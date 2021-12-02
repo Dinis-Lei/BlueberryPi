@@ -1,13 +1,18 @@
 import logo from './logo.svg';
 import './App.css';
-import React, {Component} from 'react';
+import React, {Component, useState} from 'react';
 import { Routes, Route, Link } from "react-router-dom";
+import { ToggleButton } from 'react-bootstrap';
+import { ButtonGroup } from 'react-bootstrap';
+
 
 
 
 import CanvasJSReact from './canvasjs.react';
 import MyNavbar from './components/MyNavbar';
 import LocationInfo from "./components/LocationInfo"
+import Graph from './components/Graph';
+
 //var CanvasJSReact = require('./canvasjs.react');
 var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
@@ -17,22 +22,14 @@ var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 
 const App = () => {	
-  
-    const options = {
-      title: {
-        text: "Basic Column Chart in React"
-      },
-      data: [{				
-                type: "column",
-                dataPoints: [
-                    { label: "Apple",  y: 10  },
-                    { label: "Orange", y: 15  },
-                    { label: "Banana", y: 25  },
-                    { label: "Mango",  y: 30  },
-                    { label: "Grape",  y: 28  }
-                ]
-       }]
-   }
+
+  const [checked, setChecked] = useState(false);
+  const [radioValue, setRadioValue] = useState('1');
+
+  const radios = [
+    { name: 'Plantation', value: '1' },
+    { name: 'Storage', value: '2' },
+  ];
     
    return (
 
@@ -40,19 +37,40 @@ const App = () => {
       <div>
         <MyNavbar/>
         <Routes>
-          {//<Route path="/" ><Redirect to="/dashboard" /></Route>
-          }
           <Route path="/dashboard">
-            {
-              //TODO acess ":location" to display info
-            }
-            <Route path=":location" element={<LocationInfo />}></Route>
+            <Route path=":location" element={
+              <div>
+                <div className="d-flex">
+                  <LocationInfo/>
+                  <ButtonGroup>
+                    {radios.map((radio, idx) => (
+                      <ToggleButton
+                        key={idx}
+                        id={`radio-${idx}`}
+                        type="radio"
+                        variant='outline-success'
+                        name="radio"
+                        value={radio.value}
+                        checked={radioValue === radio.value}
+                        onChange={(e) => setRadioValue(e.currentTarget.value)}
+                      >
+                        {radio.name}
+                      </ToggleButton>
+                    ))}
+                  </ButtonGroup>
+                </div>
+                <div className="d-flex">
+                  <Graph/>
+                  <Graph/>
+                </div>
+                <div className="d-flex">
+                  <Graph/>
+                  <Graph/>
+                </div>
+              </div>
+          }></Route>
           </Route>
         </Routes>
-        
-        <CanvasJSChart options = {options}
-            /* onRef = {ref => this.chart = ref} */
-        />
       </div>
     );
   

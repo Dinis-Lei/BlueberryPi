@@ -1,8 +1,5 @@
-// TODO Try to add bootstrap
-
 import React from "react";
 import Navbar from 'react-bootstrap/Navbar'
-import Container from 'react-bootstrap/Container'
 import Nav from 'react-bootstrap/Nav'
 import NavDropdown from 'react-bootstrap/NavDropdown'
 
@@ -14,7 +11,7 @@ const MyNavbar = () => {
     let arr = [1,2,3]
 
     return(
-        <Navbar bg="primary" variant="dark"  expand="lg" className="d-flex">
+        <Navbar style={{backgroundColor: "#4f86f7"}} variant="dark"  expand="lg" className="d-flex">
             <Navbar.Brand href="/dashboard" className="px-3">BlueberryPi</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
