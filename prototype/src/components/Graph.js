@@ -56,7 +56,7 @@ const Graph = () =>{
     return (			
     <CanvasJSChart options = {options} style={{width: "25%"}}
         //onRef={ref => this.chart = ref}
-   />)
+    />)
 
 }
 
