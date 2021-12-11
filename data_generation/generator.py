@@ -11,14 +11,16 @@ def generate_temperature_storage():
     return {"key": "storage_temprature", "args": {"timestamp": timestamp, "temp": temp} }
 
 def connect_kafka_producer():
-    _producer = None
-    try:
-        _producer = KafkaProducer(bootstrap_servers=['localhost:9092'], value_serializer=lambda v: json.dumps(v).encode('utf-8'))
-    except Exception as ex:
-        print('Exception while connecting Kafka')
-        print(str(ex))
-    finally:
-        return _producer
+    producer = None
+    while producer is None:
+        try:
+            producer = KafkaProducer(bootstrap_servers='kafka:29092', value_serializer=lambda v: json.dumps(v).encode('utf-8'))
+        except Exception as ex:
+            print('Exception while connecting Kafka')
+            print(str(ex))
+            time.sleep(5)
+
+    return producer
 
 def publish_message(producer_instance, topic_name, value):
     try:
@@ -32,7 +34,9 @@ def publish_message(producer_instance, topic_name, value):
 
 
 if __name__ == "__main__":
+    print("Start GENERATOR")
     producer = connect_kafka_producer()
+
     while 1:
         time.sleep(1)
         publish_message(producer_instance=producer, topic_name="test", value=generate_temperature_storage())
