@@ -12,8 +12,16 @@ def generate_temperature_storage():
 
 if __name__ == "__main__":
     print("Start GENERATOR")
-    connection = pika.BlockingConnection(
-        pika.ConnectionParameters(host='localhost'))
+    connection = None
+    while connection is None:
+        try:
+            connection = pika.BlockingConnection(
+                pika.ConnectionParameters(host='rabbitmq', port=5672))
+        except Exception as ex:
+            print('Exception while connecting Rabbit')
+            print(str(ex))
+            time.sleep(5)
+
     channel = connection.channel()
 
     channel.queue_declare(queue='blueberry')
