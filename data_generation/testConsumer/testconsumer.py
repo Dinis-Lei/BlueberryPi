@@ -1,18 +1,25 @@
-from kafka import KafkaConsumer
-import time
-consumer = None
+import pika, sys, os
 
-while consumer is None:
+def main():
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+    channel = connection.channel()
+
+    channel.queue_declare(queue='blueberry')
+
+    def callback(ch, method, properties, body):
+        print(" [x] Received %r" % body)
+
+    channel.basic_consume(queue='blueberry', on_message_callback=callback, auto_ack=True)
+
+    print(' [*] Waiting for messages. To exit press CTRL+C')
+    channel.start_consuming()
+
+if __name__ == '__main__':
     try:
-        consumer = KafkaConsumer(auto_offset_reset='earliest',
-                             bootstrap_servers='kafka:29092', consumer_timeout_ms=1000)
-        print(consumer.topics())
-        consumer.subscribe("test")
-    except Exception as ex:
-            print('Exception while connecting Kafka')
-            print(str(ex))
-            time.sleep(5)
-while 1:
-    print("Start Consumer")
-    for msg in consumer:
-        print(msg.value)
+        main()
+    except KeyboardInterrupt:
+        print('Interrupted')
+        try:
+            sys.exit(0)
+        except SystemExit:
+            os._exit(0)
