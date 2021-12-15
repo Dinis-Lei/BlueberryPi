@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
+
 @Service
 public class AllDataService {
     
@@ -24,6 +25,10 @@ public class AllDataService {
 
     public List<Temperature> getTemperatures() { 
         return tempRep.findAll();
+    }
+
+    public Temperature getTemperatureByLocation(String location) {
+        return tempRep.findTemperatureByLocation(location).orElse(null);
     }
     
 }

@@ -30,6 +30,18 @@ public class APIController {
         return dataServ.getTemperatures();
     }
 
+    @GetMapping("/temperature/{location}") //One Movie resource is fetched
+    public ResponseEntity<Temperature> getMovieByLocation(@PathVariable(value = "location") String location)
+        throws ResourceNotFoundException {
+        Temperature temperature = dataServ.getTemperatureByLocation(location);
+        if(temperature==null)
+        {
+            throw new ResourceNotFoundException("Movie not found for this id :: " + location);
+        }
+        return ResponseEntity.ok().body(temperature);
+    }
+
+
     @PostMapping("/temperature") //A new movie resource is created
     public Temperature createTemperature(@Valid @RequestBody Temperature temp) {
         return dataServ.saveTemperature(temp);
