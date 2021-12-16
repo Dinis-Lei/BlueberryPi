@@ -11,6 +11,7 @@ import LocationInfo from "./components/LocationInfo"
 import Graph from './components/Graph';
 import CircularGraph from './components/CircularGraph';
 import SideAlerts from './components/SideAlerts';
+import MyAccordion from './components/MyAccordion';
 
 //var CanvasJSReact = require('./canvasjs.react');
 var CanvasJS = CanvasJSReact.CanvasJS;
@@ -82,79 +83,87 @@ const App = () => {
             </div>
             
           </div>
-        }>
-        </Route>
+        }/>
 
-          <Route path=":location" element={
+        <Route path="home" element={
+
             <div>
-              <div className="d-flex">
-                <div style={{ width: '50%', marginLeft: '2%', marginTop: '2%'}}>
-                  <LocationInfo />
-                </div>
-                <div style={{ width: '50%' }}>
-                  <ButtonGroup style={{ position: "absolute", right: '5%', top: '10%' }}>
-                    {radios.map((radio, idx) => (
-                      <ToggleButton
-                        key={idx}
-                        id={`radio-${idx}`}
-                        type="radio"
-                        variant='outline-success'
-                        name="radio"
-                        value={radio.value}
-                        checked={radioValue === radio.value}
-                        onChange={(e) => {
-                          setRadioValue(e.currentTarget.value);
-                          if (e.currentTarget.value == 1) {
-                            document.getElementById('plantation').style.display = 'block';
-                            document.getElementById('storage').style.display = 'none';
-                          }
-                          else {
-                            document.getElementById('plantation').style.display = 'none';
-                            document.getElementById('storage').style.display = 'block';
-                          }
-                        }}
-                      >
-                        {radio.name}
-                      </ToggleButton>
-                    ))}
-                  </ButtonGroup>
-                </div>
-              </div>
-
-              {/* PLANTATION DATA */}
-              <div id='plantation'>
-                <div className="d-flex" style={{ marginTop: '50px', paddingLeft: '5%', width: '60%'}}>
-                  <Graph />
-                  <Graph />
-                </div>
-                <div className="d-flex" style={{ width: '35%', height: '300px', marginRight: '2%', backgroundColor: 'red', position: 'relative', float: 'right' }}>
-                  <SideAlerts />
-                </div>
-                <div className="d-flex" style={{ paddingLeft: '5%', width: '60%' }}>
-                  <Graph />
-                  <Graph />
-                </div>
-              </div>
-
-              {/* STORAGE DATA */}
-              <div id='storage' style={{ display: 'none' }}>
-                <div className="d-flex" style={{ marginTop: '50px', paddingLeft: '5%', width: '60%'}}>
-                  <Graph />
-                  <CircularGraph />
-                </div>
-                <div className="d-flex" style={{ width: '35%', height: '300px', marginRight: '2%', backgroundColor: 'red', position: 'relative', float: 'right' }}>
-                  <SideAlerts />
-                </div>
-                <div className="d-flex" style={{ paddingLeft: '5%', width: '60%' }}>
-                  <Graph />
-                  <CircularGraph />
-                </div>
-              </div>
-
+              <MyAccordion />
+              {/* <p>aaa</p> */}
             </div>
-          }></Route>
-        
-        </Route>
+
+        }></Route>
+
+        <Route path=":location" element={
+          <div>
+            <div className="d-flex">
+              <div style={{ width: '50%', marginLeft: '2%', marginTop: '2%'}}>
+                <LocationInfo />
+              </div>
+              <div style={{ width: '50%' }}>
+                <ButtonGroup style={{ position: "absolute", right: '5%', top: '10%' }}>
+                  {radios.map((radio, idx) => (
+                    <ToggleButton
+                      key={idx}
+                      id={`radio-${idx}`}
+                      type="radio"
+                      variant='outline-success'
+                      name="radio"
+                      value={radio.value}
+                      checked={radioValue === radio.value}
+                      onChange={(e) => {
+                        setRadioValue(e.currentTarget.value);
+                        if (e.currentTarget.value == 1) {
+                          document.getElementById('plantation').style.display = 'block';
+                          document.getElementById('storage').style.display = 'none';
+                        }
+                        else {
+                          document.getElementById('plantation').style.display = 'none';
+                          document.getElementById('storage').style.display = 'block';
+                        }
+                      }}
+                    >
+                      {radio.name}
+                    </ToggleButton>
+                  ))}
+                </ButtonGroup>
+              </div>
+            </div>
+
+            {/* PLANTATION DATA */}
+            <div id='plantation'>
+              <div className="d-flex" style={{ marginTop: '50px', paddingLeft: '5%', width: '60%'}}>
+                <Graph />
+                <Graph />
+              </div>
+              <div className="d-flex" style={{ width: '35%', height: '300px', marginRight: '2%', backgroundColor: 'red', position: 'relative', float: 'right' }}>
+                <SideAlerts />
+              </div>
+              <div className="d-flex" style={{ paddingLeft: '5%', width: '60%' }}>
+                <Graph />
+                <Graph />
+              </div>
+            </div>
+
+            {/* STORAGE DATA */}
+            <div id='storage' style={{ display: 'none' }}>
+              <div className="d-flex" style={{ marginTop: '50px', paddingLeft: '5%', width: '60%'}}>
+                <Graph />
+                <CircularGraph />
+              </div>
+              <div className="d-flex" style={{ width: '35%', height: '300px', marginRight: '2%', backgroundColor: 'red', position: 'relative', float: 'right' }}>
+                <SideAlerts />
+              </div>
+              <div className="d-flex" style={{ paddingLeft: '5%', width: '60%' }}>
+                <Graph />
+                <CircularGraph />
+              </div>
+            </div>
+
+          </div>
+        }></Route>
+
+      </Route>
       </Routes>
     </div>
   );
