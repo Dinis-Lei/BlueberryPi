@@ -8,7 +8,7 @@ def generate_temperature_storage():
     temp = random.uniform(-1,1)
     timestamp = int(time.time())
     print(timestamp ,temp)
-    return json.dumps({"key": "storage_temprature", "args": {"timestamp": timestamp, "temp": temp} })
+    return json.dumps({"key": "storage_temperature", "timestamp": timestamp, "temp": temp })
 
 if __name__ == "__main__":
     print("Start GENERATOR")
