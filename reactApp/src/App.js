@@ -4,6 +4,7 @@ import React, { Component, useState } from 'react';
 import { Routes, Route, Link } from "react-router-dom";
 import { ToggleButton } from 'react-bootstrap';
 import { ButtonGroup } from 'react-bootstrap';
+import {useEffect} from "react";
 
 import CanvasJSReact from './canvasjs.react';
 import MyNavbar from './components/MyNavbar';
@@ -17,6 +18,10 @@ import MyAccordion from './components/MyAccordion';
 var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
+const fetchData = () => {
+  return fetch("http://172.18.0.5:8080/api/temperature")
+        .then((response) => response.json());}
+
 const App = () => {
 
   const [checked, setChecked] = useState(false);
@@ -25,7 +30,23 @@ const App = () => {
   const radios = [
     { name: 'Plantation', value: '1' },
     { name: 'Storage', value: '2' },
-  ];
+  ]; 
+
+  useEffect(() => {
+    // data is a promise object
+    var data = fetchData();
+    data.then(function(result) {
+      var div = 1;
+      var counter = 1;
+      while (div != null) {
+        div = document.getElementById("temperature_info" + counter);
+        if (div != null) {
+          div.innerHTML = "Temperature: " + result[(result.length - 1)]["data"];
+        }
+        counter += 1;
+      }
+      });
+  }, []);
 
   return (
 

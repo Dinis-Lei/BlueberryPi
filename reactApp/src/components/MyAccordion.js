@@ -30,8 +30,8 @@ const MyAccordion = () => {
 
                                 <Accordion.Body>
                                 <div style={{ position: 'relative' }}>
-                                    <img src={imgs[elem-1]} style={{ width: '1050px', height: '400px', objectFit: 'cover', opacity: '0.3' }}/> 
-                                    <div style={{ position: 'absolute', top: '8px', left: '16px', fontSize: '18px', width: '50%' }}>Vestibulum accumsan, felis id vehicula egestas, sem elit gravida tortor, a vulputate nunc risus sed elit. Maecenas accumsan ultrices magna sit amet convallis. Pellentesque eget dui vestibulum, vestibulum nulla nec, sodales sem. Praesent suscipit orci eu erat ornare sodales in tincidunt risus. Donec et sapien a elit consectetur bibendum. Quisque sodales efficitur tellus, et vulputate lectus. Quisque mollis diam in placerat faucibus. Proin sed massa diam. Mauris vestibulum tellus et risus dignissim posuere.</div>
+                                    <img src={imgs[elem-1]} style={{ width: '1050px', height: '400px', objectFit: 'cover', opacity: '0.3' }}/>
+                                    <div id={"temperature_info" + elem} style={{ position: 'absolute', top: '8px', left: '16px', fontSize: '18px', width: '50%' }}>[nothing yet]</div>
                                 </div>
                                 </Accordion.Body>
 
