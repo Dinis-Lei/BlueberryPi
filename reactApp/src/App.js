@@ -19,7 +19,7 @@ var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 const fetchData = () => {
-  return fetch("http://172.18.0.5:8080/api/temperature")
+  return fetch("http://localhost:8080/api/temperature")
         .then((response) => response.json());}
 
 const App = () => {
