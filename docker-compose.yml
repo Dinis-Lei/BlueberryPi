@@ -60,12 +60,14 @@ services:
       - spring.jpa.hibernate.ddl-auto=update
       - SPRING_RABBITMQ_HOST=rabbitmq
 
-  #react:
-  #  build: ./prototype
-  #  container_name: react
-  #  stdin_open: true
-  #  restart: unless-stopped
-  #  image: blueberrypi-frontend
+  react:
+    build: ./reactApp
+    container_name: react
+    ports:
+      - 3001:3000
+    stdin_open: true
+    restart: unless-stopped
+    image: blueberrypi-reactapp
 
 volumes:
   mysql-data:
