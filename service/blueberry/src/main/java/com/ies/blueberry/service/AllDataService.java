@@ -2,10 +2,12 @@ package com.ies.blueberry.service;
 
 import com.ies.blueberry.model.NetHarvest;
 import com.ies.blueberry.model.SoilPH;
+import com.ies.blueberry.model.SoilWaterTension;
 import com.ies.blueberry.model.PlantationTemperature;
 import com.ies.blueberry.repository.NetHarvestRepository;
 import com.ies.blueberry.repository.PlantationTemperatureRepository;
 import com.ies.blueberry.repository.SoilPHRepository;
+import com.ies.blueberry.repository.SoilWaterTensionRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,8 @@ public class AllDataService {
     private NetHarvestRepository netHarvRep;
     @Autowired
     private SoilPHRepository soilPHRep;
+    @Autowired
+    private SoilWaterTensionRepository soilWTRep;
 
     //Temperature Section
 
@@ -67,7 +71,18 @@ public class AllDataService {
         return soilPHRep.findSoilPHByLocation(location).orElse(null);
     }
 
-    
+    //Soil Water Tension Section
+    public SoilWaterTension saveSoilWaterTension(SoilWaterTension watTension) {
+        return soilWTRep.save(watTension);
+    }
+
+    public List<SoilWaterTension> getSoilWaterTensions() { 
+        return soilWTRep.findAll();
+    }
+
+    public SoilWaterTension getSoilWaterTensionByLocation(String location) {
+        return soilWTRep.findSoilWaterTensionByLocation(location).orElse(null);
+    }
 
 
     

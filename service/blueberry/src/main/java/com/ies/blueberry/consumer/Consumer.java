@@ -38,6 +38,12 @@ public class Consumer {
                 Long timestamp = Long.valueOf( (Integer) result.get("timestamp"));
                 dataServ.savePlantationTemperature(new PlantationTemperature(data, "location1", timestamp));
                 break;
+            case "net_harvest":
+                break;
+            case "soil_ph":
+                break;
+            case "soil_water_tension":
+                break;
             case "storage_temperature":
                 break;
         }

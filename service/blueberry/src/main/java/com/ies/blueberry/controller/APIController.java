@@ -20,6 +20,7 @@ import com.ies.blueberry.exception.ResourceNotFoundException;
 import com.ies.blueberry.model.NetHarvest;
 import com.ies.blueberry.model.PlantationTemperature;
 import com.ies.blueberry.model.SoilPH;
+import com.ies.blueberry.model.SoilWaterTension;
 import com.ies.blueberry.service.AllDataService;
 
 @CrossOrigin
@@ -65,7 +66,7 @@ public class APIController {
         NetHarvest netharvest = dataServ.getNetHarvestByLocation(location);
         if(netharvest==null)
         {
-            throw new ResourceNotFoundException("Net Harvest data not found for this id :: " + location);
+            throw new ResourceNotFoundException("Location not found for this id :: " + location);
         }
         return ResponseEntity.ok().body(netharvest);
     }
@@ -87,7 +88,7 @@ public class APIController {
         SoilPH soilph = dataServ.getSoilPHByLocation(location);
         if(soilph==null)
         {
-            throw new ResourceNotFoundException("Soil pH data not found for this id :: " + location);
+            throw new ResourceNotFoundException("Location not found for this id :: " + location);
         }
         return ResponseEntity.ok().body(soilph);
     }
@@ -95,6 +96,29 @@ public class APIController {
     @PostMapping("/soil_ph")
     public SoilPH createSoilPH(@Valid @RequestBody SoilPH soilPH) {
         return dataServ.saveSoilPH(soilPH);
+    }
+
+    //Soil Water Tension
+
+    @GetMapping("/soil_water_tension")
+    public List<SoilWaterTension> getSoilWTData() {
+        return dataServ.getSoilWaterTensions();
+    }
+
+    @GetMapping("/soil_water_tension/{location}") 
+    public ResponseEntity<SoilWaterTension> getSoilWaterTensionByLocation(@PathVariable(value = "location") String location)
+        throws ResourceNotFoundException {
+        SoilWaterTension soilwt = dataServ.getSoilWaterTensionByLocation(location);
+        if(soilwt==null)
+        {
+            throw new ResourceNotFoundException("Location not found for this id :: " + location);
+        }
+        return ResponseEntity.ok().body(soilwt);
+    }
+
+    @PostMapping("/soil_water_tension")
+    public SoilWaterTension createTemperature(@Valid @RequestBody SoilWaterTension swt) {
+        return dataServ.saveSoilWaterTension(swt);
     }
 
 }
