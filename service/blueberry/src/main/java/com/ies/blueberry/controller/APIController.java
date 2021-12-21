@@ -21,6 +21,7 @@ import com.ies.blueberry.model.NetHarvest;
 import com.ies.blueberry.model.PlantationTemperature;
 import com.ies.blueberry.model.SoilPH;
 import com.ies.blueberry.model.SoilWaterTension;
+import com.ies.blueberry.model.StorageTemperature;
 import com.ies.blueberry.model.UnitLoss;
 import com.ies.blueberry.service.AllDataService;
 
@@ -144,4 +145,26 @@ public class APIController {
         return dataServ.saveUnitLoss(ul);
     }
 
+    //Storage Temperature
+
+    @GetMapping("/storage_temperature")
+    public List<StorageTemperature> getStorageTemperatureData() {
+        return dataServ.getStorageTemperature();
+    }
+
+    @GetMapping("/storage_temperature/{location}") 
+    public ResponseEntity<StorageTemperature> getStorageTemperatureByLocation(@PathVariable(value = "location") String location)
+        throws ResourceNotFoundException {
+        StorageTemperature st =dataServ.getStorageTemperatureByLocation(location);
+        if(st==null)
+        {
+            throw new ResourceNotFoundException("Location not found for this id :: " + location);
+        }
+        return ResponseEntity.ok().body(st);
+    }
+
+    @PostMapping("/storage_temperature")
+    public StorageTemperature createStorageTemperature(@Valid @RequestBody StorageTemperature st) {
+        return dataServ.saveStorageTemperature(st);
+    }
 }

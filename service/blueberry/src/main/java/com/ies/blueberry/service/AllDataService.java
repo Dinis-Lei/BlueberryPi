@@ -3,15 +3,18 @@ package com.ies.blueberry.service;
 import com.ies.blueberry.model.NetHarvest;
 import com.ies.blueberry.model.SoilPH;
 import com.ies.blueberry.model.SoilWaterTension;
+import com.ies.blueberry.model.StorageTemperature;
 import com.ies.blueberry.model.UnitLoss;
 import com.ies.blueberry.model.PlantationTemperature;
 import com.ies.blueberry.repository.NetHarvestRepository;
 import com.ies.blueberry.repository.PlantationTemperatureRepository;
 import com.ies.blueberry.repository.SoilPHRepository;
 import com.ies.blueberry.repository.SoilWaterTensionRepository;
+import com.ies.blueberry.repository.StorageTemperatureRepository;
 import com.ies.blueberry.repository.UnitLossRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoProperties.Storage;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,6 +33,8 @@ public class AllDataService {
     private SoilWaterTensionRepository soilWTRep;
     @Autowired
     private UnitLossRepository unitLRep;
+    @Autowired
+    private StorageTemperatureRepository STRep;
 
     //Temperature Section
 
@@ -99,6 +104,19 @@ public class AllDataService {
 
     public UnitLoss getUnitLossByLocation(String location) {
         return unitLRep.findUnitLossByLocation(location).orElse(null);
+    }
+
+    //Storage Temperature
+    public StorageTemperature saveStorageTemperature(StorageTemperature StTemp) {
+        return STRep.save(StTemp);
+    }
+
+    public List<StorageTemperature> getStorageTemperature() { 
+        return STRep.findAll();
+    }
+
+    public StorageTemperature getStorageTemperatureByLocation(String location) {
+        return STRep.findStorageTemperatureByLocation(location).orElse(null);
     }
 
 

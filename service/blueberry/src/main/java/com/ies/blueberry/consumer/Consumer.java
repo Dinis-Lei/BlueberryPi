@@ -48,6 +48,8 @@ public class Consumer {
                 break;
             case "storage_temperature":
                 break;
+            case "storage_humidity":
+                break;
         }
     }
 }
