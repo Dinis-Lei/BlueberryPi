@@ -32,11 +32,13 @@ public class Consumer {
         }
         
         switch((String) result.get("key")){
-            case "storage_temperature":
+            case "plantation_temperature":
                 System.out.println(result.get("temp"));
                 Double data = (Double) result.get("temp");
                 Long timestamp = Long.valueOf( (Integer) result.get("timestamp"));
-                dataServ.saveTemperature(new PlantationTemperature(data, "location1", timestamp));
+                dataServ.savePlantationTemperature(new PlantationTemperature(data, "location1", timestamp));
+                break;
+            case "storage_temperature":
                 break;
         }
     }

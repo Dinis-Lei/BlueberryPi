@@ -1,35 +1,53 @@
 package com.ies.blueberry.service;
 
+import com.ies.blueberry.model.NetHarvest;
 import com.ies.blueberry.model.PlantationTemperature;
-import com.ies.blueberry.repository.TemperatureRepository;
+import com.ies.blueberry.repository.NetHarvestRepository;
+import com.ies.blueberry.repository.PlantationTemperatureRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.Random;
 
 
 @Service
 public class AllDataService {
     
     @Autowired
-    private TemperatureRepository tempRep;
+    private PlantationTemperatureRepository tempRep;
+    @Autowired
+    private NetHarvestRepository netHarvRep;
 
     //Temperature Section
 
-    public PlantationTemperature saveTemperature(PlantationTemperature temp) {
+    public PlantationTemperature savePlantationTemperature(PlantationTemperature temp) {
         return tempRep.save(temp);
     }
 
-    public List<PlantationTemperature> getTemperatures() { 
+    public List<PlantationTemperature> getPlantationTemperatures() { 
         return tempRep.findAll();
     }
 
-    public PlantationTemperature getTemperatureByLocation(String location) {
-        return tempRep.findTemperatureByLocation(location).orElse(null);
+    public PlantationTemperature getPlantationTemperatureByLocation(String location) {
+        return tempRep.findPlantationTemperatureByLocation(location).orElse(null);
     }
+
+    //Net Harvest Section
+
+    public NetHarvest saveNetHarvest(NetHarvest netHarv)
+    {
+        return netHarvRep.save(netHarv);
+    }
+
+    public List<NetHarvest> getNetHarvest() { 
+        return netHarvRep.findAll();
+    }
+
+    public NetHarvest getNetHarvestByLocation(String location) {
+        return netHarvRep.findNetHarvestByLocation(location).orElse(null);
+    }
+
+
     
 }
 

@@ -7,8 +7,8 @@ import com.ies.blueberry.model.PlantationTemperature;
 import java.util.Optional;
 
 @Repository
-public interface TemperatureRepository extends JpaRepository<PlantationTemperature, Long>{
-    Optional<PlantationTemperature> findTemperatureByLocation(String emailId);
+public interface PlantationTemperatureRepository extends JpaRepository<PlantationTemperature, Long>{
+    Optional<PlantationTemperature> findPlantationTemperatureByLocation(String location);
 }
 
 

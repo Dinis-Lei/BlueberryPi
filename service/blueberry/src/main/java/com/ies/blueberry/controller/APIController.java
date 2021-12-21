@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ies.blueberry.exception.ResourceNotFoundException;
+import com.ies.blueberry.model.NetHarvest;
 import com.ies.blueberry.model.PlantationTemperature;
 import com.ies.blueberry.service.AllDataService;
 
@@ -27,24 +28,51 @@ public class APIController {
     @Autowired
     private AllDataService dataServ;
 
-    @GetMapping("/temperature") //All movies resources are fetched
-    public List<PlantationTemperature> getTempData() {
-        return dataServ.getTemperatures();
+    //Plantation Temperature
+
+    @GetMapping("/plantation_temperature") //All movies resources are fetched
+    public List<PlantationTemperature> getPlantationTempData() {
+        return dataServ.getPlantationTemperatures();
     }
 
-    @GetMapping("/temperature/{location}") //One Movie resource is fetched
-    public ResponseEntity<PlantationTemperature> getMovieByLocation(@PathVariable(value = "location") String location)
+    @GetMapping("/plantation_temperature/{location}") //One Movie resource is fetched
+    public ResponseEntity<PlantationTemperature> getPlantationTemperatureByLocation(@PathVariable(value = "location") String location)
         throws ResourceNotFoundException {
-        PlantationTemperature temperature = dataServ.getTemperatureByLocation(location);
+        PlantationTemperature temperature = dataServ.getPlantationTemperatureByLocation(location);
         if(temperature==null)
         {
-            throw new ResourceNotFoundException("Movie not found for this id :: " + location);
+            throw new ResourceNotFoundException("Location not found for this id :: " + location);
         }
         return ResponseEntity.ok().body(temperature);
     }
 
-    @PostMapping("/temperature") //A new movie resource is created
+    @PostMapping("/plantation_temperature")
     public PlantationTemperature createTemperature(@Valid @RequestBody PlantationTemperature temp) {
-        return dataServ.saveTemperature(temp);
+        return dataServ.savePlantationTemperature(temp);
+    }
+
+    //Net Harvest 
+
+    @GetMapping("/net_harvest") //All movies resources are fetched
+    public List<NetHarvest> getNetHarvestData() {
+        System.out.println("AQUI");
+        return dataServ.getNetHarvest();
+    }    
+
+    @GetMapping("/net_harvest/{location}") //One Movie resource is fetched
+    public ResponseEntity<NetHarvest> getNetHarvestByLocation(@PathVariable(value = "location") String location)
+        throws ResourceNotFoundException {
+        NetHarvest netharvest = dataServ.getNetHarvestByLocation(location);
+        if(netharvest==null)
+        {
+            throw new ResourceNotFoundException("Net Harvest data not found for this id :: " + location);
+        }
+        return ResponseEntity.ok().body(netharvest);
+    }
+
+    @PostMapping("/net_harvest")
+    public NetHarvest createNetHarvest(@Valid @RequestBody NetHarvest netHarv) {
+        System.out.println("RIGHT");
+        return dataServ.saveNetHarvest(netHarv);
     }
 }
