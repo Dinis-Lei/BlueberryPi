@@ -44,6 +44,8 @@ public class Consumer {
                 break;
             case "soil_water_tension":
                 break;
+            case "unit_loss":
+                break;
             case "storage_temperature":
                 break;
         }

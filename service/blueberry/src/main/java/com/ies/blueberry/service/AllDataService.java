@@ -3,11 +3,13 @@ package com.ies.blueberry.service;
 import com.ies.blueberry.model.NetHarvest;
 import com.ies.blueberry.model.SoilPH;
 import com.ies.blueberry.model.SoilWaterTension;
+import com.ies.blueberry.model.UnitLoss;
 import com.ies.blueberry.model.PlantationTemperature;
 import com.ies.blueberry.repository.NetHarvestRepository;
 import com.ies.blueberry.repository.PlantationTemperatureRepository;
 import com.ies.blueberry.repository.SoilPHRepository;
 import com.ies.blueberry.repository.SoilWaterTensionRepository;
+import com.ies.blueberry.repository.UnitLossRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,8 @@ public class AllDataService {
     private SoilPHRepository soilPHRep;
     @Autowired
     private SoilWaterTensionRepository soilWTRep;
+    @Autowired
+    private UnitLossRepository unitLRep;
 
     //Temperature Section
 
@@ -82,6 +86,19 @@ public class AllDataService {
 
     public SoilWaterTension getSoilWaterTensionByLocation(String location) {
         return soilWTRep.findSoilWaterTensionByLocation(location).orElse(null);
+    }
+
+    //Soil Water Tension Section
+    public UnitLoss saveUnitLoss(UnitLoss unLoss) {
+        return unitLRep.save(unLoss);
+    }
+
+    public List<UnitLoss> getUnitLoss() { 
+        return unitLRep.findAll();
+    }
+
+    public UnitLoss getUnitLossByLocation(String location) {
+        return unitLRep.findUnitLossByLocation(location).orElse(null);
     }
 
 

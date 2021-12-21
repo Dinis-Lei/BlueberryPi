@@ -21,6 +21,7 @@ import com.ies.blueberry.model.NetHarvest;
 import com.ies.blueberry.model.PlantationTemperature;
 import com.ies.blueberry.model.SoilPH;
 import com.ies.blueberry.model.SoilWaterTension;
+import com.ies.blueberry.model.UnitLoss;
 import com.ies.blueberry.service.AllDataService;
 
 @CrossOrigin
@@ -49,7 +50,7 @@ public class APIController {
     }
 
     @PostMapping("/plantation_temperature")
-    public PlantationTemperature createTemperature(@Valid @RequestBody PlantationTemperature temp) {
+    public PlantationTemperature createPlantationTemperature(@Valid @RequestBody PlantationTemperature temp) {
         return dataServ.savePlantationTemperature(temp);
     }
 
@@ -117,8 +118,30 @@ public class APIController {
     }
 
     @PostMapping("/soil_water_tension")
-    public SoilWaterTension createTemperature(@Valid @RequestBody SoilWaterTension swt) {
+    public SoilWaterTension createSoilWaterTension(@Valid @RequestBody SoilWaterTension swt) {
         return dataServ.saveSoilWaterTension(swt);
+    }
+
+    //Unit Loss
+    @GetMapping("/unit_loss")
+    public List<UnitLoss> getUnitLossData() {
+        return dataServ.getUnitLoss();
+    }
+
+    @GetMapping("/unit_loss/{location}") 
+    public ResponseEntity<UnitLoss> getUnitLossByLocation(@PathVariable(value = "location") String location)
+        throws ResourceNotFoundException {
+        UnitLoss uL = dataServ.getUnitLossByLocation(location);
+        if(uL==null)
+        {
+            throw new ResourceNotFoundException("Location not found for this id :: " + location);
+        }
+        return ResponseEntity.ok().body(uL);
+    }
+
+    @PostMapping("/unit_loss")
+    public UnitLoss createUnitLoss(@Valid @RequestBody UnitLoss ul) {
+        return dataServ.saveUnitLoss(ul);
     }
 
 }
