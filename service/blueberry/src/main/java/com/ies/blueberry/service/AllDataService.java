@@ -1,9 +1,12 @@
 package com.ies.blueberry.service;
 
 import com.ies.blueberry.model.NetHarvest;
+import com.ies.blueberry.model.SoilPH;
 import com.ies.blueberry.model.PlantationTemperature;
 import com.ies.blueberry.repository.NetHarvestRepository;
 import com.ies.blueberry.repository.PlantationTemperatureRepository;
+import com.ies.blueberry.repository.SoilPHRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +20,8 @@ public class AllDataService {
     private PlantationTemperatureRepository tempRep;
     @Autowired
     private NetHarvestRepository netHarvRep;
+    @Autowired
+    private SoilPHRepository soilPHRep;
 
     //Temperature Section
 
@@ -46,6 +51,23 @@ public class AllDataService {
     public NetHarvest getNetHarvestByLocation(String location) {
         return netHarvRep.findNetHarvestByLocation(location).orElse(null);
     }
+
+    //Soil pH Section
+
+    public SoilPH saveSoilPH(SoilPH soilPH)
+    {
+        return soilPHRep.save(soilPH);
+    }
+
+    public List<SoilPH> getSoilPH() { 
+        return soilPHRep.findAll();
+    }
+
+    public SoilPH getSoilPHByLocation(String location) {
+        return soilPHRep.findSoilPHByLocation(location).orElse(null);
+    }
+
+    
 
 
     

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ies.blueberry.exception.ResourceNotFoundException;
 import com.ies.blueberry.model.NetHarvest;
 import com.ies.blueberry.model.PlantationTemperature;
+import com.ies.blueberry.model.SoilPH;
 import com.ies.blueberry.service.AllDataService;
 
 @CrossOrigin
@@ -30,12 +31,12 @@ public class APIController {
 
     //Plantation Temperature
 
-    @GetMapping("/plantation_temperature") //All movies resources are fetched
+    @GetMapping("/plantation_temperature")
     public List<PlantationTemperature> getPlantationTempData() {
         return dataServ.getPlantationTemperatures();
     }
 
-    @GetMapping("/plantation_temperature/{location}") //One Movie resource is fetched
+    @GetMapping("/plantation_temperature/{location}") 
     public ResponseEntity<PlantationTemperature> getPlantationTemperatureByLocation(@PathVariable(value = "location") String location)
         throws ResourceNotFoundException {
         PlantationTemperature temperature = dataServ.getPlantationTemperatureByLocation(location);
@@ -53,13 +54,12 @@ public class APIController {
 
     //Net Harvest 
 
-    @GetMapping("/net_harvest") //All movies resources are fetched
+    @GetMapping("/net_harvest")
     public List<NetHarvest> getNetHarvestData() {
-        System.out.println("AQUI");
         return dataServ.getNetHarvest();
     }    
 
-    @GetMapping("/net_harvest/{location}") //One Movie resource is fetched
+    @GetMapping("/net_harvest/{location}")
     public ResponseEntity<NetHarvest> getNetHarvestByLocation(@PathVariable(value = "location") String location)
         throws ResourceNotFoundException {
         NetHarvest netharvest = dataServ.getNetHarvestByLocation(location);
@@ -72,7 +72,29 @@ public class APIController {
 
     @PostMapping("/net_harvest")
     public NetHarvest createNetHarvest(@Valid @RequestBody NetHarvest netHarv) {
-        System.out.println("RIGHT");
         return dataServ.saveNetHarvest(netHarv);
     }
+
+    //Soil pH
+    @GetMapping("/soil_ph")
+    public List<SoilPH> getSoilPH() {
+        return dataServ.getSoilPH();
+    }    
+
+    @GetMapping("/soil_ph/{location}")
+    public ResponseEntity<SoilPH> getSoilPHByLocation(@PathVariable(value = "location") String location)
+        throws ResourceNotFoundException {
+        SoilPH soilph = dataServ.getSoilPHByLocation(location);
+        if(soilph==null)
+        {
+            throw new ResourceNotFoundException("Soil pH data not found for this id :: " + location);
+        }
+        return ResponseEntity.ok().body(soilph);
+    }
+
+    @PostMapping("/soil_ph")
+    public SoilPH createSoilPH(@Valid @RequestBody SoilPH soilPH) {
+        return dataServ.saveSoilPH(soilPH);
+    }
+
 }
