@@ -3,6 +3,33 @@ import json
 import time
 import pika
 
+class Sensor:
+    def __init__(self, local, sensor_type, funcgood, funcbad) -> None:
+        self.local = local
+        self.sensor_type = sensor_type
+        self.funcgood = funcgood
+        self.funcbad = funcbad
+        self.alert = False
+        self.prob = 5
+        self.start_prob = [5, 15]
+
+    def change_state(self):
+        r = random.randint(0,100)
+        if r < self.prob:
+            self.alert = not self.alert
+            self.prob = self.start_prob[self.alert]
+        else:
+            self.prob += 1
+
+    def generate(self):
+        self.funcgood() if self.alert else self.funcbad()
+
+
+    def __str__(self) -> str:
+        pass
+
+
+
 
 def generate_temperature_storage():
     temp = random.uniform(-1,1)
