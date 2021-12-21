@@ -1,6 +1,6 @@
 package com.ies.blueberry.service;
 
-import com.ies.blueberry.model.Temperature;
+import com.ies.blueberry.model.PlantationTemperature;
 import com.ies.blueberry.repository.TemperatureRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,15 +19,15 @@ public class AllDataService {
 
     //Temperature Section
 
-    public Temperature saveTemperature(Temperature temp) {
+    public PlantationTemperature saveTemperature(PlantationTemperature temp) {
         return tempRep.save(temp);
     }
 
-    public List<Temperature> getTemperatures() { 
+    public List<PlantationTemperature> getTemperatures() { 
         return tempRep.findAll();
     }
 
-    public Temperature getTemperatureByLocation(String location) {
+    public PlantationTemperature getTemperatureByLocation(String location) {
         return tempRep.findTemperatureByLocation(location).orElse(null);
     }
     

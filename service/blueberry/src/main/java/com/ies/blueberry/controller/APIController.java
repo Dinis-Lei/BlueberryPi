@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ies.blueberry.exception.ResourceNotFoundException;
-import com.ies.blueberry.model.Temperature;
+import com.ies.blueberry.model.PlantationTemperature;
 import com.ies.blueberry.service.AllDataService;
 
 @CrossOrigin
@@ -28,14 +28,14 @@ public class APIController {
     private AllDataService dataServ;
 
     @GetMapping("/temperature") //All movies resources are fetched
-    public List<Temperature> getTempData() {
+    public List<PlantationTemperature> getTempData() {
         return dataServ.getTemperatures();
     }
 
     @GetMapping("/temperature/{location}") //One Movie resource is fetched
-    public ResponseEntity<Temperature> getMovieByLocation(@PathVariable(value = "location") String location)
+    public ResponseEntity<PlantationTemperature> getMovieByLocation(@PathVariable(value = "location") String location)
         throws ResourceNotFoundException {
-        Temperature temperature = dataServ.getTemperatureByLocation(location);
+        PlantationTemperature temperature = dataServ.getTemperatureByLocation(location);
         if(temperature==null)
         {
             throw new ResourceNotFoundException("Movie not found for this id :: " + location);
@@ -44,7 +44,7 @@ public class APIController {
     }
 
     @PostMapping("/temperature") //A new movie resource is created
-    public Temperature createTemperature(@Valid @RequestBody Temperature temp) {
+    public PlantationTemperature createTemperature(@Valid @RequestBody PlantationTemperature temp) {
         return dataServ.saveTemperature(temp);
     }
 }
