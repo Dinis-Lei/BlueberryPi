@@ -7,11 +7,9 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,6 +19,7 @@ import com.ies.blueberry.model.NetHarvest;
 import com.ies.blueberry.model.PlantationTemperature;
 import com.ies.blueberry.model.SoilPH;
 import com.ies.blueberry.model.SoilWaterTension;
+import com.ies.blueberry.model.StorageHumidity;
 import com.ies.blueberry.model.StorageTemperature;
 import com.ies.blueberry.model.UnitLoss;
 import com.ies.blueberry.service.AllDataService;
@@ -166,5 +165,28 @@ public class APIController {
     @PostMapping("/storage_temperature")
     public StorageTemperature createStorageTemperature(@Valid @RequestBody StorageTemperature st) {
         return dataServ.saveStorageTemperature(st);
+    }
+
+    //Storage Humidity
+
+    @GetMapping("/storage_humidity")
+    public List<StorageHumidity> getStorageHumidityData() {
+        return dataServ.getStorageHumidity();
+    }
+
+    @GetMapping("/storage_humidity/{location}") 
+    public ResponseEntity<StorageHumidity> getStorageHumidityByLocation(@PathVariable(value = "location") String location)
+        throws ResourceNotFoundException {
+        StorageHumidity sH = dataServ.getStorageHumidityByLocation(location);
+        if(sH==null)
+        {
+            throw new ResourceNotFoundException("Location not found for this id :: " + location);
+        }
+        return ResponseEntity.ok().body(sH);
+    }
+
+    @PostMapping("/storage_humidity")
+    public StorageHumidity createStorageHumidity(@Valid @RequestBody StorageHumidity sH) {
+        return dataServ.saveStorageHumidity(sH);
     }
 }
