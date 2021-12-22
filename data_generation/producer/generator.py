@@ -26,7 +26,7 @@ class Sensor:
 
     def generate(self, channel):
         self.funcgood(self) if not self.alert else self.funcbad(self)
-        msg = json.dumps({"key": "plantation_temperature", "timestamp": int(time.time()), "temp": self.value, "location": self.local})
+        msg = json.dumps({"key": self.sensor_type, "timestamp": int(time.time()), "temp": self.value, "location": self.local})
         channel.basic_publish(exchange='', routing_key='blueberry', body=msg)
         self.change_state()
 
