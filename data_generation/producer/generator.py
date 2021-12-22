@@ -30,6 +30,48 @@ class Sensor:
         channel.basic_publish(exchange='', routing_key='blueberry', body=msg)
         self.change_state()
 
+def generate_unit_loss(sensor):
+    pass
+
+def generate_unit_loss_alert(sensor):
+    pass
+
+def generate_stor_temp(sensor):
+    pass
+
+def generate_stor_temp_alert(sensor):
+    pass
+
+def generate_stor_humidity(sensor):
+    pass
+
+def generate_stor_humidity_alert(sensor):
+    pass
+
+def generate_temperature(sensor):
+    pass
+
+def generate_temperature_alert(sensor):
+    pass
+
+def generate_net_harv(sensor):
+    pass
+
+def generate_net_harv_alert(sensor):
+    pass
+
+def generate_ph(sensor):
+    pass
+
+def generate_ph_alert(sensor):
+    pass
+
+def generate_water(sensor):
+    pass
+
+def generate_water_alert(sensor):
+    pass
+
 if __name__ == "__main__":
     print("Start GENERATOR")
     connection = None
@@ -48,16 +90,24 @@ if __name__ == "__main__":
 
     count = 0
     while 1:
-        time.sleep(0.5) # ajustar para acelerar/desacelerar o tempo (testing purposes)
+        time.sleep(1) # ajustar para acelerar/desacelerar o tempo (testing purposes)
         # geradores segundo a segundo
 
         if count % 60 == 0:
             # geradores minuto a minuto
 
             pass
-        elif count % 3600 == 0:
+        if count % 3600 == 0:
             # geradores hora a hora
             
+            pass
+        if count % (3600 * 6) == 0:
+            # geradores 6 em 6 horas
+
+            pass
+        if count % (3600 * 24) == 0:
+            # geradores diários
+
             pass
         count += 1
 
