@@ -67,13 +67,14 @@ if __name__ == "__main__":
 
     count = 0
     while 1:
-        time.sleep(0.5)
+        time.sleep(1/60) # para efeitos de teste, 1 segundo em tempo real corresponderá a um minuto simulado pelo gerador!
         # geradores segundo a segundo
-        plant_temp_Guarda.generate(channel) 
-        plant_temp_Minho.generate(channel)
-        plant_temp_VilaReal.generate(channel)
+        
         if count % 60 == 0:
             # geradores minuto a minuto
+            plant_temp_Guarda.generate(channel) 
+            plant_temp_Minho.generate(channel)
+            plant_temp_VilaReal.generate(channel)
             pass
         elif count % 3600 == 0:
             # geradores hora a hora
