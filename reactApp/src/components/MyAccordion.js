@@ -14,24 +14,30 @@ const MyAccordion = () => {
     return(
 
         <div>
-            <div style={{margin: '5px'}}>
+            <div style={{margin: '3%' }}>
                 <LocationInfo />
             </div>
-            <div style={{ width: '60%', margin: 'auto' }}>
+            <div style={{ width: '50%', margin: 'auto', marginTop: '1%' }}>
                 <Accordion defaultActiveKey="0" flush>
                     
                     {
                         arr.map(
                         (elem) => { return (
 
-                            <Accordion.Item eventKey={elem - 1}>
+                            <Accordion.Item eventKey={(elem - 1).toString()}>
                                 
                                 <Accordion.Header>{"Location " + elem}</Accordion.Header>
 
                                 <Accordion.Body>
                                 <div style={{ position: 'relative' }}>
-                                    <img src={imgs[elem-1]} style={{ width: '1050px', height: '400px', objectFit: 'cover', opacity: '0.3' }}/>
-                                    <div id={"temperature_info" + elem} style={{ position: 'absolute', top: '8px', left: '16px', fontSize: '18px', width: '50%' }}>[nothing yet]</div>
+                                    <img src={imgs[elem-1]} style={{ width: '100%', height: '400px', objectFit: 'cover', opacity: '0.3' }}/>
+                                    <div id={"plantation_temperature" + elem} style={{ position: 'absolute', top: '5%', left: '16px', fontSize: '18px', width: '50%' }}>[plantation_temperature]</div>
+                                    <div id={"net_harvest" + elem} style={{ position: 'absolute', top: '11%', left: '16px', fontSize: '18px', width: '50%' }}>[net_harvest]</div>
+                                    <div id={"soil_ph" + elem} style={{ position: 'absolute', top: '17%', left: '16px', fontSize: '18px', width: '50%' }}>[soil_ph]</div>
+                                    <div id={"soil_water_tension" + elem} style={{ position: 'absolute', top: '23%', left: '16px', fontSize: '18px', width: '50%' }}>[soil_water_tension]</div>
+                                    <div id={"unit_loss" + elem} style={{ position: 'absolute', top: '29%', left: '16px', fontSize: '18px', width: '50%' }}>[unit_loss]</div>
+                                    <div id={"storage_temperature" + elem} style={{ position: 'absolute', top: '35%', left: '16px', fontSize: '18px', width: '50%' }}>[storage_temperature]</div>
+                                    <div id={"storage_humidity" + elem} style={{ position: 'absolute', top: '41%', left: '16px', fontSize: '18px', width: '50%' }}>[storage_humidity]</div>
                                 </div>
                                 </Accordion.Body>
 
