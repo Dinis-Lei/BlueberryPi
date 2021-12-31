@@ -1,7 +1,10 @@
 import random
+from numpy.random import default_rng
 import json
 import time
 import pika
+
+rng = default_rng()
 
 class Sensor:
     def __init__(self, local, sensor_type, funcgood, funcbad, start_prob=[5,15], prob_delta=[1,1], value=None) -> None:
@@ -31,10 +34,12 @@ class Sensor:
         self.change_state()
 
 def generate_unit_loss(sensor):
-    pass
+    sensor.value = rng.normal(2.5, 0.7)
+    if sensor.value < 0: sensor.value = 0
 
 def generate_unit_loss_alert(sensor):
-    pass
+    sensor.value = rng.normal(4, 1)
+    if sensor.value < 0: sensor.value = 0
 
 def generate_stor_temp(sensor):
     pass
@@ -88,9 +93,13 @@ if __name__ == "__main__":
 
     channel.queue_declare(queue='blueberry')
 
+    unit_Guarda = Sensor("Guarda","ph",generate_unit_loss,generate_unit_loss_alert,[0,0],[10,25],1)
+    unit_Minho = Sensor("Minho","ph",generate_unit_loss,generate_unit_loss_alert,[0,0],[10,25],1)
+    unit_VilaReal = Sensor("Vila Real","ph",generate_unit_loss,generate_unit_loss_alert,[0,0],[10,25],1)
+
     count = 0
     while 1:
-        time.sleep(1) # ajustar para acelerar/desacelerar o tempo (testing purposes)
+        time.sleep(1/(3600 * 24)) # ajustar para acelerar/desacelerar o tempo (testing purposes)
         # geradores segundo a segundo
 
         if count % 60 == 0:
@@ -107,7 +116,9 @@ if __name__ == "__main__":
             pass
         if count % (3600 * 24) == 0:
             # geradores diários
-
+            unit_Guarda.generate()
+            unit_Minho.generate()
+            unit_VilaReal.generate()
             pass
         count += 1
 
