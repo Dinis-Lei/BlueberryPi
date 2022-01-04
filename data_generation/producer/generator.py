@@ -7,7 +7,7 @@ from numpy.random import default_rng
 rng = default_rng()
 
 class Sensor:
-    def __init__(self, local, sensor_type, funcgood, funcbad, start_prob=[5,15], prob_delta=[1,1], value=None) -> None:
+    def __init__(self, local, sensor_type, funcgood, funcbad, start_prob=[5,15], prob_delta=[1,1], value=None, step=0) -> None:
         self.local = local
         self.sensor_type = sensor_type
         self.funcgood = funcgood
@@ -17,6 +17,8 @@ class Sensor:
         self.start_prob = start_prob
         self.prob_delta = prob_delta
         self.value = value
+        self.ts = 0
+        self.step = step
 
     def change_state(self):
         r = random.randint(0,100)
@@ -29,9 +31,10 @@ class Sensor:
 
     def generate(self, channel):
         self.funcgood(self) if not self.alert else self.funcbad(self)
-        msg = json.dumps({"key": "plantation_temperature", "timestamp": int(time.time()), "temp": self.value, "location": self.local})
+        msg = json.dumps({"key": self.sensor_type, "timestamp": self.ts, "temp": self.value, "location": self.local})
         channel.basic_publish(exchange='', routing_key='blueberry', body=msg)
         self.change_state()
+        self.ts += self.step
 
 def generate_ph(sensor):
     sensor.value = rng.normal(5, 0.4)
@@ -55,33 +58,20 @@ if __name__ == "__main__":
 
     channel.queue_declare(queue='blueberry')
 
-    ph_Guarda = Sensor("Guarda","ph",generate_ph,generate_ph_alert,[0,0],[10,30],5)
-    ph_Minho = Sensor("Minho","ph",generate_ph,generate_ph_alert,[0,0],[10,30],5)
-    ph_VilaReal = Sensor("Vila Real","ph",generate_ph,generate_ph_alert,[0,0],[10,30],5)
+    sensors = []
 
-    count = 0
-    while 1:
-        time.sleep(1/(3600 * 24)) # ajustar para acelerar/desacelerar o tempo (testing purposes)
-        # geradores segundo a segundo
+    sensors.append(Sensor("Guarda","ph",generate_ph,generate_ph_alert,[0,0],[10,30],5,(24*60*60)))
+    sensors.append(Sensor("Minho","ph",generate_ph,generate_ph_alert,[0,0],[10,30],5,(24*60*60)))
+    sensors.append(Sensor("Vila Real","ph",generate_ph,generate_ph_alert,[0,0],[10,30],5,(24*60*60)))
 
-        if count % 60 == 0:
-            # geradores minuto a minuto
-
-            pass
-        if count % 3600 == 0:
-            # geradores hora a hora
-            
-            pass
-        if count % (3600 * 6) == 0:
-            # geradores 6 em 6 horas
-
-            pass
-        if count % (3600 * 24) == 0:
-            # geradores diários
-            ph_Guarda.generate(channel)
-            ph_Minho.generate(channel)
-            ph_VilaReal.generate(channel)
-            pass
-        count += 1
+    curr_time = 0
+    while 1:        
+        big = curr_time
+        for sensor in sensors:
+            if sensor.ts <= curr_time:
+                sensor.generate()
+                if sensor.ts > big: big = sensor.ts
+        curr_time = big
+        time.sleep(1) # ajustar para acelerar/desacelerar o tempo (testing purposes)
 
     connection.close()
