@@ -3,6 +3,9 @@ import random
 import json
 import time
 import pika
+from numpy.random import default_rng
+
+rng = default_rng()
 
 rng = default_rng()
 
@@ -36,20 +39,7 @@ class Sensor:
         channel.basic_publish(exchange='', routing_key='blueberry', body=msg)
         self.change_state()
         self.ts += self.step
-
-def generate_temperature(sensor):
-    delta = rng.normal(0, 0.1)
-    delta = -abs(delta) if sensor.value > 20 else delta
-    sensor.value += delta
-    #print(msg, sensor.prob)
-
-def generate_temperature_alert(sensor):
-    mult = -1 if sensor.value > 25 else 1
-    delta = (abs(rng.normal(0, 0.3)) if sensor.value < 21.5 else abs(rng.normal(0, 0.1))) * mult
-    sensor.value += delta
-    #print(msg, sensor.prob)
     
-
 def generate_unit_loss(sensor):
     pass
 
@@ -69,10 +59,16 @@ def generate_stor_humidity_alert(sensor):
     pass
 
 def generate_temperature(sensor):
-    pass
+    delta = rng.normal(0, 0.1)
+    delta = -abs(delta) if sensor.value > 20 else delta
+    sensor.value += delta
+    #print(msg, sensor.prob)
 
 def generate_temperature_alert(sensor):
-    pass
+    mult = -1 if sensor.value > 25 else 1
+    delta = (abs(rng.normal(0, 0.3)) if sensor.value < 21.5 else abs(rng.normal(0, 0.1))) * mult
+    sensor.value += delta
+    #print(msg, sensor.prob)
 
 def generate_net_harv(sensor):
     pass
@@ -81,16 +77,17 @@ def generate_net_harv_alert(sensor):
     pass
 
 def generate_ph(sensor):
-    pass
+    sensor.value = rng.normal(5, 0.4)
 
 def generate_ph_alert(sensor):
-    pass
+    sensor.value = rng.normal(5, 0.9)
 
 def generate_water(sensor):
     pass
 
 def generate_water_alert(sensor):
     pass
+
 
 if __name__ == "__main__":
     print("Start GENERATOR")
@@ -110,6 +107,10 @@ if __name__ == "__main__":
 
     sensors = []
 
+
+    sensors.append(Sensor("Guarda","ph",generate_ph,generate_ph_alert,[0,0],[10,30],5,(24*60*60)))
+    sensors.append(Sensor("Minho","ph",generate_ph,generate_ph_alert,[0,0],[10,30],5,(24*60*60)))
+    sensors.append(Sensor("Vila Real","ph",generate_ph,generate_ph_alert,[0,0],[10,30],5,(24*60*60)))
 
     sensors.append(Sensor("Guarda","plantation_temperature",generate_temperature,generate_temperature_alert,[0,0],[0.2,0.9],19,60))
     sensors.append(Sensor("Minho","plantation_temperature",generate_temperature,generate_temperature_alert,[0,0],[0.2,0.9],19,60))
