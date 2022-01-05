@@ -9,6 +9,8 @@ rng = default_rng()
 
 rng = default_rng()
 
+rng = default_rng()
+
 class Sensor:
     def __init__(self, local, sensor_type, funcgood, funcbad, start_prob=[5,15], prob_delta=[1,1], value=None, step=0) -> None:
         self.local = local
@@ -39,12 +41,14 @@ class Sensor:
         channel.basic_publish(exchange='', routing_key='blueberry', body=msg)
         self.change_state()
         self.ts += self.step
-    
+
 def generate_unit_loss(sensor):
-    pass
+    sensor.value = rng.normal(2.5, 0.7)
+    if sensor.value < 0: sensor.value = 0
 
 def generate_unit_loss_alert(sensor):
-    pass
+    sensor.value = rng.normal(4, 1)
+    if sensor.value < 0: sensor.value = 0
 
 def generate_stor_temp(sensor):
     pass
@@ -107,6 +111,11 @@ if __name__ == "__main__":
 
     sensors = []
 
+    sensors.append(Sensor("Guarda","ph",generate_unit_loss,generate_unit_loss_alert,[0,0],[10,25],1,7*24*60*60))
+    sensors.append(Sensor("Minho","ph",generate_unit_loss,generate_unit_loss_alert,[0,0],[10,25],1,7*24*60*60))
+    sensors.append(Sensor("Vila Real","ph",generate_unit_loss,generate_unit_loss_alert,[0,0],[10,25],1,7*24*60*60))
+    
+
 
     sensors.append(Sensor("Guarda","ph",generate_ph,generate_ph_alert,[0,0],[10,30],5,(24*60*60)))
     sensors.append(Sensor("Minho","ph",generate_ph,generate_ph_alert,[0,0],[10,30],5,(24*60*60)))
@@ -115,6 +124,7 @@ if __name__ == "__main__":
     sensors.append(Sensor("Guarda","plantation_temperature",generate_temperature,generate_temperature_alert,[0,0],[0.2,0.9],19,60))
     sensors.append(Sensor("Minho","plantation_temperature",generate_temperature,generate_temperature_alert,[0,0],[0.2,0.9],19,60))
     sensors.append(Sensor("Vila Real","plantation_temperature",generate_temperature,generate_temperature_alert,[0,0],[0.2,0.9],19,60))
+
 
     curr_time = 0
     while 1:        
