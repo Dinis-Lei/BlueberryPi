@@ -1,23 +1,29 @@
 import React from "react"
 import { useParams } from "react-router-dom"
-import Card from "react-bootstrap/Card";
+import Alert from 'react-bootstrap/Alert'
 
 const LocationInfo = () => {
 
     var today = new Date();
     var date = today.getDate() + '/' + today.getMonth() + '/' + today.getFullYear();
-    var hours = today.getHours() + ':' + today.getMinutes()
+    var hours = today.getHours() + ':' + (today.getMinutes().toString().length==1 ? ("0" + today.getMinutes()) : today.getMinutes())
     const { location } = useParams()
 
     return (
-        <Card style={{ width: '18rem' }} border="primary">
-            <Card.Body>
-                <Card.Title>Current information</Card.Title>
-                <Card.Subtitle className="mb-2 text-muted">{location}</Card.Subtitle>
-                <Card.Text>Date: {date} </Card.Text>
-                <Card.Text style={{marginTop: '-5%'}}>Time: {hours} </Card.Text>
-            </Card.Body>
-        </Card>
+
+        <Alert variant="light" style={{ width: '300px' }}>
+            <Alert.Heading style={{ color: 'black' }}>Current information</Alert.Heading>
+            <p>
+                {location}
+            </p>
+            <hr />
+            <p className="mb-0">
+                <strong>Date:</strong> {date}
+            </p>
+            <p className="mb-0">
+                <strong>Time:</strong> {hours}
+            </p>
+        </Alert>
     )
 }
 
