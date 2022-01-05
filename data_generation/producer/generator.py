@@ -29,12 +29,26 @@ class Sensor:
         else:
             self.prob += self.prob_delta[self.alert]
 
+
     def generate(self, channel):
         self.funcgood(self) if not self.alert else self.funcbad(self)
         msg = json.dumps({"key": self.sensor_type, "timestamp": self.ts, "temp": self.value, "location": self.local})
         channel.basic_publish(exchange='', routing_key='blueberry', body=msg)
         self.change_state()
         self.ts += self.step
+
+def generate_temperature(sensor):
+    delta = rng.normal(0, 0.1)
+    delta = -abs(delta) if sensor.value > 20 else delta
+    sensor.value += delta
+    #print(msg, sensor.prob)
+
+def generate_temperature_alert(sensor):
+    mult = -1 if sensor.value > 25 else 1
+    delta = (abs(rng.normal(0, 0.3)) if sensor.value < 21.5 else abs(rng.normal(0, 0.1))) * mult
+    sensor.value += delta
+    #print(msg, sensor.prob)
+    
 
 def generate_unit_loss(sensor):
     pass
@@ -95,6 +109,11 @@ if __name__ == "__main__":
     channel.queue_declare(queue='blueberry')
 
     sensors = []
+
+
+    sensors.append(Sensor("Guarda","plantation_temperature",generate_temperature,generate_temperature_alert,[0,0],[0.2,0.9],19,60))
+    sensors.append(Sensor("Minho","plantation_temperature",generate_temperature,generate_temperature_alert,[0,0],[0.2,0.9],19,60))
+    sensors.append(Sensor("Vila Real","plantation_temperature",generate_temperature,generate_temperature_alert,[0,0],[0.2,0.9],19,60))
 
     curr_time = 0
     while 1:        
