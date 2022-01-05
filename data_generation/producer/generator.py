@@ -29,6 +29,7 @@ class Sensor:
         else:
             self.prob += self.prob_delta[self.alert]
 
+
     def generate(self, channel):
         self.funcgood(self) if not self.alert else self.funcbad(self)
         msg = json.dumps({"key": self.sensor_type, "timestamp": self.ts, "temp": self.value, "location": self.local})
@@ -48,6 +49,49 @@ def generate_temperature_alert(sensor):
     sensor.value += delta
     #print(msg, sensor.prob)
     
+
+def generate_unit_loss(sensor):
+    pass
+
+def generate_unit_loss_alert(sensor):
+    pass
+
+def generate_stor_temp(sensor):
+    pass
+
+def generate_stor_temp_alert(sensor):
+    pass
+
+def generate_stor_humidity(sensor):
+    pass
+
+def generate_stor_humidity_alert(sensor):
+    pass
+
+def generate_temperature(sensor):
+    pass
+
+def generate_temperature_alert(sensor):
+    pass
+
+def generate_net_harv(sensor):
+    pass
+
+def generate_net_harv_alert(sensor):
+    pass
+
+def generate_ph(sensor):
+    pass
+
+def generate_ph_alert(sensor):
+    pass
+
+def generate_water(sensor):
+    pass
+
+def generate_water_alert(sensor):
+    pass
+
 if __name__ == "__main__":
     print("Start GENERATOR")
     connection = None
@@ -65,6 +109,7 @@ if __name__ == "__main__":
     channel.queue_declare(queue='blueberry')
 
     sensors = []
+
 
     sensors.append(Sensor("Guarda","plantation_temperature",generate_temperature,generate_temperature_alert,[0,0],[0.2,0.9],19,60))
     sensors.append(Sensor("Minho","plantation_temperature",generate_temperature,generate_temperature_alert,[0,0],[0.2,0.9],19,60))
