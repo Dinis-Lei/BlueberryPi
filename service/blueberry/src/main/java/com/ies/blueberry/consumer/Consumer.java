@@ -1,11 +1,11 @@
-package com.ies.blueberry.comsumer;
+package com.ies.blueberry.consumer;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ies.blueberry.model.Temperature;
+import com.ies.blueberry.model.PlantationTemperature;
 import com.ies.blueberry.service.AllDataService;
 
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -32,11 +32,23 @@ public class Consumer {
         }
         
         switch((String) result.get("key")){
-            case "storage_temperature":
+            case "plantation_temperature":
                 System.out.println(result.get("temp"));
                 Double data = (Double) result.get("temp");
                 Long timestamp = Long.valueOf( (Integer) result.get("timestamp"));
-                dataServ.saveTemperature(new Temperature(data, "location1", timestamp));
+                dataServ.savePlantationTemperature(new PlantationTemperature(data, "location1", timestamp));
+                break;
+            case "net_harvest":
+                break;
+            case "soil_ph":
+                break;
+            case "soil_water_tension":
+                break;
+            case "unit_loss":
+                break;
+            case "storage_temperature":
+                break;
+            case "storage_humidity":
                 break;
         }
     }

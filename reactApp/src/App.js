@@ -5,6 +5,7 @@ import { Routes, Route, Link } from "react-router-dom";
 import { ToggleButton } from 'react-bootstrap';
 import { ButtonGroup } from 'react-bootstrap';
 import {useEffect} from "react";
+import { Navigate } from 'react-router-dom';
 
 import CanvasJSReact from './canvasjs.react';
 import MyNavbar from './components/MyNavbar';
@@ -39,9 +40,9 @@ const App = () => {
       var div = 1;
       var counter = 1;
       while (div != null) {
-        div = document.getElementById("temperature_info" + counter);
+        div = document.getElementById("plantation_temperature" + counter);
         if (div != null) {
-          div.innerHTML = "Temperature: " + result[(result.length - 1)]["data"];
+          div.innerHTML = "Plantation temperature: " + result[(result.length - 1)]["data"];
         }
         counter += 1;
       }
@@ -53,6 +54,7 @@ const App = () => {
     <div>
       <MyNavbar />
       <Routes>
+      <Route path="/" element={<Navigate to="/dashboard"/>} />
       <Route path="/dashboard">
         <Route path="" element={
           <div>
@@ -110,7 +112,6 @@ const App = () => {
 
             <div>
               <MyAccordion />
-              {/* <p>aaa</p> */}
             </div>
 
         }></Route>
@@ -128,7 +129,7 @@ const App = () => {
                       key={idx}
                       id={`radio-${idx}`}
                       type="radio"
-                      variant='outline-success'
+                      variant='outline-dark'
                       name="radio"
                       value={radio.value}
                       checked={radioValue === radio.value}
@@ -153,12 +154,12 @@ const App = () => {
 
             {/* PLANTATION DATA */}
             <div id='plantation'>
+              <div style={{ width: '40%', float: 'right' }}>
+                  <SideAlerts />
+              </div>
               <div className="d-flex" style={{ marginTop: '50px', paddingLeft: '5%', width: '60%'}}>
                 <Graph />
                 <Graph />
-              </div>
-              <div className="d-flex" style={{ width: '35%', height: '300px', marginRight: '2%', backgroundColor: 'red', position: 'relative', float: 'right' }}>
-                <SideAlerts />
               </div>
               <div className="d-flex" style={{ paddingLeft: '5%', width: '60%' }}>
                 <Graph />
@@ -168,12 +169,12 @@ const App = () => {
 
             {/* STORAGE DATA */}
             <div id='storage' style={{ display: 'none' }}>
+              <div style={{ width: '40%', float: 'right' }}>
+                  <SideAlerts />
+              </div>
               <div className="d-flex" style={{ marginTop: '50px', paddingLeft: '5%', width: '60%'}}>
                 <Graph />
                 <CircularGraph />
-              </div>
-              <div className="d-flex" style={{ width: '35%', height: '300px', marginRight: '2%', backgroundColor: 'red', position: 'relative', float: 'right' }}>
-                <SideAlerts />
               </div>
               <div className="d-flex" style={{ paddingLeft: '5%', width: '60%' }}>
                 <Graph />

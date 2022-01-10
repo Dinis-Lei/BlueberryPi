@@ -8,16 +8,16 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity //An entity represents a table stored in a database
-@Table(name = "temperature") //The table is named movies
-public class Temperature {
+@Table(name = "storage_temperature") 
+public class StorageTemperature {
     private long id;
     private Double data;
     private String location;
     private Long timestamp;
 
-    public Temperature() {}
+    public StorageTemperature() {}
 
-    public Temperature(Double data,String location,Long timestamp)
+    public StorageTemperature(Double data,String location,Long timestamp)
     {
         this.data = data;
         this.location = location;
@@ -62,6 +62,6 @@ public class Temperature {
 
     @Override
     public String toString() {
-        return "Temperature [data=" + data + ", location=" + location + ", timestamp=" + timestamp + "]";
+        return "Storage Temperature [data=" + data + ", location=" + location + ", timestamp=" + timestamp + "]";
     }
 }
