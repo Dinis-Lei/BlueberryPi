@@ -82,6 +82,8 @@ def generate_net_harv_alert(sensor):
     sensor.value = rng.normal(5, 0.5)
     if sensor.value < 0: sensor.value = 0
 
+def generate_net_harv_alert(sensor):
+    pass
 
 def generate_ph(sensor):
     sensor.value = rng.normal(5, 0.4)
@@ -124,6 +126,7 @@ if __name__ == "__main__":
 
     sensors = []
 
+
     sensors.append(Sensor("Guarda","unit_loss",generate_unit_loss,generate_unit_loss_alert,[0,0],[10,25],1,7*24*60*60))
     sensors.append(Sensor("Minho","unit_loss",generate_unit_loss,generate_unit_loss_alert,[0,0],[10,25],1,7*24*60*60))
     sensors.append(Sensor("Vila Real","unit_loss",generate_unit_loss,generate_unit_loss_alert,[0,0],[10,25],1,7*24*60*60))
@@ -143,8 +146,6 @@ if __name__ == "__main__":
     sensors.append(Sensor("Guarda","water_tension",generate_water,generate_water_alert,[0,0],[0.2,0.9],40,60))
     sensors.append(Sensor("Minho","water_tension",generate_water,generate_water_alert,[0,0],[0.2,0.9],40,60))
     sensors.append(Sensor("Vila Real","water_tension",generate_water,generate_water_alert,[0,0],[0.2,0.9],40,60))
-
-
 
     curr_time = 0
     while 1:        
