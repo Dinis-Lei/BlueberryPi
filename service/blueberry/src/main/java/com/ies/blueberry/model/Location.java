@@ -58,7 +58,7 @@ public class Location {
     }
 
     @Column(name = "unitloss", nullable = false)
-    public List<UnitLoss> getUnitLoss() {
+    public List<UnitLoss> getUnitLosses() {
         return this.unitloss;
     }
 
@@ -67,7 +67,7 @@ public class Location {
     }
 
     @Column(name = "netharvest", nullable = false)
-    public List<NetHarvest> getNetHarvest() {
+    public List<NetHarvest> getNetHarvests() {
         return this.netharvest;
     }
 
@@ -76,13 +76,51 @@ public class Location {
     }
 
     @Column(name = "plantationtemperature", nullable = false)
-    public List<PlantationTemperature> getPlantationTemperature() {
+    public List<PlantationTemperature> getPlantationTemperatures() {
         return this.plantationtemperature;
     }
 
     public void setPlantationTemperature(PlantationTemperature pt) {
         this.plantationtemperature.add(pt);
     }
+
+    @Column(name = "soilph", nullable = false)
+    public List<SoilPH> getSoilPHs() {
+        return this.soilph;
+    }
+
+    public void setSoilPH(SoilPH sp) {
+        this.soilph.add(sp);
+    }
+
+    @Column(name = "soilwatertension", nullable = false)
+    public List<SoilWaterTension> getSoilWaterTensions() {
+        return this.soilwatertension;
+    }
+
+    public void setSoilWaterTension(SoilWaterTension swt) {
+        this.soilwatertension.add(swt);
+    }
+
+    @Column(name = "storagehumidity", nullable = false)
+    public List<StorageHumidity> getStorageHumidities() {
+        return this.storagehumidity;
+    }
+
+    public void setStorageHumidity(StorageHumidity sh) {
+        this.storagehumidity.add(sh);
+    }
+
+    @Column(name = "storagetemperature", nullable = false)
+    public List<StorageTemperature> getStorageTemperatures() {
+        return this.storagetemperature;
+    }
+
+    public void setStorageTemperature(StorageTemperature st) {
+        this.storagetemperature.add(st);
+    }
+
+
 
     //ADICIONAR MAIS
 
@@ -95,8 +133,21 @@ public class Location {
         this.timestamp = timestamp;
     }
 
+
     @Override
     public String toString() {
-        return "Net Harvest [data=" + data + ", location=" + location + ", timestamp=" + timestamp + "]";
+        return "{" +
+            " id='" + getId() + "'" +
+            ", name='" + getName() + "'" +
+            ", unitloss='" + getUnitLosses() + "'" +
+            ", netharvest='" + getNetHarvests() + "'" +
+            ", plantationtemperature='" + getPlantationTemperatures() + "'" +
+            ", soilph='" + getSoilPHs() + "'" +
+            ", soilwatertension='" + getSoilWaterTensions() + "'" +
+            ", storagehumidity='" + getStorageHumidities() + "'" +
+            ", storagetemperature='" + getStorageTemperatures() + "'" +
+            ", timestamp='" + getTimestamp() + "'" +
+            "}";
     }
+
 }

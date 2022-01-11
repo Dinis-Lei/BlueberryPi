@@ -1,12 +1,14 @@
 package com.ies.blueberry.service;
 
 import com.ies.blueberry.model.NetHarvest;
+import com.ies.blueberry.model.Location;
 import com.ies.blueberry.model.SoilPH;
 import com.ies.blueberry.model.SoilWaterTension;
 import com.ies.blueberry.model.StorageHumidity;
 import com.ies.blueberry.model.StorageTemperature;
 import com.ies.blueberry.model.UnitLoss;
 import com.ies.blueberry.model.PlantationTemperature;
+import com.ies.blueberry.repository.LocationRepository;
 import com.ies.blueberry.repository.NetHarvestRepository;
 import com.ies.blueberry.repository.PlantationTemperatureRepository;
 import com.ies.blueberry.repository.SoilPHRepository;
@@ -23,117 +25,108 @@ import java.util.List;
 
 @Service
 public class AllDataService {
-    
+
     @Autowired
-    private PlantationTemperatureRepository tempRep;
+    private LocationRepository repVilaReal;
     @Autowired
-    private NetHarvestRepository netHarvRep;
+    private LocationRepository repGuarda;
     @Autowired
-    private SoilPHRepository soilPHRep;
+    private LocationRepository repMinho;
+
     @Autowired
-    private SoilWaterTensionRepository soilWTRep;
-    @Autowired
-    private UnitLossRepository unitLRep;
-    @Autowired
-    private StorageTemperatureRepository STRep;
-    @Autowired
-    private StorageHumidityRepository SHRep;
+    private LocationRepository repLocation;
+
+    public List<Location> getLocations() {
+        return repLocation.findAll();
+    }
 
     //Temperature Section
 
-    public PlantationTemperature savePlantationTemperature(PlantationTemperature temp) {
-        return tempRep.save(temp);
+    public List<PlantationTemperature> getPlantationTemperatureByLocation(String location) {
+        Location l = repLocation.findLocationByName(location).orElse(null);
+        return l.getPlantationTemperatures();
     }
 
-    public List<PlantationTemperature> getPlantationTemperatures() { 
-        return tempRep.findAll();
-    }
-
-    public PlantationTemperature getPlantationTemperatureByLocation(String location) {
-        return tempRep.findPlantationTemperatureByLocation(location).orElse(null);
+    public List<PlantationTemperature> savePlantationTemperature(PlantationTemperature temp, String location) {
+        Location l = repLocation.findLocationByName(location).orElse(null);
+        l.getPlantationTemperatures().add(temp);
+        return l.getPlantationTemperatures();
     }
 
     //Net Harvest Section
 
-    public NetHarvest saveNetHarvest(NetHarvest netHarv)
-    {
-        return netHarvRep.save(netHarv);
+    public List<NetHarvest> getNetHarvestByLocation(String location) {
+        Location l = repLocation.findLocationByName(location).orElse(null);
+        return l.getNetHarvests();
     }
 
-    public List<NetHarvest> getNetHarvest() { 
-        return netHarvRep.findAll();
-    }
-
-    public NetHarvest getNetHarvestByLocation(String location) {
-        return netHarvRep.findNetHarvestByLocation(location).orElse(null);
+    public List<NetHarvest> saveNetHarvest(NetHarvest netHarv, String location) {
+        Location l = repLocation.findLocationByName(location).orElse(null);
+        l.getNetHarvests().add(netHarv);
+        return l.getNetHarvests();
     }
 
     //Soil pH Section
 
-    public SoilPH saveSoilPH(SoilPH soilPH)
-    {
-        return soilPHRep.save(soilPH);
+    public List<SoilPH> getSoilPHByLocation(String location) {
+        Location l = repLocation.findLocationByName(location).orElse(null);
+        return l.getSoilPHs();
     }
 
-    public List<SoilPH> getSoilPH() { 
-        return soilPHRep.findAll();
+    public List<SoilPH> saveSoilPH(SoilPH soilph, String location) {
+        Location l = repLocation.findLocationByName(location).orElse(null);
+        l.getSoilPHs().add(soilph);
+        return l.getSoilPHs();
     }
 
-    public SoilPH getSoilPHByLocation(String location) {
-        return soilPHRep.findSoilPHByLocation(location).orElse(null);
-    }
-
-    //Soil Water Tension Section
-    public SoilWaterTension saveSoilWaterTension(SoilWaterTension watTension) {
-        return soilWTRep.save(watTension);
-    }
-
-    public List<SoilWaterTension> getSoilWaterTensions() { 
-        return soilWTRep.findAll();
-    }
-
-    public SoilWaterTension getSoilWaterTensionByLocation(String location) {
-        return soilWTRep.findSoilWaterTensionByLocation(location).orElse(null);
-    }
 
     //Soil Water Tension Section
-    public UnitLoss saveUnitLoss(UnitLoss unLoss) {
-        return unitLRep.save(unLoss);
+    public List<SoilWaterTension> getSoilWaterTensionByLocation(String location) {
+        Location l = repLocation.findLocationByName(location).orElse(null);
+        return l.getSoilWaterTensions();
     }
 
-    public List<UnitLoss> getUnitLoss() { 
-        return unitLRep.findAll();
+    public List<SoilWaterTension> saveSoilWaterTensions(SoilWaterTension soilwt, String location) {
+        Location l = repLocation.findLocationByName(location).orElse(null);
+        l.getSoilWaterTensions().add(soilwt);
+        return l.getSoilWaterTensions();
     }
 
-    public UnitLoss getUnitLossByLocation(String location) {
-        return unitLRep.findUnitLossByLocation(location).orElse(null);
+    //Unit Loss Section
+    public List<UnitLoss> getUnitLossByLocation(String location) {
+        Location l = repLocation.findLocationByName(location).orElse(null);
+        return l.getUnitLosses();
+    }
+
+    public List<UnitLoss> saveUnitLoss(UnitLoss ul, String location) {
+        Location l = repLocation.findLocationByName(location).orElse(null);
+        l.getUnitLosses().add(ul);
+        return l.getUnitLosses();
     }
 
     //Storage Temperature
-    public StorageTemperature saveStorageTemperature(StorageTemperature StTemp) {
-        return STRep.save(StTemp);
+    public List<StorageTemperature> getStorageTemperatureByLocation(String location) {
+        Location l = repLocation.findLocationByName(location).orElse(null);
+        return l.getStorageTemperatures();
     }
 
-    public List<StorageTemperature> getStorageTemperature() { 
-        return STRep.findAll();
-    }
-
-    public StorageTemperature getStorageTemperatureByLocation(String location) {
-        return STRep.findStorageTemperatureByLocation(location).orElse(null);
+    public List<StorageTemperature> saveStorageTemperature(StorageTemperature st, String location) {
+        Location l = repLocation.findLocationByName(location).orElse(null);
+        l.getStorageTemperatures().add(st);
+        return l.getStorageTemperatures();
     }
 
     //Storage Humidity
-    public StorageHumidity saveStorageHumidity(StorageHumidity stHum) {
-        return SHRep.save(stHum);
+
+    public List<StorageHumidity> getStorageHumidityByLocation(String location) {
+        Location l = repLocation.findLocationByName(location).orElse(null);
+        return l.getStorageHumidities();
     }
 
-    public List<StorageHumidity> getStorageHumidity() { 
-        return SHRep.findAll();
+    public List<StorageHumidity> saveStorageHumidity(StorageHumidity stHum, String location) {
+        Location l = repLocation.findLocationByName(location).orElse(null);
+        l.getStorageHumidities().add(stHum);
+        return l.getStorageHumidities();
     }
-
-    public StorageHumidity getStorageHumidityByLocation(String location) {
-        return SHRep.findStorageHumidityByLocation(location).orElse(null);
-    }
-    
 }
 
