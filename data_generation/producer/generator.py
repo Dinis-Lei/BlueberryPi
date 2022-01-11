@@ -1,41 +1,110 @@
+from numpy.random import default_rng
 import random
 import json
 import time
 import pika
+from numpy.random import default_rng
+
+rng = default_rng()
+
+rng = default_rng()
+
+rng = default_rng()
 
 class Sensor:
-    def __init__(self, local, sensor_type, funcgood, funcbad) -> None:
+    def __init__(self, local, sensor_type, funcgood, funcbad, start_prob=[5,15], prob_delta=[1,1], value=None, step=0) -> None:
         self.local = local
         self.sensor_type = sensor_type
         self.funcgood = funcgood
         self.funcbad = funcbad
         self.alert = False
-        self.prob = 5
-        self.start_prob = [5, 15]
+        self.prob = start_prob[0]
+        self.start_prob = start_prob
+        self.prob_delta = prob_delta
+        self.value = value
+        self.ts = 0
+        self.step = step
 
     def change_state(self):
         r = random.randint(0,100)
         if r < self.prob:
             self.alert = not self.alert
             self.prob = self.start_prob[self.alert]
+            #print("!!!!!!!!! CHANGED STATE !!!!!!!!!!", self.alert)
         else:
-            self.prob += 1
-
-    def generate(self):
-        self.funcgood() if self.alert else self.funcbad()
+            self.prob += self.prob_delta[self.alert]
 
 
-    def __str__(self) -> str:
-        pass
+    def generate(self, channel):
+        self.funcgood(self) if not self.alert else self.funcbad(self)
+        msg = json.dumps({"key": self.sensor_type, "timestamp": self.ts, "temp": self.value, "location": self.local})
+        channel.basic_publish(exchange='', routing_key='blueberry', body=msg)
+        self.change_state()
+        self.ts += self.step
+
+def generate_unit_loss(sensor):
+    sensor.value = rng.normal(2.5, 0.7)
+    if sensor.value < 0: sensor.value = 0
+
+def generate_unit_loss_alert(sensor):
+    sensor.value = rng.normal(4, 1)
+    if sensor.value < 0: sensor.value = 0
+
+def generate_stor_temp(sensor):
+    pass
+
+def generate_stor_temp_alert(sensor):
+    pass
+
+def generate_stor_humidity(sensor):
+    pass
+
+def generate_stor_humidity_alert(sensor):
+    pass
+
+def generate_temperature(sensor):
+    delta = rng.normal(0, 0.1)
+    delta = -abs(delta) if sensor.value > 20 else delta
+    sensor.value += delta
+    #print(msg, sensor.prob)
+
+def generate_temperature_alert(sensor):
+    mult = -1 if sensor.value > 25 else 1
+    delta = (abs(rng.normal(0, 0.3)) if sensor.value < 21.5 else abs(rng.normal(0, 0.1))) * mult
+    sensor.value += delta
+    #print(msg, sensor.prob)
+
+def generate_net_harv(sensor):
+    sensor.value = rng.normal(8, 0.5)
+    if sensor.value < 0: sensor.value = 0
+
+def generate_net_harv_alert(sensor):
+    sensor.value = rng.normal(5, 0.5)
+    if sensor.value < 0: sensor.value = 0
 
 
+def generate_ph(sensor):
+    sensor.value = rng.normal(5, 0.4)
+    if sensor.value < 0: sensor.value = 0
 
+def generate_ph_alert(sensor):
+    sensor.value = rng.normal(5, 0.9)
+    if sensor.value < 0: sensor.value = 0
 
-def generate_temperature_storage():
-    temp = random.uniform(-1,1)
-    timestamp = int(time.time())
-    print(timestamp ,temp)
-    return json.dumps({"key": "storage_temperature", "timestamp": timestamp, "temp": temp })
+#
+# Caso seja 6h da manhã tentar simular a rega da plantação, logo haverá um pico na tensão da água 
+#
+def generate_water(sensor):
+    if  sensor.ts/(3600) == 6:
+        sensor.value = rng.normal(15, 2)
+    else:
+        delta = abs(rng.normal(0, 0.1))
+        sensor.value += delta
+
+def generate_water_alert(sensor):
+    delta = abs(rng.normal(0, 1))
+    sensor.value += delta
+
 
 if __name__ == "__main__":
     print("Start GENERATOR")
@@ -53,8 +122,38 @@ if __name__ == "__main__":
 
     channel.queue_declare(queue='blueberry')
 
-    while 1:
-        time.sleep(5)
-        channel.basic_publish(exchange='', routing_key='blueberry', body=generate_temperature_storage())
+    sensors = []
+
+    sensors.append(Sensor("Guarda","unit_loss",generate_unit_loss,generate_unit_loss_alert,[0,0],[10,25],1,7*24*60*60))
+    sensors.append(Sensor("Minho","unit_loss",generate_unit_loss,generate_unit_loss_alert,[0,0],[10,25],1,7*24*60*60))
+    sensors.append(Sensor("Vila Real","unit_loss",generate_unit_loss,generate_unit_loss_alert,[0,0],[10,25],1,7*24*60*60))
+
+    sensors.append(Sensor("Guarda","ph",generate_ph,generate_ph_alert,[0,0],[10,30],5,(24*60*60)))
+    sensors.append(Sensor("Minho","ph",generate_ph,generate_ph_alert,[0,0],[10,30],5,(24*60*60)))
+    sensors.append(Sensor("Vila Real","ph",generate_ph,generate_ph_alert,[0,0],[10,30],5,(24*60*60)))
+
+    sensors.append(Sensor("Guarda","plantation_temperature",generate_temperature,generate_temperature_alert,[0,0],[0.2,0.9],19,60))
+    sensors.append(Sensor("Minho","plantation_temperature",generate_temperature,generate_temperature_alert,[0,0],[0.2,0.9],19,60))
+    sensors.append(Sensor("Vila Real","plantation_temperature",generate_temperature,generate_temperature_alert,[0,0],[0.2,0.9],19,60))
+
+    sensors.append(Sensor("Guarda","net_harvest",generate_net_harv,generate_net_harv_alert,[0,0],[10,30],5,(24*60*60)))
+    sensors.append(Sensor("Minho","net_harvest",generate_net_harv,generate_net_harv_alert,[0,0],[10,30],5,(24*60*60)))
+    sensors.append(Sensor("Vila Real","net_harvest",generate_net_harv,generate_net_harv_alert,[0,0],[10,30],5,(24*60*60)))
+
+    sensors.append(Sensor("Guarda","water_tension",generate_water,generate_water_alert,[0,0],[0.2,0.9],40,60))
+    sensors.append(Sensor("Minho","water_tension",generate_water,generate_water_alert,[0,0],[0.2,0.9],40,60))
+    sensors.append(Sensor("Vila Real","water_tension",generate_water,generate_water_alert,[0,0],[0.2,0.9],40,60))
+
+
+
+    curr_time = 0
+    while 1:        
+        big = curr_time
+        for sensor in sensors:
+            if sensor.ts <= curr_time:
+                sensor.generate()
+                if sensor.ts > big: big = sensor.ts
+        curr_time = big
+        time.sleep(1) # ajustar para acelerar/desacelerar o tempo (testing purposes)
 
     connection.close()
