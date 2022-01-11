@@ -33,12 +33,12 @@ public class APIController {
 
     //Plantation Temperature
 
-    @GetMapping("/plantation_temperature")
-    public List<PlantationTemperature> getPlantationTempData() {
-        return dataServ.getPlantationTemperatures();
-    }
+    // @GetMapping("/plantation_temperature")
+    // public List<PlantationTemperature> getPlantationTempData() {
+    //     return dataServ.getPlantationTemperatures();
+    // }
 
-    @GetMapping("/plantation_temperature/{location}") 
+    @GetMapping("/{location}/plantation_temperature") 
     public ResponseEntity<PlantationTemperature> getPlantationTemperatureByLocation(@PathVariable(value = "location") String location)
         throws ResourceNotFoundException {
         PlantationTemperature temperature = dataServ.getPlantationTemperatureByLocation(location);
@@ -56,12 +56,12 @@ public class APIController {
 
     //Net Harvest 
 
-    @GetMapping("/net_harvest")
-    public List<NetHarvest> getNetHarvestData() {
-        return dataServ.getNetHarvest();
-    }    
+    // @GetMapping("/net_harvest")
+    // public List<NetHarvest> getNetHarvestData() {
+    //     return dataServ.getNetHarvest();
+    // }    
 
-    @GetMapping("/net_harvest/{location}")
+    @GetMapping("/{location}/net_harvest")
     public ResponseEntity<NetHarvest> getNetHarvestByLocation(@PathVariable(value = "location") String location)
         throws ResourceNotFoundException {
         NetHarvest netharvest = dataServ.getNetHarvestByLocation(location);

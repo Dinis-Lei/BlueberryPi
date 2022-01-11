@@ -8,6 +8,6 @@ import com.ies.blueberry.model.SoilPH;
 import java.util.Optional;
 
 @Repository
-public interface SoilPHRepository extends JpaRepository<SoilPH, Long>{
+public interface MinhoRepository extends JpaRepository<SoilPH, Long>{
     Optional<SoilPH> findSoilPHByLocation(String location);
 }
