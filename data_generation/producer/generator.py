@@ -75,7 +75,7 @@ def generate_temperature_alert(sensor):
     #print(msg, sensor.prob)
 
 def generate_net_harv(sensor):
-    sensor.value = rng.normal(6, 0.5)
+    sensor.value = rng.normal(8, 0.5)
     if sensor.value < 0: sensor.value = 0
 
 def generate_net_harv_alert(sensor):
