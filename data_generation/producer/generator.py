@@ -57,10 +57,11 @@ def generate_stor_temp_alert(sensor):
     pass
 
 def generate_stor_humidity(sensor):
-    pass
+    sensor.value = rng.normal(92.5, 0.7)
+    if sensor.value < 85.5: sensor.value = 85.5
 
 def generate_stor_humidity_alert(sensor):
-    pass
+    sensor.value = rng.normal(85, 0.7)
 
 def generate_temperature(sensor):
     delta = rng.normal(0, 0.1)
@@ -115,7 +116,9 @@ if __name__ == "__main__":
     sensors.append(Sensor("Minho","ph",generate_unit_loss,generate_unit_loss_alert,[0,0],[10,25],1,7*24*60*60))
     sensors.append(Sensor("Vila Real","ph",generate_unit_loss,generate_unit_loss_alert,[0,0],[10,25],1,7*24*60*60))
     
-
+    sensors.append(Sensor("Guarda","store_humidity",generate_stor_humidity,generate_stor_humidity_alert,[0,0],[10,20],92.5,60))
+    sensors.append(Sensor("Minho","store_humidity",generate_stor_humidity,generate_stor_humidity_alert,[0,0],[10,20],92.5,60))
+    sensors.append(Sensor("Vila Real","store_humidity",generate_stor_humidity,generate_stor_humidity_alert,[0,0],[10,20],92.5,60))
 
     sensors.append(Sensor("Guarda","ph",generate_ph,generate_ph_alert,[0,0],[10,30],5,(24*60*60)))
     sensors.append(Sensor("Minho","ph",generate_ph,generate_ph_alert,[0,0],[10,30],5,(24*60*60)))
