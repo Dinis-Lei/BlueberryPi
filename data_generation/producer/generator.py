@@ -51,10 +51,13 @@ def generate_unit_loss_alert(sensor):
     if sensor.value < 0: sensor.value = 0
 
 def generate_stor_temp(sensor):
-    pass
+    delta = rng.normal(0, 0.01) if sensor.value < 1 else -abs(rng.normal(0, 0.1))
+    sensor.value += delta
+    sensor.alert = sensor.value > 1 or sensor.value < 0 
 
 def generate_stor_temp_alert(sensor):
-    pass
+    delta = rng.normal(0, 0.1)
+    sensor.value += abs(delta)
 
 def generate_stor_humidity(sensor):
     pass
