@@ -167,7 +167,7 @@ public class AllDataService {
         }
     }
 
-    public List<Alert> getStorageTempAlertByLocation(String location){
+    public List<Alert> getUnitLossAlertByLocation(String location){
         return repAlert.findByLocationAndSensor(location, "unit_loss");
     }
 
