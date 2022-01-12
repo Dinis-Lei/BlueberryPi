@@ -44,25 +44,25 @@ public class Consumer {
         switch((String) result.get("key")){
             case "plantation_temp":
                 //System.out.println(result.get("val"));
-                dataServ.savePlantationTemperature(new PlantationTemperature(data, location, timestamp));
+                dataServ.savePlantationTemperature(new PlantationTemperature(data, location, timestamp), location);
                 break;
             case "net_harvest":
-                dataServ.saveNetHarvest(new NetHarvest(data, location, timestamp));
+                dataServ.saveNetHarvest(new NetHarvest(data, location, timestamp), location);
                 break;
             case "ph":
-                dataServ.saveSoilPH(new SoilPH(data, location, timestamp));
+                dataServ.saveSoilPH(new SoilPH(data, location, timestamp), location);
                 break;
             case "water_tension":
-                dataServ.saveSoilWaterTension(new SoilWaterTension(data, location, timestamp));
+                dataServ.saveSoilWaterTensions(new SoilWaterTension(data, location, timestamp), location);
                 break;
             case "unit_loss":
-                dataServ.saveUnitLoss(new UnitLoss(data, location, timestamp));
+                dataServ.saveUnitLoss(new UnitLoss(data, location, timestamp), location);
                 break;
             case "store_temp":
-                dataServ.saveStorageTemperature(new StorageTemperature(data, location, timestamp));
+                dataServ.saveStorageTemperature(new StorageTemperature(data, location, timestamp), location);
                 break;
             case "store_humidity":
-                dataServ.saveStorageHumidity(new StorageHumidity(data, location, timestamp));
+                dataServ.saveStorageHumidity(new StorageHumidity(data, location, timestamp), location);
                 break;
         }
     }
