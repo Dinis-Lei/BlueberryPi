@@ -9,13 +9,6 @@ import com.ies.blueberry.model.StorageTemperature;
 import com.ies.blueberry.model.UnitLoss;
 import com.ies.blueberry.model.PlantationTemperature;
 import com.ies.blueberry.repository.LocationRepository;
-import com.ies.blueberry.repository.NetHarvestRepository;
-import com.ies.blueberry.repository.PlantationTemperatureRepository;
-import com.ies.blueberry.repository.SoilPHRepository;
-import com.ies.blueberry.repository.SoilWaterTensionRepository;
-import com.ies.blueberry.repository.StorageHumidityRepository;
-import com.ies.blueberry.repository.StorageTemperatureRepository;
-import com.ies.blueberry.repository.UnitLossRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,44 +20,41 @@ import java.util.List;
 public class AllDataService {
 
     @Autowired
-    private LocationRepository repVilaReal;
-    @Autowired
-    private LocationRepository repGuarda;
-    @Autowired
-    private LocationRepository repMinho;
-
-    @Autowired
     private LocationRepository repLocation;
 
     public List<Location> getLocations() {
         return repLocation.findAll();
     }
 
-    //Temperature Section
+    public Location saveLocation(Location l) {
+        return repLocation.save(l);
+    }
 
+    //Temperature Section
+    @Autowired
     public List<PlantationTemperature> getPlantationTemperatureByLocation(String location) {
         Location l = repLocation.findLocationByName(location).orElse(null);
         return l.getPlantationTemperatures();
     }
 
-    public List<PlantationTemperature> savePlantationTemperature(PlantationTemperature temp, String location) {
+    public PlantationTemperature savePlantationTemperature(PlantationTemperature temp, String location) {
         Location l = repLocation.findLocationByName(location).orElse(null);
         l.getPlantationTemperatures().add(temp);
-        return l.getPlantationTemperatures();
+        return temp;
     }
 
-    //Net Harvest Section
+    // //Net Harvest Section
 
-    public List<NetHarvest> getNetHarvestByLocation(String location) {
-        Location l = repLocation.findLocationByName(location).orElse(null);
-        return l.getNetHarvests();
-    }
+    // public List<NetHarvest> getNetHarvestByLocation(String location) {
+    //     Location l = repLocation.findLocationByName(location).orElse(null);
+    //     return l.getNetHarvests();
+    // }
 
-    public List<NetHarvest> saveNetHarvest(NetHarvest netHarv, String location) {
-        Location l = repLocation.findLocationByName(location).orElse(null);
-        l.getNetHarvests().add(netHarv);
-        return l.getNetHarvests();
-    }
+    // public NetHarvest saveNetHarvest(NetHarvest netHarv, String location) {
+    //     Location l = repLocation.findLocationByName(location).orElse(null);
+    //     l.getNetHarvests().add(netHarv);
+    //     return netHarv;
+    // }
 
     //Soil pH Section
 
@@ -73,10 +63,10 @@ public class AllDataService {
         return l.getSoilPHs();
     }
 
-    public List<SoilPH> saveSoilPH(SoilPH soilph, String location) {
+    public SoilPH saveSoilPH(SoilPH soilph, String location) {
         Location l = repLocation.findLocationByName(location).orElse(null);
         l.getSoilPHs().add(soilph);
-        return l.getSoilPHs();
+        return soilph;
     }
 
 
@@ -86,10 +76,10 @@ public class AllDataService {
         return l.getSoilWaterTensions();
     }
 
-    public List<SoilWaterTension> saveSoilWaterTensions(SoilWaterTension soilwt, String location) {
+    public SoilWaterTension saveSoilWaterTensions(SoilWaterTension soilwt, String location) {
         Location l = repLocation.findLocationByName(location).orElse(null);
         l.getSoilWaterTensions().add(soilwt);
-        return l.getSoilWaterTensions();
+        return soilwt;
     }
 
     //Unit Loss Section
@@ -98,10 +88,10 @@ public class AllDataService {
         return l.getUnitLosses();
     }
 
-    public List<UnitLoss> saveUnitLoss(UnitLoss ul, String location) {
+    public UnitLoss saveUnitLoss(UnitLoss ul, String location) {
         Location l = repLocation.findLocationByName(location).orElse(null);
         l.getUnitLosses().add(ul);
-        return l.getUnitLosses();
+        return ul;
     }
 
     //Storage Temperature
@@ -110,10 +100,10 @@ public class AllDataService {
         return l.getStorageTemperatures();
     }
 
-    public List<StorageTemperature> saveStorageTemperature(StorageTemperature st, String location) {
+    public StorageTemperature saveStorageTemperature(StorageTemperature st, String location) {
         Location l = repLocation.findLocationByName(location).orElse(null);
         l.getStorageTemperatures().add(st);
-        return l.getStorageTemperatures();
+        return st;
     }
 
     //Storage Humidity
@@ -123,10 +113,10 @@ public class AllDataService {
         return l.getStorageHumidities();
     }
 
-    public List<StorageHumidity> saveStorageHumidity(StorageHumidity stHum, String location) {
+    public StorageHumidity saveStorageHumidity(StorageHumidity stHum, String location) {
         Location l = repLocation.findLocationByName(location).orElse(null);
         l.getStorageHumidities().add(stHum);
-        return l.getStorageHumidities();
+        return stHum;
     }
 }
 

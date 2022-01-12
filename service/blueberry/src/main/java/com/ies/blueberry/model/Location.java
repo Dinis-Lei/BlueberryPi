@@ -30,7 +30,7 @@ public class Location {
     {
         this.name = name;
         this.unitloss = new ArrayList<UnitLoss>();
-        this.netharvest = new ArrayList<NetHarvest>();
+        //this.netharvest = new ArrayList<NetHarvest>();
         this.plantationtemperature = new ArrayList<PlantationTemperature>();
         this.soilph = new ArrayList<SoilPH>();
         this.soilwatertension = new ArrayList<SoilWaterTension>();
@@ -66,14 +66,14 @@ public class Location {
         this.unitloss.add(ul);
     }
 
-    @Column(name = "netharvest", nullable = false)
-    public List<NetHarvest> getNetHarvests() {
-        return this.netharvest;
-    }
+    // @Column(name = "netharvest", nullable = false)
+    // public List<NetHarvest> getNetHarvests() {
+    //     return this.netharvest;
+    // }
 
-    public void setNetHarvest(NetHarvest nh) {
-        this.netharvest.add(nh);
-    }
+    // public void setNetHarvest(NetHarvest nh) {
+    //     this.netharvest.add(nh);
+    // }
 
     @Column(name = "plantationtemperature", nullable = false)
     public List<PlantationTemperature> getPlantationTemperatures() {
@@ -120,10 +120,6 @@ public class Location {
         this.storagetemperature.add(st);
     }
 
-
-
-    //ADICIONAR MAIS
-
     @Column(name = "timestamp", nullable = false)
     public Long getTimestamp() {
         return this.timestamp;
@@ -140,7 +136,7 @@ public class Location {
             " id='" + getId() + "'" +
             ", name='" + getName() + "'" +
             ", unitloss='" + getUnitLosses() + "'" +
-            ", netharvest='" + getNetHarvests() + "'" +
+           // ", netharvest='" + getNetHarvests() + "'" +
             ", plantationtemperature='" + getPlantationTemperatures() + "'" +
             ", soilph='" + getSoilPHs() + "'" +
             ", soilwatertension='" + getSoilWaterTensions() + "'" +
