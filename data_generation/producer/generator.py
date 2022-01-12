@@ -51,16 +51,20 @@ def generate_unit_loss_alert(sensor):
     if sensor.value < 0: sensor.value = 0
 
 def generate_stor_temp(sensor):
-    pass
+    delta = rng.normal(0, 0.01) if sensor.value < 1 else -abs(rng.normal(0, 0.1))
+    sensor.value += delta
+    sensor.alert = sensor.value > 1 or sensor.value < 0 
 
 def generate_stor_temp_alert(sensor):
-    pass
+    delta = rng.normal(0, 0.1)
+    sensor.value += abs(delta)
 
 def generate_stor_humidity(sensor):
-    pass
+    sensor.value = rng.normal(92.5, 0.7)
+    if sensor.value < 85.5: sensor.value = 85.5
 
 def generate_stor_humidity_alert(sensor):
-    pass
+    sensor.value = rng.normal(85, 0.7)
 
 def generate_temperature(sensor):
     delta = rng.normal(0, 0.1)
@@ -75,22 +79,34 @@ def generate_temperature_alert(sensor):
     #print(msg, sensor.prob)
 
 def generate_net_harv(sensor):
-    pass
+    sensor.value = rng.normal(8, 0.5)
+    if sensor.value < 0: sensor.value = 0
 
 def generate_net_harv_alert(sensor):
-    pass
+    sensor.value = rng.normal(5, 0.5)
+    if sensor.value < 0: sensor.value = 0
 
 def generate_ph(sensor):
     sensor.value = rng.normal(5, 0.4)
+    if sensor.value < 0: sensor.value = 0
 
 def generate_ph_alert(sensor):
     sensor.value = rng.normal(5, 0.9)
+    if sensor.value < 0: sensor.value = 0
 
+#
+# Caso seja 6h da manhã tentar simular a rega da plantação, logo haverá um pico na tensão da água 
+#
 def generate_water(sensor):
-    pass
+    if  sensor.ts/(3600) == 6:
+        sensor.value = rng.normal(15, 2)
+    else:
+        delta = abs(rng.normal(0, 0.1))
+        sensor.value += delta
 
 def generate_water_alert(sensor):
-    pass
+    delta = abs(rng.normal(0, 1))
+    sensor.value += delta
 
 
 if __name__ == "__main__":
@@ -110,21 +126,34 @@ if __name__ == "__main__":
     channel.queue_declare(queue='blueberry')
 
     sensors = []
-
-    sensors.append(Sensor("Guarda","ph",generate_unit_loss,generate_unit_loss_alert,[0,0],[10,25],1,7*24*60*60))
-    sensors.append(Sensor("Minho","ph",generate_unit_loss,generate_unit_loss_alert,[0,0],[10,25],1,7*24*60*60))
-    sensors.append(Sensor("Vila Real","ph",generate_unit_loss,generate_unit_loss_alert,[0,0],[10,25],1,7*24*60*60))
     
+    sensors.append(Sensor("Guarda","store_humidity",generate_stor_humidity,generate_stor_humidity_alert,[0,0],[10,20],92.5,60))
+    sensors.append(Sensor("Minho","store_humidity",generate_stor_humidity,generate_stor_humidity_alert,[0,0],[10,20],92.5,60))
+    sensors.append(Sensor("VilaReal","store_humidity",generate_stor_humidity,generate_stor_humidity_alert,[0,0],[10,20],92.5,60))
 
+    sensors.append(Sensor("Guarda","unit_loss",generate_unit_loss,generate_unit_loss_alert,[0,0],[10,25],1,7*24*60*60))
+    sensors.append(Sensor("Minho","unit_loss",generate_unit_loss,generate_unit_loss_alert,[0,0],[10,25],1,7*24*60*60))
+    sensors.append(Sensor("VilaReal","unit_loss",generate_unit_loss,generate_unit_loss_alert,[0,0],[10,25],1,7*24*60*60))
 
     sensors.append(Sensor("Guarda","ph",generate_ph,generate_ph_alert,[0,0],[10,30],5,(24*60*60)))
     sensors.append(Sensor("Minho","ph",generate_ph,generate_ph_alert,[0,0],[10,30],5,(24*60*60)))
-    sensors.append(Sensor("Vila Real","ph",generate_ph,generate_ph_alert,[0,0],[10,30],5,(24*60*60)))
+    sensors.append(Sensor("VilaReal","ph",generate_ph,generate_ph_alert,[0,0],[10,30],5,(24*60*60)))
 
     sensors.append(Sensor("Guarda","plantation_temperature",generate_temperature,generate_temperature_alert,[0,0],[0.2,0.9],19,60))
     sensors.append(Sensor("Minho","plantation_temperature",generate_temperature,generate_temperature_alert,[0,0],[0.2,0.9],19,60))
-    sensors.append(Sensor("Vila Real","plantation_temperature",generate_temperature,generate_temperature_alert,[0,0],[0.2,0.9],19,60))
+    sensors.append(Sensor("VilaReal","plantation_temperature",generate_temperature,generate_temperature_alert,[0,0],[0.2,0.9],19,60))
 
+    sensors.append(Sensor("Guarda","net_harvest",generate_net_harv,generate_net_harv_alert,[0,0],[10,30],5,(24*60*60)))
+    sensors.append(Sensor("Minho","net_harvest",generate_net_harv,generate_net_harv_alert,[0,0],[10,30],5,(24*60*60)))
+    sensors.append(Sensor("VilaReal","net_harvest",generate_net_harv,generate_net_harv_alert,[0,0],[10,30],5,(24*60*60)))
+
+    sensors.append(Sensor("Guarda","water_tension",generate_water,generate_water_alert,[0,0],[0.2,0.9],40,60))
+    sensors.append(Sensor("Minho","water_tension",generate_water,generate_water_alert,[0,0],[0.2,0.9],40,60))
+    sensors.append(Sensor("VilaReal","water_tension",generate_water,generate_water_alert,[0,0],[0.2,0.9],40,60))
+
+    sensors.append(Sensor("Guarda","store_temp",generate_stor_temp,generate_stor_temp_alert,[0,0],[10,25],0.5,60))
+    sensors.append(Sensor("Minho","store_temp",generate_stor_temp,generate_stor_temp_alert,[0,0],[10,25],0.5,60))
+    sensors.append(Sensor("VilaReal","store_temp",generate_stor_temp,generate_stor_temp_alert,[0,0],[10,25],0.5,60))
 
     curr_time = 0
     while 1:        

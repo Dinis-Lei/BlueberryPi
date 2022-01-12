@@ -5,7 +5,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-//import com.ies.blueberry.model.PlantationTemperature;
+import com.ies.blueberry.model.NetHarvest;
+import com.ies.blueberry.model.PlantationTemperature;
+import com.ies.blueberry.model.SoilPH;
+import com.ies.blueberry.model.SoilWaterTension;
+import com.ies.blueberry.model.StorageHumidity;
+import com.ies.blueberry.model.StorageTemperature;
+import com.ies.blueberry.model.UnitLoss;
 import com.ies.blueberry.service.AllDataService;
 
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -30,25 +36,33 @@ public class Consumer {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        Double data = (Double) result.get("val");
+        Long timestamp = Long.valueOf( (Integer) result.get("timestamp"));
+        String location = (String) result.get("location");
         
         switch((String) result.get("key")){
-            case "plantation_temperature":
-                // System.out.println(result.get("temp"));
-                // Double data = (Double) result.get("temp");
-                // Long timestamp = Long.valueOf( (Integer) result.get("timestamp"));
-                // dataServ.savePlantationTemperature(new PlantationTemperature(data, "location1", timestamp));
+            case "plantation_temp":
+                //System.out.println(result.get("val"));
+                dataServ.savePlantationTemperature(new PlantationTemperature(data, location, timestamp));
                 break;
             case "net_harvest":
+                dataServ.saveNetHarvest(new NetHarvest(data, location, timestamp));
                 break;
-            case "soil_ph":
+            case "ph":
+                dataServ.saveSoilPH(new SoilPH(data, location, timestamp));
                 break;
-            case "soil_water_tension":
+            case "water_tension":
+                dataServ.saveSoilWaterTension(new SoilWaterTension(data, location, timestamp));
                 break;
             case "unit_loss":
+                dataServ.saveUnitLoss(new UnitLoss(data, location, timestamp));
                 break;
-            case "storage_temperature":
+            case "store_temp":
+                dataServ.saveStorageTemperature(new StorageTemperature(data, location, timestamp));
                 break;
-            case "storage_humidity":
+            case "store_humidity":
+                dataServ.saveStorageHumidity(new StorageHumidity(data, location, timestamp));
                 break;
         }
     }
