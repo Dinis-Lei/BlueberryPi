@@ -135,7 +135,7 @@ public class AllDataService {
                     return;
                 }
             }
-            Alert alert = new Alert(l.getName(), "plantation_temperature", ph.getTimestamp(), ph.getTimestamp());
+            Alert alert = new Alert(l.getName(), "soil_ph", ph.getTimestamp(), ph.getTimestamp());
             repAlert.save(alert);
         }
     }
