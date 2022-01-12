@@ -1,6 +1,7 @@
 import React from "react";
 import Accordion from 'react-bootstrap/Accordion';
 import LocationInfo from "./LocationInfo";
+import DailyInfo from "./DailyInfo";
 
 const MyAccordion = () => {
 
@@ -10,6 +11,22 @@ const MyAccordion = () => {
         "https://projarinternational.com/wp-content/uploads/2020/06/vivero_arandano-scaled.jpg",
         "https://s3.envato.com/files/e641f05c-c3ce-4f19-8eb6-12bdb53ea528/inline_image_preview.jpg"
     ]
+
+    // TODO: fill out the units of each thing here
+    let pt = "plantation_temperature";
+    let pt_u = "ºC";
+    let nh = "net_harvest";
+    let nh_u = "";
+    let sp = "soil_ph";
+    let sp_u = "";
+    let swt = "soil_water_tension";
+    let swt_u = "";
+    let ul = "unit_loss";
+    let ul_u = "";
+    let st = "storage_temperature";
+    let st_u = "";
+    let sh = "storage_humidity";
+    let sh_u = "";
 
     return(
 
@@ -28,16 +45,29 @@ const MyAccordion = () => {
                                 
                                 <Accordion.Header>{"Location " + elem}</Accordion.Header>
 
-                                <Accordion.Body>
+                                <Accordion.Body style={{ backgroundImage: 'url(' + imgs[elem-1] + ')' }}>
                                 <div style={{ position: 'relative' }}>
-                                    <img src={imgs[elem-1]} style={{ width: '100%', height: '400px', objectFit: 'cover', opacity: '0.3' }}/>
-                                    <div id={"plantation_temperature" + elem} style={{ position: 'absolute', top: '5%', left: '16px', fontSize: '18px', width: '50%' }}>[plantation_temperature]</div>
-                                    <div id={"net_harvest" + elem} style={{ position: 'absolute', top: '11%', left: '16px', fontSize: '18px', width: '50%' }}>[net_harvest]</div>
-                                    <div id={"soil_ph" + elem} style={{ position: 'absolute', top: '17%', left: '16px', fontSize: '18px', width: '50%' }}>[soil_ph]</div>
-                                    <div id={"soil_water_tension" + elem} style={{ position: 'absolute', top: '23%', left: '16px', fontSize: '18px', width: '50%' }}>[soil_water_tension]</div>
-                                    <div id={"unit_loss" + elem} style={{ position: 'absolute', top: '29%', left: '16px', fontSize: '18px', width: '50%' }}>[unit_loss]</div>
-                                    <div id={"storage_temperature" + elem} style={{ position: 'absolute', top: '35%', left: '16px', fontSize: '18px', width: '50%' }}>[storage_temperature]</div>
-                                    <div id={"storage_humidity" + elem} style={{ position: 'absolute', top: '41%', left: '16px', fontSize: '18px', width: '50%' }}>[storage_humidity]</div>
+                                    {/* style={{ margin: '0 auto', backgroundImage: '@Url.Content(imgs[{elem-1}])' }} */}
+                                    <table style={{ margin: '0 auto' }}>
+                                        <tbody>
+                                            <tr>
+                                                <td> <DailyInfo dataType={pt} units={pt_u} location={elem} /> </td>
+                                                <td> <DailyInfo dataType={nh} units={nh_u} location={elem} /> </td>
+                                                <td> <DailyInfo dataType={sp} units={sp_u} location={elem} /> </td>
+                                            </tr>
+                                            <tr>
+                                                <td> <DailyInfo dataType={swt} units={swt_u} location={elem} /> </td>
+                                                <td> <DailyInfo dataType={ul} units={ul_u} location={elem} /> </td>
+                                                <td> <DailyInfo dataType={st} units={st_u} location={elem} /> </td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td> <DailyInfo dataType={sh} units={sh_u} location={elem} /> </td>
+                                                <td></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
                                 </div>
                                 </Accordion.Body>
 

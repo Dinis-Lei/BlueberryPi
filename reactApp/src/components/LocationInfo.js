@@ -5,8 +5,15 @@ import Alert from 'react-bootstrap/Alert'
 const LocationInfo = () => {
 
     var today = new Date();
-    var date = today.getDate() + '/' + today.getMonth() + '/' + today.getFullYear();
-    var hours = today.getHours() + ':' + (today.getMinutes().toString().length==1 ? ("0" + today.getMinutes()) : today.getMinutes())
+
+    var day = today.getDate().toString().length==1 ? ("0" + today.getDate()) : today.getDate();
+    var month = (today.getMonth()+1).toString().length==1 ? ("0" + (today.getMonth()+1)) : (today.getMonth()+1);
+    var date = day + '/' + month + '/' + today.getFullYear();
+
+    var Hs = today.getHours().toString().length==1 ? ("0" + today.getHours()) : today.getHours();
+    var Ms = today.getMinutes().toString().length==1 ? ("0" + today.getMinutes()) : today.getMinutes();
+    var hours = Hs + ':' + Ms
+
     const { location } = useParams()
 
     return (
