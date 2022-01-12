@@ -11,6 +11,7 @@ import com.ies.blueberry.model.PlantationTemperature;
 import com.ies.blueberry.repository.LocationRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.support.ReplaceOverride;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,6 +31,10 @@ public class AllDataService {
 
     public Location saveLocation(Location l) {
         return repLocation.save(l);
+    }
+
+    public Location getLocationByName(String name) {
+        return repLocation.findLocationByName(name).orElse(null);
     }
 
     //Temperature Section

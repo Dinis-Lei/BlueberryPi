@@ -42,6 +42,18 @@ public class APIController {
         return dataServ.saveLocation(l);
     }
 
+    @GetMapping("/locations/{location}") 
+    public ResponseEntity<Location> getLocationByName(@PathVariable(value = "location") String location)
+        throws ResourceNotFoundException {
+        Location l = dataServ.getLocationByName(location);
+        if(l==null) {
+            throw new ResourceNotFoundException("Location not found for this name :: " + location);
+        }
+        return ResponseEntity.ok().body(l);
+    }
+
+
+
     //Plantation Temperature
 
     @GetMapping("/{location}/plantation_temperature") 
