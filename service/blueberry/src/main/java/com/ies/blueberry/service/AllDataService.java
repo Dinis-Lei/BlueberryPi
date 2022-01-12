@@ -110,6 +110,30 @@ public class AllDataService {
         return netHarv;
     }
 
+    public void checkNetHarvestAlert(NetHarvest nh, Location location){
+        if(nh.getData() < 4.5){
+            Alert alert = null;
+            List<Alert> alerts = repAlert.findByLocationAndSensor(location.getName(), "plantation_temperature");
+            for(Alert a: alerts){
+                if (a.getEnd() == nh.getTimestamp() - 24*60*60){
+                    alert = a;
+                    break;
+                }
+            }
+            if( alert != null){
+                alert.setEnd(nh.getTimestamp());
+            }
+            else{
+                alert = new Alert(location.getName(), "net_harvest", nh.getTimestamp(), nh.getTimestamp());
+            }
+            repAlert.save(alert);
+        }
+    }
+
+    public List<Alert> getNetHarvestAlertByLocation(String location){
+        return repAlert.findByLocationAndSensor(location, "net_harvest");
+    }
+
     //Soil pH Section
 
     public List<SoilPH> getSoilPHByLocation(String location) {
