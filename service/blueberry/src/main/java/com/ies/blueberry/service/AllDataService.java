@@ -175,7 +175,27 @@ public class AllDataService {
         Location l = repLocation.findLocationByName(location).orElse(null);
         l.setStorageHumidity(stHum);
         saveLocation(l);
+        checkStorageHumidityAlert(l, stHum);
         return stHum;
+    }
+
+    public void checkStorageHumidityAlert(Location l, StorageHumidity sh){
+        if (sh.getData() < 85) { 
+            List<Alert> alerts = repAlert.findByLocationAndSensor(l.getName(), "storage_humidity");
+            for(Alert a : alerts) {
+                if(a.getEnd() == sh.getTimestamp() - 60) {
+                    a.setEnd(sh.getTimestamp());
+                    repAlert.save(a);
+                    return;
+                }
+            }
+            Alert alert = new Alert(l.getName(), "storage_humidity", sh.getTimestamp(), sh.getTimestamp());
+            repAlert.save(alert);
+        }
+    }
+
+    public List<Alert> getStorageHumidityAlertByLocation(String location){
+        return repAlert.findByLocationAndSensor(location, "storage_humidity");
     }
 }
 
