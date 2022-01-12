@@ -1,6 +1,7 @@
 package com.ies.blueberry.service;
 
 import com.ies.blueberry.model.NetHarvest;
+import com.ies.blueberry.model.Alert;
 import com.ies.blueberry.model.Location;
 import com.ies.blueberry.model.SoilPH;
 import com.ies.blueberry.model.SoilWaterTension;
@@ -8,6 +9,7 @@ import com.ies.blueberry.model.StorageHumidity;
 import com.ies.blueberry.model.StorageTemperature;
 import com.ies.blueberry.model.UnitLoss;
 import com.ies.blueberry.model.PlantationTemperature;
+import com.ies.blueberry.repository.AlertRepository;
 import com.ies.blueberry.repository.LocationRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,9 @@ public class AllDataService {
 
     @Autowired
     private LocationRepository repLocation;
+
+    @Autowired
+    private AlertRepository repAlert;
 
     public List<Location> getLocations() {
         return repLocation.findAll();
@@ -49,7 +54,46 @@ public class AllDataService {
         Location l = repLocation.findLocationByName(location).orElse(null);
         l.setPlantationTemperature(temp);
         saveLocation(l);
+        checkPlantationTemperatureAlert(l);
         return temp;
+    }
+
+    // If 10 minutes pass with critical temperature, create alert object
+    public void checkPlantationTemperatureAlert(Location l){
+        List<PlantationTemperature> data = l.getPlantationTemperatures();
+
+        // check if there enough data for an alert
+        if ( data.size() < 10){
+            return;
+        }
+
+        List<PlantationTemperature> filtered_data = data.subList(data.size()-10, data.size());
+        for(PlantationTemperature temp: filtered_data){
+            if( temp.getData() < 21.5){
+                return;
+            }
+        }
+
+        List<Alert> alerts = repAlert.findByLocationAndSensor(l.getName(), "plantation_temperature");
+        Alert alert = null;
+        for(Alert a: alerts){
+            if (a.getStart() < filtered_data.get(0).getTimestamp() && filtered_data.get(0).getTimestamp() < a.getEnd()){
+                alert = a;
+                break;
+            }
+        }
+
+        if(alert != null){
+            alert.setEnd( filtered_data.get(9).getTimestamp());
+        }
+        else{
+            alert = new Alert(l.getName(), "plantation_temperature", filtered_data.get(0).getTimestamp(), filtered_data.get(9).getTimestamp());
+        }
+        repAlert.save(alert);
+    }
+
+    public List<Alert> getPlantationTemperatureAlertByLocation(String location){
+        return repAlert.findByLocationAndSensor(location, "plantation_temperature");
     }
 
     //Net Harvest Section

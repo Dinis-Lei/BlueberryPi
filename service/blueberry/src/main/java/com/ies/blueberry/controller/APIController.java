@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ies.blueberry.exception.ResourceNotFoundException;
 import com.ies.blueberry.model.NetHarvest;
+import com.ies.blueberry.model.Alert;
 import com.ies.blueberry.model.Location;
 import com.ies.blueberry.model.PlantationTemperature;
 import com.ies.blueberry.model.SoilPH;
@@ -31,6 +32,7 @@ import com.ies.blueberry.service.AllDataService;
 public class APIController {
     @Autowired
     private AllDataService dataServ;
+
 
     @GetMapping("/locations")
     public List<Location> getLocations() {
@@ -72,6 +74,16 @@ public class APIController {
     @PostMapping("/{location}/plantation_temperature")
     public PlantationTemperature createPlantationTemperature(@Valid @RequestBody PlantationTemperature temp,@PathVariable(value = "location") String location) {
         return dataServ.savePlantationTemperature(temp,location);
+    }
+
+    @GetMapping("/{location}/plantation_temperature/alert")
+    public ResponseEntity<List<Alert>> getPlantationTemperatureAlert(@Valid @RequestBody PlantationTemperature temp,@PathVariable(value = "location") String location) 
+    throws ResourceNotFoundException {
+        List<Alert> alerts = dataServ.getPlantationTemperatureAlertByLocation(location);
+        if(alerts==null){
+            throw new ResourceNotFoundException("Location not found for this id :: " + location);
+        }
+        return ResponseEntity.ok().body(alerts);
     }
 
     //Net Harvest    
