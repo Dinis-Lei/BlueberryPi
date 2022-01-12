@@ -3,25 +3,62 @@ package com.ies.blueberry.model;
 import java.util.List;
 import java.util.ArrayList;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 @Entity //An entity represents a table stored in a database
 @Table(name = "location") 
 public class Location {
+    @Id //The ID will be auto generated
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
+
+    @Column(name = "name", nullable = false)
     private String name;
+
+    @Column(name = "unitloss", nullable = false)
+    @OneToMany(cascade = CascadeType.ALL)
+    //@ElementCollection(targetClass=UnitLoss.class)
     private List<UnitLoss> unitloss;
+
+    @Column(name = "netharvest", nullable = false)
+    @OneToMany(cascade = CascadeType.ALL)
+    //@ElementCollection(targetClass=NetHarvest.class)
     private List<NetHarvest> netharvest;
+
+    @Column(name = "plantationtemperature", nullable = false)
+    @OneToMany(cascade = CascadeType.ALL)
+    //@ElementCollection(targetClass=PlantationTemperature.class)
     private List<PlantationTemperature> plantationtemperature;
+
+    @Column(name = "soilph", nullable = false)
+    @OneToMany(cascade = CascadeType.ALL)
+    //@ElementCollection(targetClass=SoilPH.class)
     private List<SoilPH> soilph;
+
+    @Column(name = "soilwatertension", nullable = false)
+    @OneToMany(cascade = CascadeType.ALL)
+    //@ElementCollection(targetClass=SoilWaterTension.class)
     private List<SoilWaterTension> soilwatertension;
+
+    @Column(name = "storagehumidity", nullable = false)
+    @OneToMany(cascade = CascadeType.ALL)
+    //@ElementCollection(targetClass=StorageHumidity.class)
     private List<StorageHumidity> storagehumidity;
+
+    @Column(name = "storagetemperature", nullable = false)
+    @OneToMany(cascade = CascadeType.ALL)
+    //@ElementCollection(targetClass=StorageTemperature.class)
     private List<StorageTemperature> storagetemperature;
+
+    @Column(name = "timestamp", nullable = false)
     private Long timestamp;
 
     public Location() {}
@@ -30,7 +67,7 @@ public class Location {
     {
         this.name = name;
         this.unitloss = new ArrayList<UnitLoss>();
-        //this.netharvest = new ArrayList<NetHarvest>();
+        this.netharvest = new ArrayList<NetHarvest>();
         this.plantationtemperature = new ArrayList<PlantationTemperature>();
         this.soilph = new ArrayList<SoilPH>();
         this.soilwatertension = new ArrayList<SoilWaterTension>();
@@ -39,8 +76,7 @@ public class Location {
         this.timestamp = timestamp;
     }
 
-    @Id //The ID will be auto generated
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    
     public long getId() {
         return id;
     }
@@ -48,7 +84,6 @@ public class Location {
         this.id = id;
     }
 
-    @Column(name = "name", nullable = false)
     public String getName() {
         return this.name;
     }
@@ -57,7 +92,6 @@ public class Location {
         this.name = name;
     }
 
-    @Column(name = "unitloss", nullable = false)
     public List<UnitLoss> getUnitLosses() {
         return this.unitloss;
     }
@@ -66,16 +100,15 @@ public class Location {
         this.unitloss.add(ul);
     }
 
-    // @Column(name = "netharvest", nullable = false)
-    // public List<NetHarvest> getNetHarvests() {
-    //     return this.netharvest;
-    // }
+    
+    public List<NetHarvest> getNetHarvests() {
+        return this.netharvest;
+    }
 
-    // public void setNetHarvest(NetHarvest nh) {
-    //     this.netharvest.add(nh);
-    // }
+    public void setNetHarvest(NetHarvest nh) {
+        this.netharvest.add(nh);
+    }
 
-    @Column(name = "plantationtemperature", nullable = false)
     public List<PlantationTemperature> getPlantationTemperatures() {
         return this.plantationtemperature;
     }
@@ -84,7 +117,6 @@ public class Location {
         this.plantationtemperature.add(pt);
     }
 
-    @Column(name = "soilph", nullable = false)
     public List<SoilPH> getSoilPHs() {
         return this.soilph;
     }
@@ -93,7 +125,6 @@ public class Location {
         this.soilph.add(sp);
     }
 
-    @Column(name = "soilwatertension", nullable = false)
     public List<SoilWaterTension> getSoilWaterTensions() {
         return this.soilwatertension;
     }
@@ -102,7 +133,6 @@ public class Location {
         this.soilwatertension.add(swt);
     }
 
-    @Column(name = "storagehumidity", nullable = false)
     public List<StorageHumidity> getStorageHumidities() {
         return this.storagehumidity;
     }
@@ -111,7 +141,6 @@ public class Location {
         this.storagehumidity.add(sh);
     }
 
-    @Column(name = "storagetemperature", nullable = false)
     public List<StorageTemperature> getStorageTemperatures() {
         return this.storagetemperature;
     }
@@ -120,7 +149,6 @@ public class Location {
         this.storagetemperature.add(st);
     }
 
-    @Column(name = "timestamp", nullable = false)
     public Long getTimestamp() {
         return this.timestamp;
     }

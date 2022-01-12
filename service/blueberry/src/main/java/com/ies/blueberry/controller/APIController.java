@@ -38,7 +38,7 @@ public class APIController {
     }
 
     @PostMapping("/locations")
-    public Location saveLocation(Location l) {
+    public Location saveLocation(@Valid @RequestBody Location l) {
         return dataServ.saveLocation(l);
     }
 
@@ -48,6 +48,8 @@ public class APIController {
     public ResponseEntity<List<PlantationTemperature>> getPlantationTemperatureByLocation(@PathVariable(value = "location") String location)
         throws ResourceNotFoundException {
         List<PlantationTemperature> plantationtemperature = dataServ.getPlantationTemperatureByLocation(location);
+        System.out.println("AQUI");
+        System.out.println(plantationtemperature);
         if(plantationtemperature==null)
         {
             throw new ResourceNotFoundException("Location not found for this id :: " + location);
@@ -62,21 +64,21 @@ public class APIController {
 
     //Net Harvest    
 
-    // @GetMapping("/{location}/net_harvest")
-    // public ResponseEntity<List<NetHarvest>> getNetHarvestByLocation(@PathVariable(value = "location") String location)
-    //     throws ResourceNotFoundException {
-    //     List<NetHarvest> netharvest = dataServ.getNetHarvestByLocation(location);
-    //     if(netharvest==null)
-    //     {
-    //         throw new ResourceNotFoundException("Location not found for this id :: " + location);
-    //     }
-    //     return ResponseEntity.ok().body(netharvest);
-    // }
+    @GetMapping("/{location}/net_harvest")
+    public ResponseEntity<List<NetHarvest>> getNetHarvestByLocation(@PathVariable(value = "location") String location)
+        throws ResourceNotFoundException {
+        List<NetHarvest> netharvest = dataServ.getNetHarvestByLocation(location);
+        if(netharvest==null)
+        {
+            throw new ResourceNotFoundException("Location not found for this id :: " + location);
+        }
+        return ResponseEntity.ok().body(netharvest);
+    }
 
-    // @PostMapping("/{location}/net_harvest")
-    // public NetHarvest createNetHarvest(@Valid @RequestBody NetHarvest netHarv,@PathVariable(value = "location") String location) {
-    //     return dataServ.saveNetHarvest(netHarv,location);
-    // }
+    @PostMapping("/{location}/net_harvest")
+    public NetHarvest createNetHarvest(@Valid @RequestBody NetHarvest netHarv,@PathVariable(value = "location") String location) {
+        return dataServ.saveNetHarvest(netHarv,location);
+    }
 
     //Soil pH
     @GetMapping("/{location}/soil_ph")
