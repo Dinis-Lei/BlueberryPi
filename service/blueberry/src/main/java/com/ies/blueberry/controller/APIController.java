@@ -104,6 +104,16 @@ public class APIController {
         return dataServ.saveNetHarvest(netHarv,location);
     }
 
+    @GetMapping("/{location}/net_harvest/alert")
+    public ResponseEntity<List<Alert>> getNetHarvestAlert(@Valid @RequestBody PlantationTemperature temp,@PathVariable(value = "location") String location) 
+    throws ResourceNotFoundException {
+        List<Alert> alerts = dataServ.getNetHarvestAlertByLocation(location);
+        if(alerts==null){
+            throw new ResourceNotFoundException("Location not found for this id :: " + location);
+        }
+        return ResponseEntity.ok().body(alerts);
+    }
+
     //Soil pH
     @GetMapping("/{location}/soil_ph")
     public ResponseEntity<List<SoilPH>> getSoilPHByLocation(@PathVariable(value = "location") String location)

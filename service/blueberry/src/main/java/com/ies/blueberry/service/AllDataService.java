@@ -81,17 +81,19 @@ public class AllDataService {
         List<Alert> alerts = repAlert.findByLocationAndSensor(l.getName(), "plantation_temperature");
         Alert alert = null;
         for(Alert a: alerts){
-            if (a.getStart() < filtered_data.get(0).getTimestamp() && filtered_data.get(0).getTimestamp() < a.getEnd()){
+            if (a.getEnd() == filtered_data.get(filtered_data.size()-1).getTimestamp() - 60){
                 alert = a;
                 break;
             }
         }
 
+        Double val = filtered_data.get(9).getData() - 21.5; 
         if(alert != null){
             alert.setEnd( filtered_data.get(9).getTimestamp());
+            alert.setVal(val);
         }
         else{
-            alert = new Alert(l.getName(), "plantation_temperature", filtered_data.get(0).getTimestamp(), filtered_data.get(9).getTimestamp());
+            alert = new Alert(l.getName(), "plantation_temperature", filtered_data.get(0).getTimestamp(), filtered_data.get(9).getTimestamp(), val);
         }
         repAlert.save(alert);
     }
@@ -111,7 +113,32 @@ public class AllDataService {
         Location l = repLocation.findLocationByName(location).orElse(null);
         l.setNetHarvest(netHarv);
         saveLocation(l);
+        checkNetHarvestAlert(netHarv, l);
         return netHarv;
+    }
+
+    public void checkNetHarvestAlert(NetHarvest nh, Location location){
+        if(nh.getData() < 4.5){
+            Alert alert = null;
+            List<Alert> alerts = repAlert.findByLocationAndSensor(location.getName(), "plantation_temperature");
+            for(Alert a: alerts){
+                if (a.getEnd() == nh.getTimestamp() - 24*60*60){
+                    alert = a;
+                    break;
+                }
+            }
+            if( alert != null){
+                alert.setEnd(nh.getTimestamp());
+            }
+            else{
+                alert = new Alert(location.getName(), "net_harvest", nh.getTimestamp(), nh.getTimestamp());
+            }
+            repAlert.save(alert);
+        }
+    }
+
+    public List<Alert> getNetHarvestAlertByLocation(String location){
+        return repAlert.findByLocationAndSensor(location, "net_harvest");
     }
 
     //Soil pH Section
@@ -125,7 +152,27 @@ public class AllDataService {
         Location l = repLocation.findLocationByName(location).orElse(null);
         l.setSoilPH(soilph);
         saveLocation(l);
+        checkSoilPHAlert(l, soilph);
         return soilph;
+    }
+
+    public void checkSoilPHAlert(Location l, SoilPH ph){
+        if (!(ph.getData() > 4 && ph.getData() < 6)) { 
+            List<Alert> alerts = repAlert.findByLocationAndSensor(l.getName(), "soil_ph");
+            for(Alert a : alerts) {
+                if(a.getEnd() == ph.getTimestamp() - 24*60*60) {
+                    a.setEnd(ph.getTimestamp());
+                    repAlert.save(a);
+                    return;
+                }
+            }
+            Alert alert = new Alert(l.getName(), "soil_ph", ph.getTimestamp(), ph.getTimestamp());
+            repAlert.save(alert);
+        }
+    }
+
+    public List<Alert> getSoilPHAlertByLocation(String location){
+        return repAlert.findByLocationAndSensor(location, "soil_ph");
     }
 
 
@@ -180,7 +227,27 @@ public class AllDataService {
         Location l = repLocation.findLocationByName(location).orElse(null);
         l.setUnitLoss(ul);
         saveLocation(l);
+        checkUnitLossAlert(l, ul);
         return ul;
+    }
+
+    public void checkUnitLossAlert(Location l, UnitLoss ul){
+        if (ul.getData() >= 5) { 
+            List<Alert> alerts = repAlert.findByLocationAndSensor(l.getName(), "unit_loss");
+            for(Alert a : alerts) {
+                if(a.getEnd() == ul.getTimestamp() - 7*24*60*60) {
+                    a.setEnd(ul.getTimestamp());
+                    repAlert.save(a);
+                    return;
+                }
+            }
+            Alert alert = new Alert(l.getName(), "unit_loss", ul.getTimestamp(), ul.getTimestamp());
+            repAlert.save(alert);
+        }
+    }
+
+    public List<Alert> getUnitLossAlertByLocation(String location){
+        return repAlert.findByLocationAndSensor(location, "unit_loss");
     }
 
     //Storage Temperature
@@ -193,7 +260,27 @@ public class AllDataService {
         Location l = repLocation.findLocationByName(location).orElse(null);
         l.setStorageTemperature(st);
         saveLocation(l);
+        checkStorageTempAlert(l, st);
         return st;
+    }
+
+    public void checkStorageTempAlert(Location l, StorageTemperature st){
+        if (st.getData() > 3) { 
+            List<Alert> alerts = repAlert.findByLocationAndSensor(l.getName(), "storage_temp");
+            for(Alert a : alerts) {
+                if(a.getEnd() == st.getTimestamp() - 60) {
+                    a.setEnd(st.getTimestamp());
+                    repAlert.save(a);
+                    return;
+                }
+            }
+            Alert alert = new Alert(l.getName(), "storage_temp", st.getTimestamp(), st.getTimestamp());
+            repAlert.save(alert);
+        }
+    }
+
+    public List<Alert> getStorageTempAlertByLocation(String location){
+        return repAlert.findByLocationAndSensor(location, "storage_temp");
     }
 
     //Storage Humidity
@@ -207,7 +294,27 @@ public class AllDataService {
         Location l = repLocation.findLocationByName(location).orElse(null);
         l.setStorageHumidity(stHum);
         saveLocation(l);
+        checkStorageHumidityAlert(l, stHum);
         return stHum;
+    }
+
+    public void checkStorageHumidityAlert(Location l, StorageHumidity sh){
+        if (sh.getData() < 85) { 
+            List<Alert> alerts = repAlert.findByLocationAndSensor(l.getName(), "storage_humidity");
+            for(Alert a : alerts) {
+                if(a.getEnd() == sh.getTimestamp() - 60) {
+                    a.setEnd(sh.getTimestamp());
+                    repAlert.save(a);
+                    return;
+                }
+            }
+            Alert alert = new Alert(l.getName(), "storage_humidity", sh.getTimestamp(), sh.getTimestamp());
+            repAlert.save(alert);
+        }
+    }
+
+    public List<Alert> getStorageHumidityAlertByLocation(String location){
+        return repAlert.findByLocationAndSensor(location, "storage_humidity");
     }
 }
 
