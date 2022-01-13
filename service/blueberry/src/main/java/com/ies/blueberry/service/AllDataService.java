@@ -42,6 +42,10 @@ public class AllDataService {
         return repLocation.findLocationByName(name).orElse(null);
     }
 
+    public List<Alert> getAlertByLocationAndSensor(String location, String sensor){
+        return repAlert.findByLocationAndSensor(location, sensor);
+    }
+
     //Temperature Section
     public List<PlantationTemperature> getPlantationTemperatureByLocation(String location) {
         Location l = repLocation.findLocationByName(location).orElse(null);
@@ -136,6 +140,34 @@ public class AllDataService {
         l.setSoilWaterTension(soilwt);
         saveLocation(l);
         return soilwt;
+    }
+
+    public void checkSoilWaterTensions(SoilWaterTension soilwt, Location location){
+        List<SoilWaterTension> data = location.getSoilWaterTensions();
+        
+        // check if there enough data for an alert
+        if ( data.size() < 10){
+            return;
+        }
+
+        List<SoilWaterTension> filtered_data = data.subList(data.size()-10, data.size());
+        for(SoilWaterTension wt: filtered_data){
+            if( wt.getData() < 20){
+                return;
+            }
+        }
+
+        List<Alert> alerts = repAlert.findByLocationAndSensor(l.getName(), "water_tension");
+        Alert a = alerts.get(alerts.size() - 1);
+        Alert alert = null;
+
+        if(a.getEnd() == soilwt.getTimestamp() - 60){
+            alert = a;
+        }
+        else{
+            alert = new Alert(location.getName(), "water_tension", filtered_data.get(0).getTimestamp(), filtered_data.get(9).getTimestamp());
+        }
+        repAlert.save(alert);
     }
 
     //Unit Loss Section

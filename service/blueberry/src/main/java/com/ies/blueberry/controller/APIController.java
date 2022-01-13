@@ -139,6 +139,16 @@ public class APIController {
         return dataServ.saveSoilWaterTensions(soilwt,location);
     }
 
+    @GetMapping("/{location}/soil_water_tension/alert")
+    public ResponseEntity<List<Alert>> getSoilWaterTensionAlert(@Valid @RequestBody SoilWaterTension stw,@PathVariable(value = "location") String location) 
+    throws ResourceNotFoundException {
+        List<Alert> alerts = dataServ.getAlertByLocationAndSensor(location, "soil_water_tension");
+        if(alerts==null){
+            throw new ResourceNotFoundException("Location not found for this id :: " + location);
+        }
+        return ResponseEntity.ok().body(alerts);
+    }
+
     //Unit Loss
     @GetMapping("/{location}/unit_loss")
     public ResponseEntity<List<UnitLoss>> getUnitLossByLocation(@PathVariable(value = "location") String location)
