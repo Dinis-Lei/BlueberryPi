@@ -131,7 +131,7 @@ public class AllDataService {
                 alert.setEnd(nh.getTimestamp());
             }
             else{
-                alert = new Alert(location.getName(), "net_harvest", nh.getTimestamp(), nh.getTimestamp());
+                alert = new Alert(location.getName(), "net_harvest", nh.getTimestamp(), nh.getTimestamp(), null);
             }
             repAlert.save(alert);
         }
@@ -166,7 +166,7 @@ public class AllDataService {
                     return;
                 }
             }
-            Alert alert = new Alert(l.getName(), "soil_ph", ph.getTimestamp(), ph.getTimestamp());
+            Alert alert = new Alert(l.getName(), "soil_ph", ph.getTimestamp(), ph.getTimestamp(), null);
             repAlert.save(alert);
         }
     }
@@ -198,13 +198,17 @@ public class AllDataService {
         }
 
         List<SoilWaterTension> filtered_data = data.subList(data.size()-10, data.size());
+        long unixTime = System.currentTimeMillis() / 1000L;
         for(SoilWaterTension wt: filtered_data){
             if( wt.getData() < 20){
                 return;
             }
+            else if(unixTime/3600 > 12){
+                return;
+            }
         }
 
-        List<Alert> alerts = repAlert.findByLocationAndSensor(l.getName(), "water_tension");
+        List<Alert> alerts = repAlert.findByLocationAndSensor(location.getName(), "water_tension");
         Alert a = alerts.get(alerts.size() - 1);
         Alert alert = null;
 
@@ -212,7 +216,7 @@ public class AllDataService {
             alert = a;
         }
         else{
-            alert = new Alert(location.getName(), "water_tension", filtered_data.get(0).getTimestamp(), filtered_data.get(9).getTimestamp());
+            alert = new Alert(location.getName(), "water_tension", filtered_data.get(0).getTimestamp(), filtered_data.get(9).getTimestamp(), null);
         }
         repAlert.save(alert);
     }
@@ -241,7 +245,7 @@ public class AllDataService {
                     return;
                 }
             }
-            Alert alert = new Alert(l.getName(), "unit_loss", ul.getTimestamp(), ul.getTimestamp());
+            Alert alert = new Alert(l.getName(), "unit_loss", ul.getTimestamp(), ul.getTimestamp(), null);
             repAlert.save(alert);
         }
     }
@@ -274,7 +278,7 @@ public class AllDataService {
                     return;
                 }
             }
-            Alert alert = new Alert(l.getName(), "storage_temp", st.getTimestamp(), st.getTimestamp());
+            Alert alert = new Alert(l.getName(), "storage_temp", st.getTimestamp(), st.getTimestamp(), null);
             repAlert.save(alert);
         }
     }
@@ -308,7 +312,7 @@ public class AllDataService {
                     return;
                 }
             }
-            Alert alert = new Alert(l.getName(), "storage_humidity", sh.getTimestamp(), sh.getTimestamp());
+            Alert alert = new Alert(l.getName(), "storage_humidity", sh.getTimestamp(), sh.getTimestamp(), null);
             repAlert.save(alert);
         }
     }
