@@ -186,6 +186,7 @@ public class AllDataService {
         Location l = repLocation.findLocationByName(location).orElse(null);
         l.setSoilWaterTension(soilwt);
         saveLocation(l);
+        checkSoilWaterTensions(soilwt, l);
         return soilwt;
     }
 
