@@ -42,6 +42,10 @@ public class AllDataService {
         return repLocation.findLocationByName(name).orElse(null);
     }
 
+    public List<Alert> getAlertByLocationAndSensor(String location, String sensor){
+        return repAlert.findByLocationAndSensor(location, sensor);
+    }
+
     //Temperature Section
     public List<PlantationTemperature> getPlantationTemperatureByLocation(String location) {
         Location l = repLocation.findLocationByName(location).orElse(null);
@@ -127,7 +131,7 @@ public class AllDataService {
                 alert.setEnd(nh.getTimestamp());
             }
             else{
-                alert = new Alert(location.getName(), "net_harvest", nh.getTimestamp(), nh.getTimestamp());
+                alert = new Alert(location.getName(), "net_harvest", nh.getTimestamp(), nh.getTimestamp(), null);
             }
             repAlert.save(alert);
         }
@@ -162,7 +166,7 @@ public class AllDataService {
                     return;
                 }
             }
-            Alert alert = new Alert(l.getName(), "soil_ph", ph.getTimestamp(), ph.getTimestamp());
+            Alert alert = new Alert(l.getName(), "soil_ph", ph.getTimestamp(), ph.getTimestamp(), null);
             repAlert.save(alert);
         }
     }
@@ -182,7 +186,40 @@ public class AllDataService {
         Location l = repLocation.findLocationByName(location).orElse(null);
         l.setSoilWaterTension(soilwt);
         saveLocation(l);
+        checkSoilWaterTensions(soilwt, l);
         return soilwt;
+    }
+
+    public void checkSoilWaterTensions(SoilWaterTension soilwt, Location location){
+        List<SoilWaterTension> data = location.getSoilWaterTensions();
+        
+        // check if there enough data for an alert
+        if ( data.size() < 10){
+            return;
+        }
+
+        List<SoilWaterTension> filtered_data = data.subList(data.size()-10, data.size());
+        long unixTime = System.currentTimeMillis() / 1000L;
+        for(SoilWaterTension wt: filtered_data){
+            if( wt.getData() < 20){
+                return;
+            }
+            else if(unixTime/3600 > 12){
+                return;
+            }
+        }
+
+        List<Alert> alerts = repAlert.findByLocationAndSensor(location.getName(), "water_tension");
+        Alert a = alerts.get(alerts.size() - 1);
+        Alert alert = null;
+
+        if(a.getEnd() == soilwt.getTimestamp() - 60){
+            alert = a;
+        }
+        else{
+            alert = new Alert(location.getName(), "water_tension", filtered_data.get(0).getTimestamp(), filtered_data.get(9).getTimestamp(), null);
+        }
+        repAlert.save(alert);
     }
 
     //Unit Loss Section
@@ -209,7 +246,7 @@ public class AllDataService {
                     return;
                 }
             }
-            Alert alert = new Alert(l.getName(), "unit_loss", ul.getTimestamp(), ul.getTimestamp());
+            Alert alert = new Alert(l.getName(), "unit_loss", ul.getTimestamp(), ul.getTimestamp(), null);
             repAlert.save(alert);
         }
     }
@@ -242,7 +279,7 @@ public class AllDataService {
                     return;
                 }
             }
-            Alert alert = new Alert(l.getName(), "storage_temp", st.getTimestamp(), st.getTimestamp());
+            Alert alert = new Alert(l.getName(), "storage_temp", st.getTimestamp(), st.getTimestamp(), null);
             repAlert.save(alert);
         }
     }
@@ -276,7 +313,7 @@ public class AllDataService {
                     return;
                 }
             }
-            Alert alert = new Alert(l.getName(), "storage_humidity", sh.getTimestamp(), sh.getTimestamp());
+            Alert alert = new Alert(l.getName(), "storage_humidity", sh.getTimestamp(), sh.getTimestamp(), null);
             repAlert.save(alert);
         }
     }
