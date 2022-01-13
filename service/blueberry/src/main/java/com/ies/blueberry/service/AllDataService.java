@@ -83,11 +83,13 @@ public class AllDataService {
             }
         }
 
+        Double val = filtered_data.get(9).getData() - 21.5; 
         if(alert != null){
             alert.setEnd( filtered_data.get(9).getTimestamp());
+            alert.setVal(val);
         }
         else{
-            alert = new Alert(l.getName(), "plantation_temperature", filtered_data.get(0).getTimestamp(), filtered_data.get(9).getTimestamp());
+            alert = new Alert(l.getName(), "plantation_temperature", filtered_data.get(0).getTimestamp(), filtered_data.get(9).getTimestamp(), val);
         }
         repAlert.save(alert);
     }

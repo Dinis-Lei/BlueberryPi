@@ -26,13 +26,17 @@ public class Alert {
     @Column(name = "end", nullable = false)
     private Long end;
 
+    @Column(name = "val", nullable = false)
+    private Double val;
+
     public Alert(){}
 
-    public Alert(String location, String sensor, Long start, Long end) {
+    public Alert(String location, String sensor, Long start, Long end, Double val) {
         this.location = location;
         this.sensor = sensor;
         this.start = start;
         this.end = end;
+        this.val = val;
     }
 
     public long getId() {
@@ -75,6 +79,11 @@ public class Alert {
         this.end = end;
     }
 
-    
+    public Double getVal(){
+        return val;
+    }
 
+    public void setVal(Double val) {
+        this.val = val;
+    }
 }
