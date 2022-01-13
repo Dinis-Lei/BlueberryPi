@@ -77,7 +77,7 @@ public class AllDataService {
         List<Alert> alerts = repAlert.findByLocationAndSensor(l.getName(), "plantation_temperature");
         Alert alert = null;
         for(Alert a: alerts){
-            if (a.getStart() < filtered_data.get(0).getTimestamp() && filtered_data.get(0).getTimestamp() < a.getEnd()){
+            if (a.getEnd() == filtered_data.get(filtered_data.size()-1).getTimestamp() - 60){
                 alert = a;
                 break;
             }
@@ -107,6 +107,7 @@ public class AllDataService {
         Location l = repLocation.findLocationByName(location).orElse(null);
         l.setNetHarvest(netHarv);
         saveLocation(l);
+        checkNetHarvestAlert(netHarv, l);
         return netHarv;
     }
 

@@ -104,7 +104,7 @@ public class APIController {
         return dataServ.saveNetHarvest(netHarv,location);
     }
 
-    @GetMapping("/{location}/plantation_temperature/alert")
+    @GetMapping("/{location}/net_harvest/alert")
     public ResponseEntity<List<Alert>> getNetHarvestAlert(@Valid @RequestBody PlantationTemperature temp,@PathVariable(value = "location") String location) 
     throws ResourceNotFoundException {
         List<Alert> alerts = dataServ.getNetHarvestAlertByLocation(location);
