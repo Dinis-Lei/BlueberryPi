@@ -175,7 +175,27 @@ public class AllDataService {
         Location l = repLocation.findLocationByName(location).orElse(null);
         l.setUnitLoss(ul);
         saveLocation(l);
+        checkUnitLossAlert(l, ul);
         return ul;
+    }
+
+    public void checkUnitLossAlert(Location l, UnitLoss ul){
+        if (ul.getData() >= 5) { 
+            List<Alert> alerts = repAlert.findByLocationAndSensor(l.getName(), "unit_loss");
+            for(Alert a : alerts) {
+                if(a.getEnd() == ul.getTimestamp() - 7*24*60*60) {
+                    a.setEnd(ul.getTimestamp());
+                    repAlert.save(a);
+                    return;
+                }
+            }
+            Alert alert = new Alert(l.getName(), "unit_loss", ul.getTimestamp(), ul.getTimestamp());
+            repAlert.save(alert);
+        }
+    }
+
+    public List<Alert> getUnitLossAlertByLocation(String location){
+        return repAlert.findByLocationAndSensor(location, "unit_loss");
     }
 
     //Storage Temperature
