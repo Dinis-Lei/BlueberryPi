@@ -54,6 +54,16 @@ public class APIController {
         return ResponseEntity.ok().body(l);
     }
 
+    @GetMapping("/{location}/{sensor}/alert")
+    public ResponseEntity<List<Alert>> getAlertByLocationAndSensor(
+        @PathVariable(value = "location") String location, @PathVariable(value = "sensor") String sensor) 
+    throws ResourceNotFoundException {
+        List<Alert> alerts = dataServ.getAlertByLocationAndSensor(location, sensor);
+        if(alerts==null){
+            throw new ResourceNotFoundException("Location not found for this id :: " + location);
+        }
+        return ResponseEntity.ok().body(alerts);
+    }
 
 
     //Plantation Temperature
@@ -76,16 +86,6 @@ public class APIController {
         return dataServ.savePlantationTemperature(temp,location);
     }
 
-    @GetMapping("/{location}/plantation_temperature/alert")
-    public ResponseEntity<List<Alert>> getPlantationTemperatureAlert(@Valid @RequestBody PlantationTemperature temp,@PathVariable(value = "location") String location) 
-    throws ResourceNotFoundException {
-        List<Alert> alerts = dataServ.getPlantationTemperatureAlertByLocation(location);
-        if(alerts==null){
-            throw new ResourceNotFoundException("Location not found for this id :: " + location);
-        }
-        return ResponseEntity.ok().body(alerts);
-    }
-
     //Net Harvest    
 
     @GetMapping("/{location}/net_harvest")
@@ -102,16 +102,6 @@ public class APIController {
     @PostMapping("/{location}/net_harvest")
     public NetHarvest createNetHarvest(@Valid @RequestBody NetHarvest netHarv,@PathVariable(value = "location") String location) {
         return dataServ.saveNetHarvest(netHarv,location);
-    }
-
-    @GetMapping("/{location}/net_harvest/alert")
-    public ResponseEntity<List<Alert>> getNetHarvestAlert(@Valid @RequestBody PlantationTemperature temp,@PathVariable(value = "location") String location) 
-    throws ResourceNotFoundException {
-        List<Alert> alerts = dataServ.getNetHarvestAlertByLocation(location);
-        if(alerts==null){
-            throw new ResourceNotFoundException("Location not found for this id :: " + location);
-        }
-        return ResponseEntity.ok().body(alerts);
     }
 
     //Soil pH
@@ -147,17 +137,6 @@ public class APIController {
     @PostMapping("/{location}/soil_water_tension")
     public SoilWaterTension createSoilWaterTension(@Valid @RequestBody SoilWaterTension soilwt,@PathVariable(value = "location") String location) {
         return dataServ.saveSoilWaterTensions(soilwt,location);
-    }
-
-    @GetMapping("/{location}/{sensor}/alert")
-    public ResponseEntity<List<Alert>> getAlertByLocationAndSensor(
-        @PathVariable(value = "location") String location, @PathVariable(value = "sensor") String sensor) 
-    throws ResourceNotFoundException {
-        List<Alert> alerts = dataServ.getAlertByLocationAndSensor(location, sensor);
-        if(alerts==null){
-            throw new ResourceNotFoundException("Location not found for this id :: " + location);
-        }
-        return ResponseEntity.ok().body(alerts);
     }
 
     //Unit Loss
