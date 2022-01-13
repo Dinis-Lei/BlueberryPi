@@ -148,7 +148,27 @@ public class AllDataService {
         Location l = repLocation.findLocationByName(location).orElse(null);
         l.setSoilPH(soilph);
         saveLocation(l);
+        checkSoilPHAlert(l, soilph);
         return soilph;
+    }
+
+    public void checkSoilPHAlert(Location l, SoilPH ph){
+        if (!(ph.getData() > 4 && ph.getData() < 6)) { 
+            List<Alert> alerts = repAlert.findByLocationAndSensor(l.getName(), "soil_ph");
+            for(Alert a : alerts) {
+                if(a.getEnd() == ph.getTimestamp() - 24*60*60) {
+                    a.setEnd(ph.getTimestamp());
+                    repAlert.save(a);
+                    return;
+                }
+            }
+            Alert alert = new Alert(l.getName(), "soil_ph", ph.getTimestamp(), ph.getTimestamp());
+            repAlert.save(alert);
+        }
+    }
+
+    public List<Alert> getSoilPHAlertByLocation(String location){
+        return repAlert.findByLocationAndSensor(location, "soil_ph");
     }
 
 
