@@ -2,22 +2,23 @@ import React, { useEffect, useState } from "react";
 // import { useParams } from "react-router-dom";
 import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
-import {fetchData, processString} from '../App';
+import { fetchData, processString } from "../App";
 
-const getLatestDataPoint = (JSONData, location_id, units) => {
+const getLatestDataPoint = (JSONData, location_name, units) => {
 
     let div = 1;
 
     while (div != null) {
         if (JSONData.length != 0) {
 
-            let location = "Location " + location_id;
             let inner_counter = JSONData.length - 1; // start by latest info (the most recent)
             let found_info = false;
 
             while (inner_counter) {
                 const new_info = JSONData[inner_counter];
-                if (new_info["location"]==location) { // check for correct 
+                console.log("NEW INFO LOCATION: " + new_info["location"]);
+                console.log("LOCATION NAME: " + location_name);
+                if (new_info["location"]==location_name) { // check for correct 
                     found_info = true;
                     return (new_info["data"] + " " + units)
                 }
@@ -38,12 +39,13 @@ const getLatestDataPoint = (JSONData, location_id, units) => {
 const DailyInfo = props => {
 
     const title = processString(props.dataType)
-    const [value, setValue] = useState(0);
+    const [value, setValue] = useState("no information available");
 
     useEffect(() => {
         
-        let data = fetchData(props.dataType); // data is a promise object
+        let data = fetchData(props.location + "/" + props.dataType); // data is a promise object
         data.then(function (result) {
+            console.log("PROPS LOCATION: " + props.location);
             setValue(getLatestDataPoint(result, props.location, props.units));
         });
 

@@ -15,6 +15,8 @@ import CircularGraph from './components/CircularGraph';
 import SideAlerts from './components/SideAlerts';
 import MyAccordion from './components/MyAccordion';
 
+import { getLocations } from './components/MyAccordion';
+
 let CanvasJS = CanvasJSReact.CanvasJS;
 let CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
@@ -78,6 +80,7 @@ const App = () => {
 
   const [checked, setChecked] = useState(false);
   const [radioValue, setRadioValue] = useState('1');
+  const [locations_lst, setLocationsLst] = useState([]);
 
   const radios = [
     { name: 'Plantation', value: '1' },
@@ -120,6 +123,11 @@ const App = () => {
     let storage_humidity_data = fetchData("storage_humidity");
     storage_humidity_data.then(function (result) {
       getLatestDataPoint(result, "storage_humidity", "");
+    });
+
+    let location_data = fetchData("locations");
+    location_data.then(function (result) {
+      setLocationsLst(getLocations(result));
     });
 
   }, []);
@@ -237,12 +245,12 @@ const App = () => {
                   <SideAlerts />
                 </div>
                 <div className="d-flex" style={{ marginTop: '50px', paddingLeft: '5%', width: '60%' }}>
-                  <Graph />
-                  <Graph />
+                  <Graph dataType="soil_water_tension" />
+                  <Graph dataType="plantation_temperature" />
                 </div>
                 <div className="d-flex" style={{ paddingLeft: '5%', width: '60%' }}>
-                  <Graph />
-                  <Graph />
+                  <Graph dataType="soil_ph" />
+                  <Graph dataType="net_harvest" />
                 </div>
               </div>
 
@@ -252,12 +260,12 @@ const App = () => {
                   <SideAlerts />
                 </div>
                 <div className="d-flex" style={{ marginTop: '50px', paddingLeft: '5%', width: '60%' }}>
-                  <Graph />
-                  <CircularGraph />
+                  <Graph dataType="storage_humidity" />
+                  <CircularGraph dataType="unit_loss" />
                 </div>
                 <div className="d-flex" style={{ paddingLeft: '5%', width: '60%' }}>
-                  <Graph />
-                  <CircularGraph />
+                  <Graph dataType="storage_temperature" />
+                  <CircularGraph dataType="storage_temperature" />
                 </div>
               </div>
 
