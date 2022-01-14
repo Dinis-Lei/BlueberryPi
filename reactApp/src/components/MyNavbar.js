@@ -1,14 +1,23 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from 'react-bootstrap/Navbar'
 import Nav from 'react-bootstrap/Nav'
 import NavDropdown from 'react-bootstrap/NavDropdown'
+import { fetchData } from "../App";
+import { getLocations } from "./MyAccordion";
 
 const MyNavbar = () => {
 
     let logged = true
     let name = "Bob"
 
-    let arr = [1,2,3]
+    const [locations_lst, setLocationsLst] = useState([]);
+
+    useEffect(() => {
+      let location_data = fetchData("locations");
+      location_data.then(function (result) {
+          setLocationsLst(getLocations(result));
+      });
+    }, []);
 
     return(
         <Navbar style={{backgroundColor: "#04235a"}} variant="dark"  expand="lg" className="d-flex">
@@ -22,8 +31,8 @@ const MyNavbar = () => {
                 {!logged && <Nav.Link href="#login">Login</Nav.Link>}
                 <NavDropdown title="History" id="basic-nav-dropdown" className="flex-grow-1">
                   {
-                    arr.map(
-                      (elem) => { return ( <NavDropdown.Item href={"/dashboard/location"+elem}>Location {elem}</NavDropdown.Item>) }
+                    locations_lst.map(
+                      (elem) => { return ( <NavDropdown.Item href={"/dashboard/"+elem}>{elem}</NavDropdown.Item>) }
                     )
                   }
                 </NavDropdown>

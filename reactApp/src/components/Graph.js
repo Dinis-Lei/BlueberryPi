@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import CanvasJSReact from '../canvasjs.react';
-import {fetchData, processString} from '../App';
+import { fetchData, processString } from "../App";
+import { useParams } from "react-router-dom"
 
 var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
-const getDataPoints = (JSONData) => {
+export const getDataPoints = (JSONData) => {
     let ret = [];
     let counter = 1;
     let graphData;
@@ -28,16 +29,18 @@ const getDataPoints = (JSONData) => {
     return ret;
 }
 
-const Graph = () =>{
+const Graph = props =>{
 
     const [myDataPoints, setMyDataPoints] = useState([]);
     const [graphTitle, setGraphTitle] = useState("[no title]");
+    const { location } = useParams()
 
     useEffect(() => {
 
-        let dataType = "plantation_temperature";
+        let dataType = props.dataType;
+        let url = location + "/" + dataType;
         
-        let plantation_temperature_data = fetchData(dataType); // data is a promise object
+        let plantation_temperature_data = fetchData(url); // data is a promise object
         plantation_temperature_data.then(function (result) {
             setMyDataPoints(getDataPoints(result));
             setGraphTitle(processString(dataType));
