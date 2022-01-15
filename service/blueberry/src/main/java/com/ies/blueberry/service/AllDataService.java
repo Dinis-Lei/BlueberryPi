@@ -46,6 +46,11 @@ public class AllDataService {
         return repAlert.findByLocationAndSensor(location, sensor);
     }
 
+    public Alert saveAlert(Alert a) {
+        repAlert.save(a);
+        return a;
+    }
+
     //Temperature Section
     public List<PlantationTemperature> getPlantationTemperatureByLocation(String location) {
         Location l = repLocation.findLocationByName(location).orElse(null);

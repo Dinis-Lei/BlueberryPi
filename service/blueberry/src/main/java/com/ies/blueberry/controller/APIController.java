@@ -65,6 +65,10 @@ public class APIController {
         return ResponseEntity.ok().body(alerts);
     }
 
+    @PostMapping("/{location}/{sensor}/alert")
+    public Alert createAlert(@Valid @RequestBody Alert a, @PathVariable(value = "location") String location, @PathVariable(value = "sensor") String sensor) {
+        return dataServ.saveAlert(a);
+    }
 
     //Plantation Temperature
 
