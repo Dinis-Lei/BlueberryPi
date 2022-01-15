@@ -1,6 +1,7 @@
 package com.ies.blueberry.service;
 
 import com.ies.blueberry.model.NetHarvest;
+import com.ies.blueberry.exception.ResourceNotFoundException;
 import com.ies.blueberry.model.Alert;
 import com.ies.blueberry.model.Location;
 import com.ies.blueberry.model.SoilPH;
@@ -11,7 +12,10 @@ import com.ies.blueberry.model.UnitLoss;
 import com.ies.blueberry.model.PlantationTemperature;
 import com.ies.blueberry.repository.AlertRepository;
 import com.ies.blueberry.repository.LocationRepository;
+import com.ies.blueberry.repository.StorageHumidityRepository;
 
+import org.hibernate.Hibernate;
+import org.hibernate.cfg.beanvalidation.IntegrationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.ReplaceOverride;
 import org.springframework.stereotype.Service;
@@ -30,6 +34,9 @@ public class AllDataService {
     @Autowired
     private AlertRepository repAlert;
 
+    @Autowired
+    private StorageHumidityRepository repStorageHumidity;
+
     public List<Location> getLocations() {
         return repLocation.findAll();
     }
@@ -39,7 +46,10 @@ public class AllDataService {
     }
 
     public Location getLocationByName(String name) {
-        return repLocation.findLocationByName(name).orElse(null);
+        System.out.println("BBBBBBBB");
+        Location l = repLocation.findLocationByName(name).orElse(null);
+        System.out.println("CCCCCCCCc");
+        return l;
     }
 
     public List<Alert> getAlertByLocationAndSensor(String location, String sensor){
@@ -296,16 +306,29 @@ public class AllDataService {
     }
 
     public StorageHumidity saveStorageHumidity(StorageHumidity stHum, String location) {
+        //try{
+        //    Location l = repLocation.findLocationByName(location).orElse(null);
+        //    //System.out.println("LOCATION: " + l);
+        //    
+        //    l.setStorageHumidity(stHum);
+        //    saveLocation(l);
+        //    //checkStorageHumidityAlert(l, stHum);
+        //    return stHum;
+        //
+        //} catch (IntegrationException e) {
+        //    e.printStackTrace();
+        //    return null;
+        //} 
+        //checkStorageHumidityAlert(location, stHum);
         Location l = repLocation.findLocationByName(location).orElse(null);
-        l.setStorageHumidity(stHum);
+        l.setStorageHumidity(stHum);  
         saveLocation(l);
-        checkStorageHumidityAlert(l, stHum);
-        return stHum;
+        return stHum;    
     }
 
-    public void checkStorageHumidityAlert(Location l, StorageHumidity sh){
+    public void checkStorageHumidityAlert(String l, StorageHumidity sh){
         if (sh.getData() < 85) { 
-            List<Alert> alerts = repAlert.findByLocationAndSensor(l.getName(), "storage_humidity");
+            List<Alert> alerts = repAlert.findByLocationAndSensor(l, "storage_humidity");
             for(Alert a : alerts) {
                 if(a.getEnd() == sh.getTimestamp() - 60) {
                     a.setEnd(sh.getTimestamp());
@@ -313,7 +336,7 @@ public class AllDataService {
                     return;
                 }
             }
-            Alert alert = new Alert(l.getName(), "storage_humidity", sh.getTimestamp(), sh.getTimestamp(), null);
+            Alert alert = new Alert(l, "storage_humidity", sh.getTimestamp(), sh.getTimestamp(), null);
             repAlert.save(alert);
         }
     }

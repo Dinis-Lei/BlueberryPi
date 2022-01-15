@@ -7,6 +7,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Table;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -48,13 +49,13 @@ public class Location {
     //@ElementCollection(targetClass=SoilWaterTension.class)
     private List<SoilWaterTension> soilwatertension;
 
-    @Column(name = "storagehumidity", nullable = false)
-    @OneToMany(cascade = CascadeType.ALL)
+    //@Column(name = "storagehumidity", nullable = false)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)//, mappedBy = "location", orphanRemoval = true)
     //@ElementCollection(targetClass=StorageHumidity.class)
-    private List<StorageHumidity> storagehumidity;
+    private List<StorageHumidity> storagehumidity = new ArrayList<StorageHumidity>();;
 
-    @Column(name = "storagetemperature", nullable = false)
-    @OneToMany(cascade = CascadeType.ALL)
+    //@Column(name = "storagetemperature", nullable = false)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "location")
     //@ElementCollection(targetClass=StorageTemperature.class)
     private List<StorageTemperature> storagetemperature;
 
@@ -139,6 +140,7 @@ public class Location {
 
     public void setStorageHumidity(StorageHumidity sh) {
         this.storagehumidity.add(sh);
+        //sh.setLocation(this);
     }
 
     public List<StorageTemperature> getStorageTemperatures() {
