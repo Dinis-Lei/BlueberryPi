@@ -56,6 +56,14 @@ public class AllDataService {
         return a;
     }
 
+    public void deleteAlert(long id) {
+        repAlert.deleteById(id);
+    }
+
+    public void deleteAllAlerts() {
+        repAlert.deleteAll();
+    }
+
     public List<Alert> getAlerts() {
         return repAlert.findAll();
     }

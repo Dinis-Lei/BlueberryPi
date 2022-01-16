@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -64,6 +65,20 @@ public class APIController {
     @PostMapping("/alerts")
     public Alert createAlert(@Valid @RequestBody Alert a) {
         return dataServ.saveAlert(a);
+    }
+
+    @DeleteMapping("/alerts/{id}")
+    public void deleteAlert(@PathVariable(value = "id") String s_id) {
+        try {
+            long id = Long.parseLong(s_id);
+            dataServ.deleteAlert(id);
+        } 
+        catch(NumberFormatException e) { System.out.println("Oh naur");}
+    }
+
+    @DeleteMapping("/alerts")
+    public void clearAlerts() {
+        dataServ.deleteAllAlerts();
     }
 
     @GetMapping("/{location}/{sensor}/alert")
