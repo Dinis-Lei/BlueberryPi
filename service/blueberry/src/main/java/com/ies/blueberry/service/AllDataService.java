@@ -14,6 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.ReplaceOverride;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -36,6 +39,19 @@ public class AllDataService {
     public Location getLocationByName(String name) {
         return repLocation.findLocationByName(name).orElse(null);
     }
+
+    public void deleteAll() {
+        repLocation.deleteAll();
+    }
+
+    // public List<List<Object>> getDataByDate(String name, String date) {
+    //     LocalDate today = LocalDate.parse(date);
+    //     LocalDate tomorrow = today.plusDays(1);
+    //     ZoneId z = ZoneId.of("Europe/Lisbon");
+    //     Long begin = today.atStartOfDay(z).toEpochSecond();
+    //     Long end = tomorrow.atStartOfDay(z).toEpochSecond();
+    //     return repLocation.findByTime(name, begin, end);
+    // }
 
     //Temperature Section
     public List<PlantationTemperature> getPlantationTemperatureByLocation(String location) {

@@ -32,6 +32,11 @@ public class APIController {
     @Autowired
     private AllDataService dataServ;
 
+    @GetMapping("/deleteall")
+    public void deleteAll() {
+        dataServ.deleteAll();
+    }
+
     @GetMapping("/locations")
     public List<Location> getLocations() {
         return dataServ.getLocations();
@@ -52,6 +57,15 @@ public class APIController {
         return ResponseEntity.ok().body(l);
     }
 
+    // @GetMapping("/locations/{location}/{date}") 
+    // public ResponseEntity<List<List<Object>>> getLocationByName(@PathVariable(value = "location") String location,@PathVariable(value = "date") String date )
+    //     throws ResourceNotFoundException {
+    //     Location l = dataServ.getLocationByName(location);
+    //     if(l==null) {
+    //         throw new ResourceNotFoundException("Location not found for this name :: " + location);
+    //     }
+    //     return ResponseEntity.ok().body(dataServ.getDataByDate(location,date));
+    // }
 
 
     //Plantation Temperature
