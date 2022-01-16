@@ -39,11 +39,23 @@ const App = () => {
 
   const [checked, setChecked] = useState(false);
   const [radioValue, setRadioValue] = useState('1');
+  const [alertsExist, setAlertsExist] = useState(false);
 
   const radios = [
     { name: 'Plantation', value: '1' },
     { name: 'Storage', value: '2' },
   ];
+
+  useEffect(() => {
+
+    let alerts_data = fetchData("alerts");
+    alerts_data.then(function(result){
+      if (result.length != 0) {
+        setAlertsExist(true);
+      }
+    });
+
+  }, []);
 
   return (
 
@@ -155,7 +167,7 @@ const App = () => {
               {/* PLANTATION DATA */}
               <div id='plantation'>
                 <div style={{ width: '40%', float: 'right' }}>
-                  <SideAlerts/>
+                  <SideAlerts alerts={alertsExist} />
                 </div>
                 <div className="d-flex" style={{ marginTop: '50px', paddingLeft: '5%', width: '60%' }}>
                   <Graph dataType="soil_water_tension" />
@@ -178,7 +190,6 @@ const App = () => {
                 </div>
                 <div className="d-flex" style={{ paddingLeft: '5%', width: '60%' }}>
                   <Graph dataType="storage_temperature" />
-                  <CircularGraph dataType="storage_temperature" />
                 </div>
               </div>
 

@@ -61,7 +61,7 @@ const getLocations = (JSONData) => {
     return ret;
 }
 
-const SideAlerts = () => {
+const SideAlerts = props => {
 
     const [show, setShow] = React.useState(true);
     const toggleShow = () => setShow(!show);
@@ -100,6 +100,10 @@ const SideAlerts = () => {
         });
 
     }, []);
+
+    if (!props.alerts) {
+        return (<div></div>);
+    }
 
     return (
         <div
