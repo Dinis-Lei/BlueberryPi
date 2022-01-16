@@ -54,6 +54,13 @@ public class APIController {
         return ResponseEntity.ok().body(l);
     }
 
+    @GetMapping("/alerts")
+    public ResponseEntity<List<Alert>> getAllAlerts() throws ResourceNotFoundException {
+        List<Alert> alerts = dataServ.getAlerts();
+        if(alerts == null) { throw new ResourceNotFoundException("Alerts not found"); }
+        return ResponseEntity.ok().body(alerts);
+    }
+
     @GetMapping("/{location}/{sensor}/alert")
     public ResponseEntity<List<Alert>> getAlertByLocationAndSensor(
         @PathVariable(value = "location") String location, @PathVariable(value = "sensor") String sensor) 

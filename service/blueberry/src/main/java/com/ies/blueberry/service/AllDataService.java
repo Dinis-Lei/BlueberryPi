@@ -51,6 +51,10 @@ public class AllDataService {
         return a;
     }
 
+    public List<Alert> getAlerts() {
+        return repAlert.findAll();
+    }
+
     //Temperature Section
     public List<PlantationTemperature> getPlantationTemperatureByLocation(String location) {
         Location l = repLocation.findLocationByName(location).orElse(null);
