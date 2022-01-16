@@ -42,6 +42,10 @@ public class AllDataService {
         return repLocation.findLocationByName(name).orElse(null);
     }
 
+    public List<Alert> getAlertByLocationAndSensor(String location, String sensor){
+        return repAlert.findByLocationAndSensor(location, sensor);
+    }
+
     //Temperature Section
     public List<PlantationTemperature> getPlantationTemperatureByLocation(String location) {
         Location l = repLocation.findLocationByName(location).orElse(null);
@@ -244,7 +248,7 @@ public class AllDataService {
         if (!(st.getData() < 3 && st.getData() > 0)) {
             Double val;
             if(st.getData() > 3) val = st.getData() - 3;
-            else val = 0 - st.getData();
+            else val = st.getData();
             List<Alert> alerts = repAlert.findByLocationAndSensor(l.getName(), "storage_temp");
             for(Alert a : alerts) {
                 if(a.getEnd() == st.getTimestamp() - 60) {
