@@ -61,6 +61,11 @@ public class APIController {
         return ResponseEntity.ok().body(alerts);
     }
 
+    @PostMapping("/alerts")
+    public Alert createAlert(@Valid @RequestBody Alert a) {
+        return dataServ.saveAlert(a);
+    }
+
     @GetMapping("/{location}/{sensor}/alert")
     public ResponseEntity<List<Alert>> getAlertByLocationAndSensor(
         @PathVariable(value = "location") String location, @PathVariable(value = "sensor") String sensor) 
