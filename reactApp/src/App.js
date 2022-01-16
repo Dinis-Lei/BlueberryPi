@@ -186,7 +186,7 @@ const App = () => {
                 </div>
                 <div className="d-flex" style={{ marginTop: '50px', paddingLeft: '5%', width: '60%' }}>
                   <Graph dataType="storage_humidity" />
-                  <CircularGraph dataType="unit_loss" />
+                  <Graph dataType="unit_loss" />
                 </div>
                 <div className="d-flex" style={{ paddingLeft: '5%', width: '60%' }}>
                   <Graph dataType="storage_temperature" />
