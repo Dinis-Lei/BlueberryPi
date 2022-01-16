@@ -182,7 +182,7 @@ const App = () => {
               {/* STORAGE DATA */}
               <div id='storage' style={{ display: 'none' }}>
                 <div style={{ width: '40%', float: 'right' }}>
-                  <SideAlerts/>
+                  <SideAlerts alerts={alertsExist} />
                 </div>
                 <div className="d-flex" style={{ marginTop: '50px', paddingLeft: '5%', width: '60%' }}>
                   <Graph dataType="storage_humidity" />
