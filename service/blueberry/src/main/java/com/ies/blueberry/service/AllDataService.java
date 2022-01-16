@@ -68,6 +68,10 @@ public class AllDataService {
         return repAlert.findAll();
     }
 
+    public List<Alert> getAlertByLocationAndSensor(String location, String sensor){
+        return repAlert.findByLocationAndSensor(location, sensor);
+    }
+
     //Temperature Section
     public List<PlantationTemperature> getPlantationTemperatureByLocation(String location) {
         Location l = repLocation.findLocationByName(location).orElse(null);
@@ -151,11 +155,13 @@ public class AllDataService {
                     break;
                 }
             }
+            Double val = 4.5 - nh.getData(); 
             if( alert != null){
                 alert.setEnd(nh.getTimestamp());
+                alert.setVal(val);
             }
             else{
-                alert = new Alert(location.getName(), "net_harvest", nh.getTimestamp(), nh.getTimestamp(), null);
+                alert = new Alert(location.getName(), "net_harvest", nh.getTimestamp(), nh.getTimestamp(), val);
             }
             repAlert.save(alert);
         }
@@ -183,15 +189,19 @@ public class AllDataService {
 
     public void checkSoilPHAlert(Location l, SoilPH ph){
         if (!(ph.getData() > 4 && ph.getData() < 6)) { 
+            Double val;
+            if(ph.getData()>4) val = 4 - ph.getData();
+            else val = ph.getData() - 6;
             List<Alert> alerts = repAlert.findByLocationAndSensor(l.getName(), "soil_ph");
             for(Alert a : alerts) {
                 if(a.getEnd() == ph.getTimestamp() - 24*60*60) {
                     a.setEnd(ph.getTimestamp());
+                    a.setVal(val);
                     repAlert.save(a);
                     return;
                 }
             }
-            Alert alert = new Alert(l.getName(), "soil_ph", ph.getTimestamp(), ph.getTimestamp(), null);
+            Alert alert = new Alert(l.getName(), "soil_ph", ph.getTimestamp(), ph.getTimestamp(),val);
             repAlert.save(alert);
         }
     }
@@ -264,16 +274,18 @@ public class AllDataService {
     }
 
     public void checkUnitLossAlert(Location l, UnitLoss ul){
-        if (ul.getData() >= 5) { 
+        if (ul.getData() >= 5) {
+            Double val = ul.getData() - 5; 
             List<Alert> alerts = repAlert.findByLocationAndSensor(l.getName(), "unit_loss");
             for(Alert a : alerts) {
                 if(a.getEnd() == ul.getTimestamp() - 7*24*60*60) {
                     a.setEnd(ul.getTimestamp());
+                    a.setVal(val);
                     repAlert.save(a);
                     return;
                 }
             }
-            Alert alert = new Alert(l.getName(), "unit_loss", ul.getTimestamp(), ul.getTimestamp(), null);
+            Alert alert = new Alert(l.getName(), "unit_loss", ul.getTimestamp(), ul.getTimestamp(),val);
             repAlert.save(alert);
         }
     }
@@ -298,16 +310,20 @@ public class AllDataService {
     }
 
     public void checkStorageTempAlert(Location l, StorageTemperature st){
-        if (st.getData() > 3) { 
+        if (!(st.getData() < 3 && st.getData() > 0)) {
+            Double val;
+            if(st.getData() > 3) val = st.getData() - 3;
+            else val = st.getData();
             List<Alert> alerts = repAlert.findByLocationAndSensor(l.getName(), "storage_temp");
             for(Alert a : alerts) {
                 if(a.getEnd() == st.getTimestamp() - 60) {
                     a.setEnd(st.getTimestamp());
+                    a.setVal(val);
                     repAlert.save(a);
                     return;
                 }
             }
-            Alert alert = new Alert(l.getName(), "storage_temp", st.getTimestamp(), st.getTimestamp(), null);
+            Alert alert = new Alert(l.getName(), "storage_temp", st.getTimestamp(), st.getTimestamp(), val);
             repAlert.save(alert);
         }
     }
@@ -333,15 +349,17 @@ public class AllDataService {
 
     public void checkStorageHumidityAlert(String l, StorageHumidity sh){
         if (sh.getData() < 85) { 
+            Double val = 85 - sh.getData();
             List<Alert> alerts = repAlert.findByLocationAndSensor(l, "storage_humidity");
             for(Alert a : alerts) {
                 if(a.getEnd() == sh.getTimestamp() - 60) {
                     a.setEnd(sh.getTimestamp());
+                    a.setVal(val);
                     repAlert.save(a);
                     return;
                 }
             }
-            Alert alert = new Alert(l, "storage_humidity", sh.getTimestamp(), sh.getTimestamp(), null);
+            Alert alert = new Alert(l, "storage_humidity", sh.getTimestamp(), sh.getTimestamp(), val);
             repAlert.save(alert);
         }
     }
