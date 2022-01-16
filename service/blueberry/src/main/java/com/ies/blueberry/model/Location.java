@@ -7,6 +7,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Table;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -24,39 +25,39 @@ public class Location {
     private String name;
 
     @Column(name = "unitloss", nullable = false)
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     //@ElementCollection(targetClass=UnitLoss.class)
-    private List<UnitLoss> unitloss;
+    private List<UnitLoss> unitloss = new ArrayList<UnitLoss>();
 
     @Column(name = "netharvest", nullable = false)
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     //@ElementCollection(targetClass=NetHarvest.class)
-    private List<NetHarvest> netharvest;
+    private List<NetHarvest> netharvest = new ArrayList<NetHarvest>();
 
     @Column(name = "plantationtemperature", nullable = false)
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     //@ElementCollection(targetClass=PlantationTemperature.class)
-    private List<PlantationTemperature> plantationtemperature;
+    private List<PlantationTemperature> plantationtemperature = new ArrayList<PlantationTemperature>();
 
     @Column(name = "soilph", nullable = false)
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     //@ElementCollection(targetClass=SoilPH.class)
-    private List<SoilPH> soilph;
+    private List<SoilPH> soilph = new ArrayList<SoilPH>();
 
     @Column(name = "soilwatertension", nullable = false)
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     //@ElementCollection(targetClass=SoilWaterTension.class)
-    private List<SoilWaterTension> soilwatertension;
+    private List<SoilWaterTension> soilwatertension = new ArrayList<SoilWaterTension>();
 
-    @Column(name = "storagehumidity", nullable = false)
-    @OneToMany(cascade = CascadeType.ALL)
+    //@Column(name = "storagehumidity", nullable = false)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     //@ElementCollection(targetClass=StorageHumidity.class)
-    private List<StorageHumidity> storagehumidity;
+    private List<StorageHumidity> storagehumidity = new ArrayList<StorageHumidity>();
 
-    @Column(name = "storagetemperature", nullable = false)
-    @OneToMany(cascade = CascadeType.ALL)
+    //@Column(name = "storagetemperature", nullable = false)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     //@ElementCollection(targetClass=StorageTemperature.class)
-    private List<StorageTemperature> storagetemperature;
+    private List<StorageTemperature> storagetemperature = new ArrayList<StorageTemperature>();
 
     @Column(name = "timestamp", nullable = false)
     private Long timestamp;
@@ -66,13 +67,13 @@ public class Location {
     public Location(String name,Long timestamp)
     {
         this.name = name;
-        this.unitloss = new ArrayList<UnitLoss>();
-        this.netharvest = new ArrayList<NetHarvest>();
-        this.plantationtemperature = new ArrayList<PlantationTemperature>();
-        this.soilph = new ArrayList<SoilPH>();
-        this.soilwatertension = new ArrayList<SoilWaterTension>();
-        this.storagehumidity = new ArrayList<StorageHumidity>();
-        this.storagetemperature = new ArrayList<StorageTemperature>();
+        //this.unitloss = new ArrayList<UnitLoss>();
+        //this.netharvest = new ArrayList<NetHarvest>();
+        //this.plantationtemperature = new ArrayList<PlantationTemperature>();
+        //this.soilph = new ArrayList<SoilPH>();
+        //this.soilwatertension = new ArrayList<SoilWaterTension>();
+        //this.storagehumidity = new ArrayList<StorageHumidity>();
+        //this.storagetemperature = new ArrayList<StorageTemperature>();
         this.timestamp = timestamp;
     }
 
@@ -139,6 +140,7 @@ public class Location {
 
     public void setStorageHumidity(StorageHumidity sh) {
         this.storagehumidity.add(sh);
+        //sh.setLocation(this);
     }
 
     public List<StorageTemperature> getStorageTemperatures() {
