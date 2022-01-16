@@ -19,9 +19,7 @@ const MyAccordion = () => {
     useEffect(() => {
         let location_data = fetchData("locations");
         location_data.then(function (result) {
-
             setLocationsLst(getLocations(result));
-
         });
     }, []);
 
@@ -31,21 +29,20 @@ const MyAccordion = () => {
         "https://s3.envato.com/files/e641f05c-c3ce-4f19-8eb6-12bdb53ea528/inline_image_preview.jpg"
     ]
 
-    // TODO: fill out the units of each thing here
     let pt = "plantation_temperature";
     let pt_u = "ºC";
     let nh = "net_harvest";
-    let nh_u = "";
+    let nh_u = "kg";
     let sp = "soil_ph";
-    let sp_u = "";
+    let sp_u = "pH";
     let swt = "soil_water_tension";
-    let swt_u = "";
+    let swt_u = "cb";
     let ul = "unit_loss";
-    let ul_u = "";
+    let ul_u = "%";
     let st = "storage_temperature";
-    let st_u = "";
+    let st_u = "ºC";
     let sh = "storage_humidity";
-    let sh_u = "";
+    let sh_u = "%";
 
     return(
 

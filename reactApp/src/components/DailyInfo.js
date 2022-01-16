@@ -14,7 +14,7 @@ const getLatestDataPoint = (JSONData, location_name, units) => {
             let inner_counter = JSONData.length - 1; // start by latest info (the most recent)
             let found_info = false;
 
-            while (inner_counter) {
+            while (inner_counter!=-1) {
                 const new_info = JSONData[inner_counter];
                 console.log("NEW INFO LOCATION: " + new_info["location"]);
                 console.log("LOCATION NAME: " + location_name);

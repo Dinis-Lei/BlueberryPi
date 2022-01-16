@@ -35,102 +35,15 @@ export const processString = (str) => {
   return ret;
 }
 
-const getLatestDataPoint = (JSONdata, dataType, units) => {
-
-  let div = 1;
-  let counter = 1;
-
-  while (div != null) {
-
-    div = document.getElementById(dataType + counter);
-
-    if (div != null) {
-      if (JSONdata.length != 0) {
-
-        let location = "Location " + counter;
-        let inner_counter = JSONdata.length - 1; // start by latest info (the most recent)
-        let found_info = false;
-
-        while (inner_counter) {
-          const new_info = JSONdata[inner_counter];
-          if (new_info["location"]==location) { // check for correct location
-            div.innerHTML = processString(dataType) + ": " + new_info["data"] + units;
-            found_info = true;
-            break;
-          }
-          inner_counter -= 1;
-        }
-        if (!found_info) {
-          div.innerHTML = processString(dataType) + ": no available information";
-        }
-
-      }
-      else {
-        div.innerHTML = processString(dataType) + ": no available information";
-      }
-    }
-    
-    counter += 1;
-
-  }
-
-}
-
 const App = () => {
 
   const [checked, setChecked] = useState(false);
   const [radioValue, setRadioValue] = useState('1');
-  const [locations_lst, setLocationsLst] = useState([]);
 
   const radios = [
     { name: 'Plantation', value: '1' },
     { name: 'Storage', value: '2' },
   ];
-
-  useEffect(() => {
-
-    let plantation_temperature_data = fetchData("plantation_temperature"); // data is a promise object
-    plantation_temperature_data.then(function (result) {
-        getLatestDataPoint(result, "plantation_temperature", "ºC");
-    });
-
-    // TODO: fill out the units of everything
-    let net_harvest_data = fetchData("net_harvest");
-    net_harvest_data.then(function (result) {
-        getLatestDataPoint(result, "net_harvest", "");
-    });
-
-    let soil_ph_data = fetchData("soil_ph");
-    soil_ph_data.then(function (result) {
-      getLatestDataPoint(result, "soil_ph", "");
-    });
-
-    let soil_water_tension_data = fetchData("soil_water_tension");
-    soil_water_tension_data.then(function (result) {
-      getLatestDataPoint(result, "soil_water_tension", "");
-    });
-
-    let unit_loss_data = fetchData("unit_loss");
-    unit_loss_data.then(function (result) {
-      getLatestDataPoint(result, "unit_loss", "");
-    });
-
-    let storage_temperature_data = fetchData("storage_temperature");
-    storage_temperature_data.then(function (result) {
-      getLatestDataPoint(result, "storage_temperature", "");
-    });
-
-    let storage_humidity_data = fetchData("storage_humidity");
-    storage_humidity_data.then(function (result) {
-      getLatestDataPoint(result, "storage_humidity", "");
-    });
-
-    let location_data = fetchData("locations");
-    location_data.then(function (result) {
-      setLocationsLst(getLocations(result));
-    });
-
-  }, []);
 
   return (
 
@@ -242,7 +155,7 @@ const App = () => {
               {/* PLANTATION DATA */}
               <div id='plantation'>
                 <div style={{ width: '40%', float: 'right' }}>
-                  <SideAlerts />
+                  <SideAlerts/>
                 </div>
                 <div className="d-flex" style={{ marginTop: '50px', paddingLeft: '5%', width: '60%' }}>
                   <Graph dataType="soil_water_tension" />
@@ -257,7 +170,7 @@ const App = () => {
               {/* STORAGE DATA */}
               <div id='storage' style={{ display: 'none' }}>
                 <div style={{ width: '40%', float: 'right' }}>
-                  <SideAlerts />
+                  <SideAlerts/>
                 </div>
                 <div className="d-flex" style={{ marginTop: '50px', paddingLeft: '5%', width: '60%' }}>
                   <Graph dataType="storage_humidity" />
