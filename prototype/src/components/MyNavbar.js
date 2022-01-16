@@ -11,13 +11,16 @@ const MyNavbar = () => {
     let arr = [1,2,3]
 
     return(
-        <Navbar style={{backgroundColor: "#4f86f7"}} variant="dark"  expand="lg" className="d-flex">
+        <Navbar style={{backgroundColor: "#04235a"}} variant="dark"  expand="lg" className="d-flex">
             <Navbar.Brand href="/dashboard" className="px-3">BlueberryPi</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
+            <Nav className="me-auto">
+              <Nav.Link href="/dashboard/home">Dashboard</Nav.Link>
+            </Nav>
             <Navbar.Collapse id="basic-navbar-nav">
               <Nav className="me-auto d-flex flex-grow-1">
                 {!logged && <Nav.Link href="#login">Login</Nav.Link>}
-                <NavDropdown title="Locations" id="basic-nav-dropdown" className="flex-grow-1">
+                <NavDropdown title="History" id="basic-nav-dropdown" className="flex-grow-1">
                   {
                     arr.map(
                       (elem) => { return ( <NavDropdown.Item href={"/dashboard/location"+elem}>Location {elem}</NavDropdown.Item>) }

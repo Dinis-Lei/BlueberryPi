@@ -1,4 +1,9 @@
 # BlueberryPi
+
+Precision agriculture for blueberry plantations.
+
+# 172.22.0.5
+
 This product will implement a monitorization system to precision agriculture plantations of blueberrys.
 
 This app will allow the user to see the plantation conditions such as temperature, humidity, pH, etc...
@@ -33,4 +38,3 @@ Useful resources for building the prototype:
 * [canvasJS](https://canvasjs.com/)
 * [React Router](https://reactrouter.com/)
 * [RabbitMQ](https://www.rabbitmq.com/getstarted.html)
-

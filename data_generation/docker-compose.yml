@@ -1,0 +1,38 @@
+version: "3.9"
+services:
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    hostname: rabbitmq-host
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    volumes:
+      - "./rabbitdata:/var/lib/rabbitmq"
+    healthcheck:
+      test: [ "CMD", "nc", "-z", "localhost", "5672" ]
+      interval: 5s
+      timeout: 15s
+      retries: 1
+
+  producer:
+    build: ./producer
+    container_name: producer
+    image: python-producer
+    depends_on:
+      rabbitmq:
+        condition:
+          service_healthy
+    links:
+      - rabbitmq
+
+  consumer:
+    build: ./testConsumer
+    container_name: consumer
+    image: python-consumer
+    depends_on:
+      rabbitmq:
+        condition:
+          service_healthy
+    links:
+      - rabbitmq
