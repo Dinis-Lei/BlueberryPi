@@ -68,10 +68,6 @@ public class AllDataService {
         return repAlert.findAll();
     }
 
-    public List<Alert> getAlertByLocationAndSensor(String location, String sensor){
-        return repAlert.findByLocationAndSensor(location, sensor);
-    }
-
     //Temperature Section
     public List<PlantationTemperature> getPlantationTemperatureByLocation(String location) {
         Location l = repLocation.findLocationByName(location).orElse(null);

@@ -52,7 +52,7 @@ public class Consumer {
         //Location l = dataServ.getLocationByName(location);
 
         switch((String) result.get("key")){
-            case "plantation_temp":
+            case "plantation_temperature":
                 //System.out.println(result.get("val"));
                 dataServ.savePlantationTemperature(new PlantationTemperature(data, location, timestamp), location);
                 break;
