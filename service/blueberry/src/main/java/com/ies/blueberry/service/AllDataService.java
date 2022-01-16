@@ -310,7 +310,7 @@ public class AllDataService {
             Double val;
             if(st.getData() > 3) val = st.getData() - 3;
             else val = st.getData();
-            List<Alert> alerts = repAlert.findByLocationAndSensor(l.getName(), "storage_temp");
+            List<Alert> alerts = repAlert.findByLocationAndSensor(l.getName(), "storage_temperature");
             for(Alert a : alerts) {
                 if(a.getEnd() == st.getTimestamp() - 60) {
                     a.setEnd(st.getTimestamp());
@@ -319,13 +319,13 @@ public class AllDataService {
                     return;
                 }
             }
-            Alert alert = new Alert(l.getName(), "storage_temp", st.getTimestamp(), st.getTimestamp(), val);
+            Alert alert = new Alert(l.getName(), "storage_temperature", st.getTimestamp(), st.getTimestamp(), val);
             repAlert.save(alert);
         }
     }
 
     public List<Alert> getStorageTempAlertByLocation(String location){
-        return repAlert.findByLocationAndSensor(location, "storage_temp");
+        return repAlert.findByLocationAndSensor(location, "storage_temperature");
     }
 
     //Storage Humidity

@@ -68,7 +68,7 @@ public class Consumer {
             case "unit_loss":
                 dataServ.saveUnitLoss(new UnitLoss(data, location, timestamp), location);
                 break;
-            case "store_temp":
+            case "store_temperature":
                 dataServ.saveStorageTemperature(new StorageTemperature(data, location, timestamp), location);
                 break;
             case "store_humidity":    
