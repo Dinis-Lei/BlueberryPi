@@ -14,15 +14,12 @@ import com.ies.blueberry.repository.AlertRepository;
 import com.ies.blueberry.repository.LocationRepository;
 import com.ies.blueberry.repository.StorageHumidityRepository;
 
-import org.hibernate.Hibernate;
-import org.hibernate.cfg.beanvalidation.IntegrationException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.support.ReplaceOverride;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 
 
 @Service
@@ -46,9 +43,7 @@ public class AllDataService {
     }
 
     public Location getLocationByName(String name) {
-        System.out.println("BBBBBBBB");
         Location l = repLocation.findLocationByName(name).orElse(null);
-        System.out.println("CCCCCCCCc");
         return l;
     }
 
@@ -64,6 +59,7 @@ public class AllDataService {
         return l.getPlantationTemperatures();
     }
 
+    @Transactional
     public PlantationTemperature savePlantationTemperature(PlantationTemperature temp, String location) {
         Location l = repLocation.findLocationByName(location).orElse(null);
         l.setPlantationTemperature(temp);
@@ -119,6 +115,7 @@ public class AllDataService {
         return l.getNetHarvests();
     }
 
+    @Transactional
     public NetHarvest saveNetHarvest(NetHarvest netHarv, String location) {
         Location l = repLocation.findLocationByName(location).orElse(null);
         l.setNetHarvest(netHarv);
@@ -158,6 +155,7 @@ public class AllDataService {
         return l.getSoilPHs();
     }
 
+    @Transactional
     public SoilPH saveSoilPH(SoilPH soilph, String location) {
         Location l = repLocation.findLocationByName(location).orElse(null);
         l.setSoilPH(soilph);
@@ -192,6 +190,7 @@ public class AllDataService {
         return l.getSoilWaterTensions();
     }
 
+    @Transactional
     public SoilWaterTension saveSoilWaterTensions(SoilWaterTension soilwt, String location) {
         Location l = repLocation.findLocationByName(location).orElse(null);
         l.setSoilWaterTension(soilwt);
@@ -238,6 +237,7 @@ public class AllDataService {
         return l.getUnitLosses();
     }
 
+    @Transactional
     public UnitLoss saveUnitLoss(UnitLoss ul, String location) {
         Location l = repLocation.findLocationByName(location).orElse(null);
         l.setUnitLoss(ul);
@@ -271,6 +271,7 @@ public class AllDataService {
         return l.getStorageTemperatures();
     }
 
+    @Transactional
     public StorageTemperature saveStorageTemperature(StorageTemperature st, String location) {
         Location l = repLocation.findLocationByName(location).orElse(null);
         l.setStorageTemperature(st);
@@ -305,21 +306,8 @@ public class AllDataService {
         return l.getStorageHumidities();
     }
 
+    @Transactional
     public StorageHumidity saveStorageHumidity(StorageHumidity stHum, String location) {
-        //try{
-        //    Location l = repLocation.findLocationByName(location).orElse(null);
-        //    //System.out.println("LOCATION: " + l);
-        //    
-        //    l.setStorageHumidity(stHum);
-        //    saveLocation(l);
-        //    //checkStorageHumidityAlert(l, stHum);
-        //    return stHum;
-        //
-        //} catch (IntegrationException e) {
-        //    e.printStackTrace();
-        //    return null;
-        //} 
-        //checkStorageHumidityAlert(location, stHum);
         Location l = repLocation.findLocationByName(location).orElse(null);
         l.setStorageHumidity(stHum);  
         saveLocation(l);

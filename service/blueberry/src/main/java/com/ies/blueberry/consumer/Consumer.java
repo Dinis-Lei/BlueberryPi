@@ -37,20 +37,20 @@ public class Consumer {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println(result);
+        //System.out.println(result);
 
         Double data = (Double) result.get("val");
         Long timestamp = Long.valueOf( (Integer) result.get("timestamp"));
         String location = (String) result.get("location");
-        System.out.println(data + " " + timestamp + " " + location);
+        //System.out.println(data + " " + timestamp + " " + location);
         //System.out.println("1" + dataServ.getLocationByName(location));
         //System.out.println("AAAAAAAAAAAAAAAAa");
         if (dataServ.getLocationByName(location) == null){
             dataServ.saveLocation(new Location(location, 0L));
             //System.out.println("2" + dataServ.getLocationByName(location));
         }
-        Location l = dataServ.getLocationByName(location);
-        System.out.println("-------------------");
+        //Location l = dataServ.getLocationByName(location);
+
         switch((String) result.get("key")){
             case "plantation_temp":
                 //System.out.println(result.get("val"));
@@ -71,9 +71,7 @@ public class Consumer {
             case "store_temp":
                 dataServ.saveStorageTemperature(new StorageTemperature(data, location, timestamp), location);
                 break;
-            case "store_humidity":
-                System.out.println("OIOIOI");
-                
+            case "store_humidity":    
                 dataServ.saveStorageHumidity(new StorageHumidity(data, location, timestamp), location);
                 break;
         }
