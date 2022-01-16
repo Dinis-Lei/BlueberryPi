@@ -1,6 +1,7 @@
 package com.ies.blueberry.service;
 
 import com.ies.blueberry.model.NetHarvest;
+import com.ies.blueberry.exception.ResourceNotFoundException;
 import com.ies.blueberry.model.Alert;
 import com.ies.blueberry.model.Location;
 import com.ies.blueberry.model.SoilPH;
@@ -11,14 +12,14 @@ import com.ies.blueberry.model.UnitLoss;
 import com.ies.blueberry.model.PlantationTemperature;
 import com.ies.blueberry.repository.AlertRepository;
 import com.ies.blueberry.repository.LocationRepository;
+import com.ies.blueberry.repository.StorageHumidityRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.support.ReplaceOverride;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 
 
 @Service
@@ -30,6 +31,9 @@ public class AllDataService {
     @Autowired
     private AlertRepository repAlert;
 
+    @Autowired
+    private StorageHumidityRepository repStorageHumidity;
+
     public List<Location> getLocations() {
         return repLocation.findAll();
     }
@@ -39,7 +43,29 @@ public class AllDataService {
     }
 
     public Location getLocationByName(String name) {
-        return repLocation.findLocationByName(name).orElse(null);
+        Location l = repLocation.findLocationByName(name).orElse(null);
+        return l;
+    }
+
+    public List<Alert> getAlertByLocationAndSensor(String location, String sensor){
+        return repAlert.findByLocationAndSensor(location, sensor);
+    }
+
+    public Alert saveAlert(Alert a) {
+        repAlert.save(a);
+        return a;
+    }
+
+    public void deleteAlert(long id) {
+        repAlert.deleteById(id);
+    }
+
+    public void deleteAllAlerts() {
+        repAlert.deleteAll();
+    }
+
+    public List<Alert> getAlerts() {
+        return repAlert.findAll();
     }
 
     public List<Alert> getAlertByLocationAndSensor(String location, String sensor){
@@ -54,6 +80,7 @@ public class AllDataService {
         return l.getPlantationTemperatures();
     }
 
+    @Transactional
     public PlantationTemperature savePlantationTemperature(PlantationTemperature temp, String location) {
         Location l = repLocation.findLocationByName(location).orElse(null);
         l.setPlantationTemperature(temp);
@@ -109,6 +136,7 @@ public class AllDataService {
         return l.getNetHarvests();
     }
 
+    @Transactional
     public NetHarvest saveNetHarvest(NetHarvest netHarv, String location) {
         Location l = repLocation.findLocationByName(location).orElse(null);
         l.setNetHarvest(netHarv);
@@ -150,6 +178,7 @@ public class AllDataService {
         return l.getSoilPHs();
     }
 
+    @Transactional
     public SoilPH saveSoilPH(SoilPH soilph, String location) {
         Location l = repLocation.findLocationByName(location).orElse(null);
         l.setSoilPH(soilph);
@@ -188,11 +217,45 @@ public class AllDataService {
         return l.getSoilWaterTensions();
     }
 
+    @Transactional
     public SoilWaterTension saveSoilWaterTensions(SoilWaterTension soilwt, String location) {
         Location l = repLocation.findLocationByName(location).orElse(null);
         l.setSoilWaterTension(soilwt);
         saveLocation(l);
+        checkSoilWaterTensions(soilwt, l);
         return soilwt;
+    }
+
+    public void checkSoilWaterTensions(SoilWaterTension soilwt, Location location){
+        List<SoilWaterTension> data = location.getSoilWaterTensions();
+        
+        // check if there enough data for an alert
+        if ( data.size() < 10){
+            return;
+        }
+
+        List<SoilWaterTension> filtered_data = data.subList(data.size()-10, data.size());
+        long unixTime = System.currentTimeMillis() / 1000L;
+        for(SoilWaterTension wt: filtered_data){
+            if( wt.getData() < 20){
+                return;
+            }
+            else if(unixTime/3600 > 12){
+                return;
+            }
+        }
+
+        List<Alert> alerts = repAlert.findByLocationAndSensor(location.getName(), "water_tension");
+        Alert a = alerts.get(alerts.size() - 1);
+        Alert alert = null;
+
+        if(a.getEnd() == soilwt.getTimestamp() - 60){
+            alert = a;
+        }
+        else{
+            alert = new Alert(location.getName(), "water_tension", filtered_data.get(0).getTimestamp(), filtered_data.get(9).getTimestamp(), null);
+        }
+        repAlert.save(alert);
     }
 
     //Unit Loss Section
@@ -201,6 +264,7 @@ public class AllDataService {
         return l.getUnitLosses();
     }
 
+    @Transactional
     public UnitLoss saveUnitLoss(UnitLoss ul, String location) {
         Location l = repLocation.findLocationByName(location).orElse(null);
         l.setUnitLoss(ul);
@@ -236,6 +300,7 @@ public class AllDataService {
         return l.getStorageTemperatures();
     }
 
+    @Transactional
     public StorageTemperature saveStorageTemperature(StorageTemperature st, String location) {
         Location l = repLocation.findLocationByName(location).orElse(null);
         l.setStorageTemperature(st);
@@ -274,18 +339,18 @@ public class AllDataService {
         return l.getStorageHumidities();
     }
 
+    @Transactional
     public StorageHumidity saveStorageHumidity(StorageHumidity stHum, String location) {
         Location l = repLocation.findLocationByName(location).orElse(null);
-        l.setStorageHumidity(stHum);
+        l.setStorageHumidity(stHum);  
         saveLocation(l);
-        checkStorageHumidityAlert(l, stHum);
-        return stHum;
+        return stHum;    
     }
 
-    public void checkStorageHumidityAlert(Location l, StorageHumidity sh){
+    public void checkStorageHumidityAlert(String l, StorageHumidity sh){
         if (sh.getData() < 85) { 
             Double val = 85 - sh.getData();
-            List<Alert> alerts = repAlert.findByLocationAndSensor(l.getName(), "storage_humidity");
+            List<Alert> alerts = repAlert.findByLocationAndSensor(l, "storage_humidity");
             for(Alert a : alerts) {
                 if(a.getEnd() == sh.getTimestamp() - 60) {
                     a.setEnd(sh.getTimestamp());
@@ -294,7 +359,7 @@ public class AllDataService {
                     return;
                 }
             }
-            Alert alert = new Alert(l.getName(), "storage_humidity", sh.getTimestamp(), sh.getTimestamp(),val);
+            Alert alert = new Alert(l, "storage_humidity", sh.getTimestamp(), sh.getTimestamp(), val);
             repAlert.save(alert);
         }
     }

@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -54,16 +55,47 @@ public class APIController {
         return ResponseEntity.ok().body(l);
     }
 
+    @GetMapping("/alerts")
+    public ResponseEntity<List<Alert>> getAllAlerts() throws ResourceNotFoundException {
+        List<Alert> alerts = dataServ.getAlerts();
+        if(alerts == null) { throw new ResourceNotFoundException("Alerts not found"); }
+        return ResponseEntity.ok().body(alerts);
+    }
+
+    @PostMapping("/alerts")
+    public Alert createAlert(@Valid @RequestBody Alert a) {
+        return dataServ.saveAlert(a);
+    }
+
+    @DeleteMapping("/alerts/{id}")
+    public void deleteAlert(@PathVariable(value = "id") String s_id) {
+        try {
+            long id = Long.parseLong(s_id);
+            dataServ.deleteAlert(id);
+        } 
+        catch(NumberFormatException e) { System.out.println("Oh naur");}
+    }
+
+    @DeleteMapping("/alerts")
+    public void clearAlerts() {
+        dataServ.deleteAllAlerts();
+    }
+
     @GetMapping("/{location}/{sensor}/alert")
-    public ResponseEntity<List<Alert>> getAlertBySensor(@PathVariable(value = "location") String location, @PathVariable(value = "sensor") String sensor) 
+    public ResponseEntity<List<Alert>> getAlertByLocationAndSensor(
+        @PathVariable(value = "location") String location, @PathVariable(value = "sensor") String sensor) 
     throws ResourceNotFoundException {
-        List<Alert> alerts = dataServ.getAlertByLocationAndSensor(location,sensor);
+        List<Alert> alerts = dataServ.getAlertByLocationAndSensor(location, sensor);
         if(alerts==null){
             throw new ResourceNotFoundException("Location not found for this id :: " + location);
         }
         return ResponseEntity.ok().body(alerts);
     }
 
+    @PostMapping("/{location}/{sensor}/alert")
+    public Alert createAlert(@Valid @RequestBody Alert a, @PathVariable(value = "location") String location, @PathVariable(value = "sensor") String sensor) {
+        return dataServ.saveAlert(a);
+    }
 
     //Plantation Temperature
 
@@ -85,16 +117,6 @@ public class APIController {
         return dataServ.savePlantationTemperature(temp,location);
     }
 
-    @GetMapping("/{location}/plantation_temperature/alert")
-    public ResponseEntity<List<Alert>> getPlantationTemperatureAlert(@Valid @RequestBody PlantationTemperature temp,@PathVariable(value = "location") String location) 
-    throws ResourceNotFoundException {
-        List<Alert> alerts = dataServ.getPlantationTemperatureAlertByLocation(location);
-        if(alerts==null){
-            throw new ResourceNotFoundException("Location not found for this id :: " + location);
-        }
-        return ResponseEntity.ok().body(alerts);
-    }
-
     //Net Harvest    
 
     @GetMapping("/{location}/net_harvest")
@@ -111,16 +133,6 @@ public class APIController {
     @PostMapping("/{location}/net_harvest")
     public NetHarvest createNetHarvest(@Valid @RequestBody NetHarvest netHarv,@PathVariable(value = "location") String location) {
         return dataServ.saveNetHarvest(netHarv,location);
-    }
-
-    @GetMapping("/{location}/net_harvest/alert")
-    public ResponseEntity<List<Alert>> getNetHarvestAlert(@Valid @RequestBody PlantationTemperature temp,@PathVariable(value = "location") String location) 
-    throws ResourceNotFoundException {
-        List<Alert> alerts = dataServ.getNetHarvestAlertByLocation(location);
-        if(alerts==null){
-            throw new ResourceNotFoundException("Location not found for this id :: " + location);
-        }
-        return ResponseEntity.ok().body(alerts);
     }
 
     //Soil pH
