@@ -1,55 +1,125 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import CanvasJSReact from '../canvasjs.react';
+import { fetchData, processString } from "../App";
+import { useParams } from "react-router-dom"
 
 var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
-var dataPoints =[];
 
-const Graph = () =>{
+const units = {
+    "Plantation temperature": "ºC",
+    "Net harvest": "kg",
+    "Soil ph": "pH",
+    "Soil water tension": "cb",
+    "Unit loss": "%",
+    "Storage temperature": "ºC",
+    "Storage humidity": "%"
+}
+
+const process_date = (timestamp) => {
+    let date = new Date(timestamp * 1000);
+    let date_str = date.getDate()+
+        "/"+(date.getMonth()+1)+
+        "/"+date.getFullYear()+
+        " "+date.getHours()+
+        ":"+date.getMinutes()+
+        ":"+date.getSeconds();
+    return date_str;
+}
+
+export const getDataPoints = (JSONData) => {
+    let ret = [];
+    let counter = 1;
+    let graphData;
+
+    if (JSONData.length < 20) {
+        graphData = JSONData;
+    }
+    else {
+        let firstElem = JSONData.length - 10; 
+        let lastElem = JSONData.length;
+        graphData = JSONData.slice(firstElem, lastElem); // não inclui lastElem
+    }
+
+    for (const dataPoint of graphData) {
+        let newElem = {x: counter, y: dataPoint["data"], label: process_date(dataPoint["timestamp"])};
+        ret.push(newElem);
+        counter += 1;
+    }
+
+    return ret;
+}
+
+// const getTimes = (JSONData) => {
+//     let ret = [];
+//     let graphData;
+
+//     if (JSONData.length < 20) {
+//         graphData = JSONData;
+//     }
+//     else {
+//         let firstElem = JSONData.length - 10; 
+//         let lastElem = JSONData.length;
+//         graphData = JSONData.slice(firstElem, lastElem); // não inclui lastElem
+//     }
+
+//     for (const dataPoint of graphData) {
+//         let timestamp = dataPoint["timestamp"];
+//         let date = new Date(timestamp * 1000);
+//         let date_str = date.getDate()+
+//             "/"+(date.getMonth()+1)+
+//             "/"+date.getFullYear()+
+//             " "+date.getHours()+
+//             ":"+date.getMinutes()+
+//             ":"+date.getSeconds();
+//         ret.push(date_str);
+//     }
+
+//     return ret;
+// }
+
+const Graph = props =>{
+
+    const [myDataPoints, setMyDataPoints] = useState([]);
+    const [graphTitle, setGraphTitle] = useState("[no title]");
+    const { location } = useParams()
+    // const [times, setTimes] = useState([]);
+
+    useEffect(() => {
+
+        let dataType = props.dataType;
+        let url = location + "/" + dataType;
+        
+        let plantation_temperature_data = fetchData(url); // data is a promise object
+        plantation_temperature_data.then(function (result) {
+            setMyDataPoints(getDataPoints(result));
+            setGraphTitle(processString(dataType));
+            // setTimes(getTimes(result));
+        });
+
+    }, []);
+
     const options = {
         animationEnabled: true,
         width: 450,
-        theme: "light2", // "light1", "dark1", "dark2"
+        theme: "light2",
         title:{
-            text: "Soil Water Tension"
+            text: graphTitle
         },
         axisY: {
-            title: "medida idk o que raio a tensão leva",
-            suffix: "%"
+            title: graphTitle,
+            suffix: units[graphTitle]
         },
         axisX: {
-            title: "Week of Year",
-            prefix: "W",
+            title: "Time",
+            //prefix: "W",
             interval: 2
         },
         data: [{
-            type: "line",
-            toolTipContent: "Week {x}: {y}%",
-            dataPoints: [
-                { x: 1, y: 64 },
-                { x: 2, y: 61 },
-                { x: 3, y: 64 },
-                { x: 4, y: 62 },
-                { x: 5, y: 64 },
-                { x: 6, y: 60 },
-                { x: 7, y: 58 },
-                { x: 8, y: 59 },
-                { x: 9, y: 53 },
-                { x: 10, y: 54 },
-                { x: 11, y: 61 },
-                { x: 12, y: 60 },
-                { x: 13, y: 55 },
-                { x: 14, y: 60 },
-                { x: 15, y: 56 },
-                { x: 16, y: 60 },
-                { x: 17, y: 59.5 },
-                { x: 18, y: 63 },
-                { x: 19, y: 58 },
-                { x: 20, y: 54 },
-                { x: 21, y: 59 },
-                { x: 22, y: 64 },
-                { x: 23, y: 59 }
-            ]
+            type: "spline",
+            indexLabel: "{x}: {y}",
+            // toolTipContent: "Week {x}: {y}%",
+            dataPoints: myDataPoints
         }]
     }
 

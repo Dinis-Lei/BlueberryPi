@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ies.blueberry.exception.ResourceNotFoundException;
 import com.ies.blueberry.model.NetHarvest;
+import com.ies.blueberry.model.Alert;
 import com.ies.blueberry.model.Location;
 import com.ies.blueberry.model.PlantationTemperature;
 import com.ies.blueberry.model.SoilPH;
@@ -57,16 +59,47 @@ public class APIController {
         return ResponseEntity.ok().body(l);
     }
 
-    // @GetMapping("/locations/{location}/{date}") 
-    // public ResponseEntity<List<List<Object>>> getLocationByName(@PathVariable(value = "location") String location,@PathVariable(value = "date") String date )
-    //     throws ResourceNotFoundException {
-    //     Location l = dataServ.getLocationByName(location);
-    //     if(l==null) {
-    //         throw new ResourceNotFoundException("Location not found for this name :: " + location);
-    //     }
-    //     return ResponseEntity.ok().body(dataServ.getDataByDate(location,date));
-    // }
+    @GetMapping("/alerts")
+    public ResponseEntity<List<Alert>> getAllAlerts() throws ResourceNotFoundException {
+        List<Alert> alerts = dataServ.getAlerts();
+        if(alerts == null) { throw new ResourceNotFoundException("Alerts not found"); }
+        return ResponseEntity.ok().body(alerts);
+    }
 
+    @PostMapping("/alerts")
+    public Alert createAlert(@Valid @RequestBody Alert a) {
+        return dataServ.saveAlert(a);
+    }
+
+    @DeleteMapping("/alerts/{id}")
+    public void deleteAlert(@PathVariable(value = "id") String s_id) {
+        try {
+            long id = Long.parseLong(s_id);
+            dataServ.deleteAlert(id);
+        } 
+        catch(NumberFormatException e) { System.out.println("Oh naur");}
+    }
+
+    @DeleteMapping("/alerts")
+    public void clearAlerts() {
+        dataServ.deleteAllAlerts();
+    }
+
+    @GetMapping("/{location}/{sensor}/alert")
+    public ResponseEntity<List<Alert>> getAlertByLocationAndSensor(
+        @PathVariable(value = "location") String location, @PathVariable(value = "sensor") String sensor) 
+    throws ResourceNotFoundException {
+        List<Alert> alerts = dataServ.getAlertByLocationAndSensor(location, sensor);
+        if(alerts==null){
+            throw new ResourceNotFoundException("Location not found for this id :: " + location);
+        }
+        return ResponseEntity.ok().body(alerts);
+    }
+
+    @PostMapping("/{location}/{sensor}/alert")
+    public Alert createAlert(@Valid @RequestBody Alert a, @PathVariable(value = "location") String location, @PathVariable(value = "sensor") String sensor) {
+        return dataServ.saveAlert(a);
+    }
 
     //Plantation Temperature
 
