@@ -73,6 +73,17 @@ public class APIController {
         return ResponseEntity.ok().body(data);
     }
 
+    @GetMapping("/{location}/{sensor}/{date}/{limit}")
+    public ResponseEntity<List<Optional<Object>>> getAlertByLocationAndSensorWithLimit(
+        @PathVariable(value = "location") String location, @PathVariable(value = "sensor") String sensor,@PathVariable(value = "date") String date,@PathVariable(value = "limit") Integer limit) 
+    throws ResourceNotFoundException {
+        List<Optional<Object>> data = dataServ.getDataByDateWithLimit(location, date, sensor,limit);
+        if(data==null){
+            throw new ResourceNotFoundException("Data not found for this id :: " + location);
+        }
+        return ResponseEntity.ok().body(data);
+    }
+
     @GetMapping("/alerts")
     public ResponseEntity<List<Alert>> getAllAlerts() throws ResourceNotFoundException {
         List<Alert> alerts = dataServ.getAlerts();

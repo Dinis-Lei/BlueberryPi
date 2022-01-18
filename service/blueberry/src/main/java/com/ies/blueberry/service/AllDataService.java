@@ -26,8 +26,11 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -106,24 +109,45 @@ public class AllDataService {
         ZoneId z = ZoneId.of("Europe/Lisbon");
         Long begin = today.atStartOfDay(z).toEpochSecond();
         Long end = tomorrow.atStartOfDay(z).toEpochSecond();
+        List<Optional<Object>> results = new ArrayList<Optional<Object>>();
         switch(dataType){
             case "plantation_temperature":
-            return repPlantationTemperature.findByLocationAndTimestampBetween(name, begin, end);
+                results = repPlantationTemperature.findByLocationAndTimestampBetween(name, begin, end);
+                Collections.reverse(results);
+                return results;
             case "net_harvest":
-                System.out.println("Im here");
-                return repNetHarvest.findByLocationAndTimestampBetween(name, begin, end);
+                results = repNetHarvest.findByLocationAndTimestampBetween(name, begin, end);
+                Collections.reverse(results);
+                return results;
             case "soil_ph":
-                return repSoilPH.findByLocationAndTimestampBetween(name, begin, end);
+                results = repSoilPH.findByLocationAndTimestampBetween(name, begin, end);
+                Collections.reverse(results);
+                return results;
             case "soil_water_tension":
-                return repSoilWaterTension.findByLocationAndTimestampBetween(name, begin, end);
+                results = repSoilWaterTension.findByLocationAndTimestampBetween(name, begin, end);
+                Collections.reverse(results);
+                return results;
             case "unit_loss":
-                return repUnitLoss.findByLocationAndTimestampBetween(name, begin, end);
+                results = repUnitLoss.findByLocationAndTimestampBetween(name, begin, end);
+                Collections.reverse(results);
+                return results;
             case "storage_temperature":
-                return repStorageTemp.findByLocationAndTimestampBetween(name, begin, end);
+                results = repStorageTemp.findByLocationAndTimestampBetween(name, begin, end);
+                Collections.reverse(results);
+                return results;
             case "storage_humidity":    
-                return repStorageHumidity.findByLocationAndTimestampBetween(name, begin, end);
+                results = repStorageHumidity.findByLocationAndTimestampBetween(name, begin, end);
+                Collections.reverse(results);
+                return results;
         }
-        return null;
+        return results;
+    }
+
+    public List<Optional<Object>> getDataByDateWithLimit(String name, String date,String dataType, Integer limit)
+    {
+        List<Optional<Object>> results = getDataByDate(name, date, dataType);
+        Collections.reverse(results);
+        return results.stream().limit(limit).collect(Collectors.toList());
     }
 
     //Temperature Section
