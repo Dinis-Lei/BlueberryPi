@@ -402,7 +402,9 @@ public class AllDataService {
     }
 
     public void checkStorageHumidityAlert(String l, StorageHumidity sh){
+        System.out.println("AAAAAA");
         if (sh.getData() < 85) { 
+            System.out.println(sh);
             Double val = 85 - sh.getData();
             List<Alert> alerts = repAlert.findByLocationAndSensor(l, "storage_humidity");
             for(Alert a : alerts) {
