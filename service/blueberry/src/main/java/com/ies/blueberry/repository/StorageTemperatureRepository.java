@@ -5,9 +5,12 @@ import org.springframework.stereotype.Repository;
 
 import com.ies.blueberry.model.StorageTemperature;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface StorageTemperatureRepository extends JpaRepository<StorageTemperature, Long>{
     Optional<StorageTemperature> findStorageTemperatureByLocation(String location);
+    List<Optional<Object>> findByLocationAndTimestampBetween(String location,Long begin,Long end);
+
 }

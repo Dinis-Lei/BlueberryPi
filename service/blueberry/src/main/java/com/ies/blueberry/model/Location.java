@@ -9,6 +9,11 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Table;
+
+import com.ies.blueberry.repository.UnitLossRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -26,7 +31,6 @@ public class Location {
 
     @Column(name = "unitloss", nullable = false)
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    //@ElementCollection(targetClass=UnitLoss.class)
     private List<UnitLoss> unitloss = new ArrayList<UnitLoss>();
 
     @Column(name = "netharvest", nullable = false)
@@ -49,12 +53,12 @@ public class Location {
     //@ElementCollection(targetClass=SoilWaterTension.class)
     private List<SoilWaterTension> soilwatertension = new ArrayList<SoilWaterTension>();
 
-    //@Column(name = "storagehumidity", nullable = false)
+    @Column(name = "storagehumidity", nullable = false)
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     //@ElementCollection(targetClass=StorageHumidity.class)
     private List<StorageHumidity> storagehumidity = new ArrayList<StorageHumidity>();
 
-    //@Column(name = "storagetemperature", nullable = false)
+    @Column(name = "storagetemperature", nullable = false)
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     //@ElementCollection(targetClass=StorageTemperature.class)
     private List<StorageTemperature> storagetemperature = new ArrayList<StorageTemperature>();

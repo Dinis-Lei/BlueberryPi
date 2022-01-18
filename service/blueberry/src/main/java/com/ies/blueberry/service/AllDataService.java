@@ -12,7 +12,13 @@ import com.ies.blueberry.model.UnitLoss;
 import com.ies.blueberry.model.PlantationTemperature;
 import com.ies.blueberry.repository.AlertRepository;
 import com.ies.blueberry.repository.LocationRepository;
+import com.ies.blueberry.repository.NetHarvestRepository;
+import com.ies.blueberry.repository.PlantationTemperatureRepository;
+import com.ies.blueberry.repository.SoilPHRepository;
+import com.ies.blueberry.repository.SoilWaterTensionRepository;
 import com.ies.blueberry.repository.StorageHumidityRepository;
+import com.ies.blueberry.repository.StorageTemperatureRepository;
+import com.ies.blueberry.repository.UnitLossRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +27,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -35,7 +42,25 @@ public class AllDataService {
     private AlertRepository repAlert;
 
     @Autowired
+    private NetHarvestRepository repNetHarvest;
+
+    @Autowired
+    private PlantationTemperatureRepository repPlantationTemperature;
+
+    @Autowired
+    private SoilPHRepository repSoilPH;
+
+    @Autowired
+    private SoilWaterTensionRepository repSoilWaterTension;
+
+    @Autowired
     private StorageHumidityRepository repStorageHumidity;
+
+    @Autowired
+    private StorageTemperatureRepository repStorageTemp;
+
+    @Autowired
+    private UnitLossRepository repUnitLoss;
 
     public List<Location> getLocations() {
         return repLocation.findAll();
@@ -75,14 +100,31 @@ public class AllDataService {
         repLocation.deleteAll();
     }
 
-    // public List<List<Object>> getDataByDate(String name, String date) {
-    //     LocalDate today = LocalDate.parse(date);
-    //     LocalDate tomorrow = today.plusDays(1);
-    //     ZoneId z = ZoneId.of("Europe/Lisbon");
-    //     Long begin = today.atStartOfDay(z).toEpochSecond();
-    //     Long end = tomorrow.atStartOfDay(z).toEpochSecond();
-    //     return repLocation.findByTime(name, begin, end);
-    // }
+    public List<Optional<Object>> getDataByDate(String name, String date,String dataType) {
+        LocalDate today = LocalDate.parse(date);
+        LocalDate tomorrow = today.plusDays(1);
+        ZoneId z = ZoneId.of("Europe/Lisbon");
+        Long begin = today.atStartOfDay(z).toEpochSecond();
+        Long end = tomorrow.atStartOfDay(z).toEpochSecond();
+        switch(dataType){
+            case "plantation_temperature":
+            return repPlantationTemperature.findByLocationAndTimestampBetween(name, begin, end);
+            case "net_harvest":
+                System.out.println("Im here");
+                return repNetHarvest.findByLocationAndTimestampBetween(name, begin, end);
+            case "soil_ph":
+                return repSoilPH.findByLocationAndTimestampBetween(name, begin, end);
+            case "soil_water_tension":
+                return repSoilWaterTension.findByLocationAndTimestampBetween(name, begin, end);
+            case "unit_loss":
+                return repUnitLoss.findByLocationAndTimestampBetween(name, begin, end);
+            case "storage_temperature":
+                return repStorageTemp.findByLocationAndTimestampBetween(name, begin, end);
+            case "storage_humidity":    
+                return repStorageHumidity.findByLocationAndTimestampBetween(name, begin, end);
+        }
+        return null;
+    }
 
     //Temperature Section
     public List<PlantationTemperature> getPlantationTemperatureByLocation(String location) {

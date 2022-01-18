@@ -15,9 +15,5 @@ public interface LocationRepository extends JpaRepository<Location, Long>{
     // @Query(value = "SELECT * FROM location where name = :name",nativeQuery = true)
     // Optional<Location> findLocationByName(@Param("name") String name);
     Optional<Location> findLocationByName(String name);
-
-//     @Query(value = "SELECT unitloss,netharvest,plantationtemperature,soilph,soilwatertension,storagehumidity,storagetemperature FROM location where name = :name",nativeQuery = true)
-//     //@Query(value = "SELECT * FROM location where name = :name",nativeQuery = true)
-//     List<List<Object>> findByTime(@Param("name") String name);
  }
 

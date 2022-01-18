@@ -5,9 +5,12 @@ import org.springframework.stereotype.Repository;
 
 import com.ies.blueberry.model.StorageHumidity;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface StorageHumidityRepository extends JpaRepository<StorageHumidity, Long>{
     Optional<StorageHumidity> findStorageHumidityByLocation(String location);
+    List<Optional<Object>> findByLocationAndTimestampBetween(String location,Long begin,Long end);
+
 }

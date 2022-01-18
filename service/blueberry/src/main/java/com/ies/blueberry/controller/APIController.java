@@ -1,6 +1,7 @@
 package com.ies.blueberry.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -57,6 +58,17 @@ public class APIController {
             throw new ResourceNotFoundException("Location not found for this name :: " + location);
         }
         return ResponseEntity.ok().body(l);
+    }
+
+    @GetMapping("/{location}/{sensor}/{date}")
+    public ResponseEntity<List<Optional<Object>>> getAlertByLocationAndSensor(
+        @PathVariable(value = "location") String location, @PathVariable(value = "sensor") String sensor,@PathVariable(value = "date") String date) 
+    throws ResourceNotFoundException {
+        List<Optional<Object>> data = dataServ.getDataByDate(location, date, sensor);
+        if(data==null){
+            throw new ResourceNotFoundException("Data not found for this id :: " + location);
+        }
+        return ResponseEntity.ok().body(data);
     }
 
     @GetMapping("/alerts")
