@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface SoilPHRepository extends JpaRepository<SoilPH, Long>{
-    Optional<SoilPH> findSoilPHByLocation(String location);
+    List<Optional<Object>> findByLocation(String location);
     List<Optional<Object>> findByLocationAndTimestampBetween(String location,Long begin,Long end);
 
 }

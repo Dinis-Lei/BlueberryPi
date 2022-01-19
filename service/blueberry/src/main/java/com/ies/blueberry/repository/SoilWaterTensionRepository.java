@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface SoilWaterTensionRepository extends JpaRepository<SoilWaterTension, Long>{
-    Optional<SoilWaterTension> findSoilWaterTensionByLocation(String location);
+    List<Optional<Object>> findByLocation(String location);
     List<Optional<Object>> findByLocationAndTimestampBetween(String location,Long begin,Long end);
 
 }

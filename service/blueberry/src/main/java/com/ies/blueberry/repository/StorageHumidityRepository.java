@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface StorageHumidityRepository extends JpaRepository<StorageHumidity, Long>{
-    Optional<StorageHumidity> findStorageHumidityByLocation(String location);
+    List<Optional<Object>> findByLocation(String location);
     List<Optional<Object>> findByLocationAndTimestampBetween(String location,Long begin,Long end);
 
 }

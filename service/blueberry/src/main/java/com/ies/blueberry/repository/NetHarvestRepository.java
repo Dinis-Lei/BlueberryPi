@@ -10,6 +10,6 @@ import java.util.Optional;
 
 @Repository
 public interface NetHarvestRepository extends JpaRepository<NetHarvest, Long>{
-    Optional<NetHarvest> findNetHarvestByLocation(String location);
+    List<Optional<Object>> findByLocation(String location);
     List<Optional<Object>> findByLocationAndTimestampBetween(String location,Long begin,Long end);
 }

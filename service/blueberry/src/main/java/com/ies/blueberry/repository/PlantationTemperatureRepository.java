@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface PlantationTemperatureRepository extends JpaRepository<PlantationTemperature, Long>{
-    Optional<PlantationTemperature> findPlantationTemperatureByLocation(String location);
+    List<Optional<Object>> findByLocation(String location);
     List<Optional<Object>> findByLocationAndTimestampBetween(String location,Long begin,Long end);
 
 }

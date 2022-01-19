@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface UnitLossRepository extends JpaRepository<UnitLoss, Long>{
-    Optional<UnitLoss> findUnitLossByLocation(String location);
+    List<Optional<Object>> findByLocation(String location);
     List<Optional<Object>> findByLocationAndTimestampBetween(String location,Long begin,Long end);
 
 }
