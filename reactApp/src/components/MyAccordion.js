@@ -3,12 +3,15 @@ import Accordion from 'react-bootstrap/Accordion';
 import LocationInfo from "./LocationInfo";
 import DailyInfo from "./DailyInfo";
 import { fetchData } from "../App";
+import { Container, Table } from "react-bootstrap";
 
 export const getLocations = (JSONData) => {
     let ret = [];
     for (let loc of JSONData) {
         ret.push(loc["name"]);
     }
+    console.log(JSONData)
+    console.log(ret)
     return ret;
 }
 
@@ -50,7 +53,7 @@ const MyAccordion = () => {
             <div style={{margin: '3%' }}>
                 <LocationInfo />
             </div>
-            <div style={{ width: '50%', margin: 'auto', marginTop: '1%' }}>
+            <Container style={{ width: '50%', margin: 'auto', marginTop: '1%' }}>
                 <Accordion defaultActiveKey="0" flush>
                     
                     {
@@ -62,28 +65,27 @@ const MyAccordion = () => {
                                 <Accordion.Header>{elem}</Accordion.Header>
 
                                 <Accordion.Body style={{ backgroundImage: 'url(' + imgs[locations_lst.indexOf(elem)] + ')' }}>
-                                <div style={{ position: 'relative' }}>
-                                    <table style={{ margin: '0 auto' }}>
-                                        <tbody>
-                                            <tr>
-                                                <td> <DailyInfo dataType={pt} units={pt_u} location={elem} /> </td>
-                                                <td> <DailyInfo dataType={nh} units={nh_u} location={elem} /> </td>
-                                                <td> <DailyInfo dataType={sp} units={sp_u} location={elem} /> </td>
-                                            </tr>
-                                            <tr>
-                                                <td> <DailyInfo dataType={swt} units={swt_u} location={elem} /> </td>
-                                                <td> <DailyInfo dataType={ul} units={ul_u} location={elem} /> </td>
-                                                <td> <DailyInfo dataType={st} units={st_u} location={elem} /> </td>
-                                            </tr>
-                                            <tr>
-                                                <td></td>
-                                                <td> <DailyInfo dataType={sh} units={sh_u} location={elem} /> </td>
-                                                <td></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-
-                                </div>
+                                    <div style={{ position: 'relative' }}>
+                                        <Table style={{ margin: '0 auto' }} responsive>
+                                            <tbody>
+                                                <tr>
+                                                    <td> <DailyInfo dataType={pt} units={pt_u} location={elem} /> </td>
+                                                    <td> <DailyInfo dataType={nh} units={nh_u} location={elem} /> </td>
+                                                    <td> <DailyInfo dataType={sp} units={sp_u} location={elem} /> </td>
+                                                </tr>
+                                                <tr>
+                                                    <td> <DailyInfo dataType={swt} units={swt_u} location={elem} /> </td>
+                                                    <td> <DailyInfo dataType={ul} units={ul_u} location={elem} /> </td>
+                                                    <td> <DailyInfo dataType={st} units={st_u} location={elem} /> </td>
+                                                </tr>
+                                                <tr>
+                                                    <td></td>
+                                                    <td> <DailyInfo dataType={sh} units={sh_u} location={elem} /> </td>
+                                                    <td></td>
+                                                </tr>
+                                            </tbody>
+                                        </Table>
+                                    </div>
                                 </Accordion.Body>
 
                             </Accordion.Item>
@@ -93,7 +95,7 @@ const MyAccordion = () => {
                     }
 
                 </Accordion>
-            </div>
+            </Container>
         </div>
 
     )

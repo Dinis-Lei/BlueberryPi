@@ -2,7 +2,7 @@ import logo from './logo.svg';
 import './App.css';
 import React, { Component, useState } from 'react';
 import { Routes, Route, Link } from "react-router-dom";
-import { ToggleButton } from 'react-bootstrap';
+import { Container, ToggleButton, Row, Col } from 'react-bootstrap';
 import { ButtonGroup } from 'react-bootstrap';
 import { useEffect } from "react";
 import { Navigate } from 'react-router-dom';
@@ -21,7 +21,7 @@ let CanvasJS = CanvasJSReact.CanvasJS;
 let CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 export const fetchData = (str) => {
-  return fetch("http://192.168.160.210:8080/api/" + str)
+  return fetch("http://localhost:8080/api/" + str)
     .then((response) => response.json());
 }
 
@@ -40,6 +40,8 @@ const App = () => {
   const [checked, setChecked] = useState(false);
   const [radioValue, setRadioValue] = useState('1');
   const [alertsExist, setAlertsExist] = useState(false);
+
+  const [frontPage, setFrontPage] = useState(true);
 
   const radios = [
     { name: 'Plantation', value: '1' },
@@ -148,12 +150,10 @@ const App = () => {
                         onChange={(e) => {
                           setRadioValue(e.currentTarget.value);
                           if (e.currentTarget.value == 1) {
-                            document.getElementById('plantation').style.display = 'block';
-                            document.getElementById('storage').style.display = 'none';
+                            setFrontPage(true);
                           }
                           else {
-                            document.getElementById('plantation').style.display = 'none';
-                            document.getElementById('storage').style.display = 'block';
+                            setFrontPage(false);
                           }
                         }}
                       >
@@ -165,34 +165,53 @@ const App = () => {
               </div>
 
               {/* PLANTATION DATA */}
-              <div id='plantation'>
-                <div style={{ width: '40%', float: 'right' }}>
-                  <SideAlerts alerts={alertsExist} />
-                </div>
-                <div className="d-flex" style={{ marginTop: '50px', paddingLeft: '5%', width: '60%' }}>
-                  <Graph dataType="soil_water_tension" />
-                  <Graph dataType="plantation_temperature" />
-                </div>
-                <div className="d-flex" style={{ paddingLeft: '5%', width: '60%' }}>
-                  <Graph dataType="soil_ph" />
-                  <Graph dataType="net_harvest" />
-                </div>
-              </div>
-
-              {/* STORAGE DATA */}
-              <div id='storage' style={{ display: 'none' }}>
-                <div style={{ width: '40%', float: 'right' }}>
-                  <SideAlerts alerts={alertsExist} />
-                </div>
-                <div className="d-flex" style={{ marginTop: '50px', paddingLeft: '5%', width: '60%' }}>
-                  <Graph dataType="storage_humidity" />
-                  <Graph dataType="unit_loss" />
-                </div>
-                <div className="d-flex" style={{ paddingLeft: '5%', width: '60%' }}>
-                  <Graph dataType="storage_temperature" />
-                </div>
-              </div>
-
+              {frontPage == true &&
+                <Row id='plantation'>
+                  <Col xl={9} md={12}>
+                    <Row style={{ marginTop: '50px', paddingLeft: '5%' }}>
+                      <Col xl={6} lg={12}>
+                        <Graph dataType="soil_water_tension" />
+                      </Col>
+                      <Col  xl={6} lg={12}>
+                        <Graph dataType="plantation_temperature" />
+                      </Col>  
+                    </Row>
+                    <Row style={{ marginTop: '50px', paddingLeft: '5%' }}>
+                      <Col xl={6} lg={12}>
+                        <Graph dataType="soil_ph" />
+                      </Col>
+                      <Col  xl={6} lg={12}>
+                        <Graph dataType="net_harvest" />
+                      </Col>  
+                    </Row>
+                  </Col>
+                  <Col xl={3} md={12}>
+                    <SideAlerts alerts={alertsExist} />
+                  </Col>
+                </Row>
+              }
+              { frontPage == false &&
+                <Row id='storage'>
+                  <Col xl={9} lg={12}>
+                    <Row style={{ marginTop: '50px', paddingLeft: '5%' }}>
+                      <Col xl={6} lg={12}>
+                        <Graph dataType="storage_humidity" />
+                      </Col>
+                      <Col  xl={6} lg={12}>
+                        <Graph dataType="unit_loss" />
+                      </Col>  
+                    </Row>
+                    <Row style={{ marginTop: '50px', paddingLeft: '5%' }}>
+                      <Col xl={6} lg={12}>
+                        <Graph dataType="storage_temperature" />
+                      </Col>
+                    </Row>
+                  </Col>
+                  <Col xl={3} lg={12}>
+                    <SideAlerts alerts={alertsExist} />
+                  </Col>
+                </Row>
+              }
             </div>
           }></Route>
 

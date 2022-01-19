@@ -52,7 +52,7 @@ const DailyInfo = props => {
     }, []);
 
     return(
-        <Card style={{ width: 'auto' }}>
+        <Card>
             <Card.Header>{title}</Card.Header>
             <ListGroup variant="flush">
                 <ListGroup.Item>{value}</ListGroup.Item>
