@@ -29,6 +29,9 @@ public class Alert {
     @Column(name = "val", nullable = false)
     private Double val;
 
+    @Column(name = "seen", nullable = false)
+    private Boolean seen;
+
     public Alert(){}
 
     public Alert(String location, String sensor, Long start, Long end, Double val) {
@@ -37,6 +40,7 @@ public class Alert {
         this.start = start;
         this.end = end;
         this.val = val;
+        this.seen = false;
     }
 
     public long getId() {
@@ -85,5 +89,13 @@ public class Alert {
 
     public void setVal(Double val) {
         this.val = val;
+    }
+
+    public Boolean getSeen() {
+        return seen;
+    }
+
+    public void setSeen(Boolean seen) {
+        this.seen = seen;
     }
 }
