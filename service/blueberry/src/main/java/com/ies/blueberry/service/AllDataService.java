@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -67,10 +66,6 @@ public class AllDataService {
 
     public List<Alert> getAlerts() {
         return repAlert.findAll();
-    }
-
-    public Alert getAlertById(long id) {
-        return repAlert.findById(id).orElse(null);
     }
 
     //Temperature Section
@@ -349,9 +344,7 @@ public class AllDataService {
     }
 
     public void checkStorageHumidityAlert(String l, StorageHumidity sh){
-        System.out.println("AAAAAA");
         if (sh.getData() < 85) { 
-            System.out.println(sh);
             Double val = 85 - sh.getData();
             List<Alert> alerts = repAlert.findByLocationAndSensor(l, "storage_humidity");
             for(Alert a : alerts) {
