@@ -32,12 +32,12 @@ export const getDataPoints = (JSONData) => {
     let counter = 1;
     let graphData;
 
-    if (JSONData.length < 10) {
+    if (JSONData.length < 20) {
         graphData = JSONData;
     }
     else {
         let firstElem = 0; 
-        let lastElem = 10;
+        let lastElem = 40;
         graphData = JSONData.slice(firstElem, lastElem); // não inclui lastElem
     }
     graphData.reverse()
@@ -78,12 +78,13 @@ export const getDataPoints = (JSONData) => {
 //     return ret;
 // }
 
-const Graph = props =>{
+const SoloGraphPage = props =>{
 
     const [myDataPoints, setMyDataPoints] = useState([]);
     const [graphTitle, setGraphTitle] = useState("[no title]");
     const { location } = useParams()
     const [flg, setFlg] = useState(true);
+    const { sensor } = useParams();
     // const [times, setTimes] = useState([]);
 
     useEffect(() => {
@@ -98,16 +99,17 @@ const Graph = props =>{
     })
 
     useEffect(() => {
-        //console.log("AAA")
-        let dataType = props.dataType;
-        let url = location + "/" + dataType;
+        console.log("LOCATION")
+        console.log(location)
         
-        let plantation_temperature_data = fetchData(url); // data is a promise object
-        plantation_temperature_data.then(function (result) {
+        let url = location + "/" + sensor;
+        
+        let data = fetchData(url); // data is a promise object
+        data.then(function (result) {
             setMyDataPoints(getDataPoints(result));
             //console.log(`${dataType}`)
             //console.log(myDataPoints)
-            setGraphTitle(processString(dataType));
+            setGraphTitle(processString(sensor));
             // setTimes(getTimes(result));
         });
 
@@ -115,7 +117,7 @@ const Graph = props =>{
 
     const options = {
         animationEnabled: true,
-        width: 450,
+        width: 1800,
         theme: "light2",
         title:{
             text: graphTitle
@@ -144,4 +146,4 @@ const Graph = props =>{
 
 }
 
-export default Graph;
+export default SoloGraphPage;

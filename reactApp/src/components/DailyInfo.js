@@ -41,6 +41,10 @@ const DailyInfo = props => {
     const title = processString(props.dataType)
     const [value, setValue] = useState("no information available");
 
+    const aStyle = {
+        'text-decoration': 'none'
+      };
+
     useEffect(() => {
         
         let data = fetchData(props.location + "/" + props.dataType); // data is a promise object
@@ -52,12 +56,14 @@ const DailyInfo = props => {
     }, []);
 
     return(
-        <Card>
+        <a style={aStyle} href={"/dashboard/"+props.location+"/"+props.dataType}>
+           <Card>
             <Card.Header>{title}</Card.Header>
             <ListGroup variant="flush">
                 <ListGroup.Item>{value}</ListGroup.Item>
             </ListGroup>
-        </Card>
+            </Card> 
+        </a>
     )
 
 }
