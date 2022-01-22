@@ -32,15 +32,15 @@ export const getDataPoints = (JSONData) => {
     let counter = 1;
     let graphData;
 
-    if (JSONData.length < 20) {
+    if (JSONData.length < 10) {
         graphData = JSONData;
     }
     else {
-        let firstElem = JSONData.length - 10; 
-        let lastElem = JSONData.length;
+        let firstElem = 0; 
+        let lastElem = 10;
         graphData = JSONData.slice(firstElem, lastElem); // não inclui lastElem
     }
-
+    graphData.reverse()
     for (const dataPoint of graphData) {
         let newElem = {x: counter, y: dataPoint["data"], label: process_date(dataPoint["timestamp"])};
         ret.push(newElem);
@@ -83,21 +83,37 @@ const Graph = props =>{
     const [myDataPoints, setMyDataPoints] = useState([]);
     const [graphTitle, setGraphTitle] = useState("[no title]");
     const { location } = useParams()
+    const [flg, setFlg] = useState(true);
     // const [times, setTimes] = useState([]);
 
     useEffect(() => {
+        //while(true){
+           setInterval(
+            () => {
+                console.log(flg)
+                setFlg(!flg)
+            }, 60000) 
+        //} 
+        
+    })
 
+    useEffect(() => {
+        console.log("AAA")
         let dataType = props.dataType;
         let url = location + "/" + dataType;
         
         let plantation_temperature_data = fetchData(url); // data is a promise object
         plantation_temperature_data.then(function (result) {
+            console.log(`${dataType}`)
+            console.log(myDataPoints)
             setMyDataPoints(getDataPoints(result));
+            console.log(`${dataType}`)
+            console.log(myDataPoints)
             setGraphTitle(processString(dataType));
             // setTimes(getTimes(result));
         });
 
-    }, []);
+    }, [flg]);
 
     const options = {
         animationEnabled: true,
