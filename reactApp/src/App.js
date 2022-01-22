@@ -21,7 +21,7 @@ let CanvasJS = CanvasJSReact.CanvasJS;
 let CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 export const fetchData = (str) => {
-  return fetch("http://localhost:8080/api/" + str)
+  return fetch("http://192.168.160.210:8080/api/" + str)
     .then((response) => response.json());
 }
 
