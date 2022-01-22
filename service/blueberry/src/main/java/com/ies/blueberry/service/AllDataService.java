@@ -9,10 +9,12 @@ import com.ies.blueberry.model.SoilWaterTension;
 import com.ies.blueberry.model.StorageHumidity;
 import com.ies.blueberry.model.StorageTemperature;
 import com.ies.blueberry.model.UnitLoss;
+import com.ies.blueberry.model.User;
 import com.ies.blueberry.model.PlantationTemperature;
 import com.ies.blueberry.repository.AlertRepository;
 import com.ies.blueberry.repository.LocationRepository;
 import com.ies.blueberry.repository.StorageHumidityRepository;
+import com.ies.blueberry.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,6 +36,9 @@ public class AllDataService {
 
     @Autowired
     private StorageHumidityRepository repStorageHumidity;
+
+    @Autowired
+    private UserRepository repUsers;
 
     public List<Location> getLocations() {
         return repLocation.findAll();
@@ -71,6 +76,18 @@ public class AllDataService {
 
     public Alert getAlertById(long id) {
         return repAlert.findById(id).orElse(null);
+    }
+
+    public List<User> getUsers() {
+        return repUsers.findAll();
+    }
+
+    public User saveUser(User u) {
+        return repUsers.save(u);
+    }
+
+    public User getUserByName(String username) {
+        return repUsers.findByUser(username);
     }
 
     //Temperature Section
@@ -370,5 +387,6 @@ public class AllDataService {
     public List<Alert> getStorageHumidityAlertByLocation(String location){
         return repAlert.findByLocationAndSensor(location, "storage_humidity");
     }
+
 }
 

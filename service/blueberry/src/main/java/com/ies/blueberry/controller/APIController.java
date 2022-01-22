@@ -27,6 +27,7 @@ import com.ies.blueberry.model.SoilWaterTension;
 import com.ies.blueberry.model.StorageHumidity;
 import com.ies.blueberry.model.StorageTemperature;
 import com.ies.blueberry.model.UnitLoss;
+import com.ies.blueberry.model.User;
 import com.ies.blueberry.service.AllDataService;
 
 @CrossOrigin
@@ -100,6 +101,29 @@ public class APIController {
     @PostMapping("/{location}/{sensor}/alert")
     public Alert createAlert(@Valid @RequestBody Alert a, @PathVariable(value = "location") String location, @PathVariable(value = "sensor") String sensor) {
         return dataServ.saveAlert(a);
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<List<User>> getUsers() throws ResourceNotFoundException {
+        List<User> users = dataServ.getUsers();
+        if(users== null){
+            throw new ResourceNotFoundException("No users found.");
+        }
+        return ResponseEntity.ok().body(users);
+    }
+
+    @PostMapping("/users")
+    public User createUser(@Valid @RequestBody User u) {
+        return dataServ.saveUser(u);
+    }   
+    
+    @GetMapping("/users/{user}")
+    public ResponseEntity<User> getUserByName(@PathVariable(value="user") String username) throws ResourceNotFoundException {
+        User user = dataServ.getUserByName(username);
+        if(user==null){
+            throw new ResourceNotFoundException("No user with username "+username);
+        }
+        return ResponseEntity.ok().body(user);
     }
 
     //Plantation Temperature
