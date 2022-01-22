@@ -132,6 +132,14 @@ const App = () => {
 
           }></Route>
 
+          <Route path="alerts" element={
+
+            <div>
+              <AlertHistory all={true} />
+            </div>
+
+          }></Route>
+
           <Route path=":location">
             <Route path="" element={ 
               <div>
@@ -224,7 +232,7 @@ const App = () => {
                 </div>
                 <SoloGraphPage />
                 <br/>
-                <AlertHistory />
+                <AlertHistory all={false} />
               </div>
             }></Route>
           </Route>
