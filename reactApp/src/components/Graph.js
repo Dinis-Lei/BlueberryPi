@@ -124,7 +124,7 @@ const Graph = props =>{
     }
 
     return (			
-    <CanvasJSChart options = {options} style={{width: "25%"}}
+    <CanvasJSChart options = {options} 
         //onRef={ref => this.chart = ref}
     />)
 
