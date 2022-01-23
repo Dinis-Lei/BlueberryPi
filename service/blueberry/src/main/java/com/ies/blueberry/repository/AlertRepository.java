@@ -9,15 +9,14 @@ import java.util.List;
 
 @Repository
 public interface AlertRepository extends JpaRepository<Alert, Long>{
-    List<Alert> findByLocationAndSensor(String location, String sensor);
 
-    List<Alert> findByLocationAndSensorAndStartAfterAndEndBefore(String location, String sensor, Long start, Long end);
+    List<Alert> findByLocationAndSensorAndStartGreaterThanEqualAndEndLessThanEqual(String location, String sensor, Long start, Long end);
 
-    List<Alert> findByLocationAndSensorAndSeen(String location, String sensor, Boolean seen);
+    List<Alert> findByLocationAndSensorAndSeenAndStartGreaterThanEqualAndEndLessThanEqual(String location, String sensor, Boolean seen, Long start, Long end);
 
-    List<Alert> findByLocationAndSensorAndSeenAndStartAfterAndEndBefore(String location, String sensor, Boolean seen, Long start, Long end);
+    List<Alert> findByStartGreaterThanEqualAndEndLessThanEqual(Long start, Long end);
 
-    List<Alert> findBySeen(Boolean seen);
+    List<Alert> findBySeenAndStartGreaterThanEqualAndEndLessThanEqual(Boolean seen, Long start, Long end);    
 
     List<Alert> findAll();
 }

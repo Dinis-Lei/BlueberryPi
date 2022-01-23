@@ -104,10 +104,10 @@ public class AllDataService {
             finish = e.toEpochSecond(ZoneOffset.UTC);
         }
             
-
-        if(seen == null) return repAlert.findByLocationAndSensorAndStartAfterAndEndBefore(location, sensor, begin, finish);
+        System.out.println("!!!!!!!!!!!!!!!" + begin + " " + finish);
+        if(seen == null) return repAlert.findByLocationAndSensorAndStartGreaterThanEqualAndEndLessThanEqual(location, sensor, begin, finish);
         else {
-            return repAlert.findByLocationAndSensorAndSeenAndStartAfterAndEndBefore(location, sensor, seen, begin, finish);
+            return repAlert.findByLocationAndSensorAndSeenAndStartGreaterThanEqualAndEndLessThanEqual(location, sensor, seen, begin, finish);
         }
         
     }
@@ -125,9 +125,27 @@ public class AllDataService {
         repAlert.deleteAll();
     }
 
-    public List<Alert> getAlerts(Boolean seen) {
-        if(seen == null) return repAlert.findAll();
-        else return repAlert.findBySeen(seen);
+    public List<Alert> getAlerts(Boolean seen, String start, String end) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy-HH-mm-ss");
+        Long begin;
+        Long finish;
+        if(start==null) {
+            begin = Long.MIN_VALUE;
+        }
+        else {
+            LocalDateTime s = LocalDateTime.parse(start, formatter);
+            begin = s.toEpochSecond(ZoneOffset.UTC);
+        }
+        if(end==null) {
+            finish = Long.MAX_VALUE;
+        }
+        else {
+            LocalDateTime e = LocalDateTime.parse(end, formatter);
+            finish = e.toEpochSecond(ZoneOffset.UTC);
+        }
+
+        if(seen == null) return repAlert.findByStartGreaterThanEqualAndEndLessThanEqual(begin, finish);
+        else return repAlert.findBySeenAndStartGreaterThanEqualAndEndLessThanEqual(seen, begin, finish);
     }
 
     public void deleteAll() {
