@@ -28,7 +28,6 @@ import com.ies.blueberry.model.SoilWaterTension;
 import com.ies.blueberry.model.StorageHumidity;
 import com.ies.blueberry.model.StorageTemperature;
 import com.ies.blueberry.model.UnitLoss;
-import com.ies.blueberry.model.User;
 import com.ies.blueberry.service.AllDataService;
 
 @CrossOrigin
@@ -38,7 +37,7 @@ public class APIController {
     @Autowired
     private AllDataService dataServ;
 
-    @GetMapping("/deleteall")
+    @DeleteMapping("/deleteall")
     public void deleteAll() {
         dataServ.deleteAll();
     }
@@ -100,8 +99,9 @@ public class APIController {
     }
 
     @GetMapping("/alerts")
-    public ResponseEntity<List<Alert>> getAllAlerts() throws ResourceNotFoundException {
-        List<Alert> alerts = dataServ.getAlerts();
+    public ResponseEntity<List<Alert>> getAllAlerts(@RequestParam(required = false) Boolean seen,
+    @RequestParam(required = false) String start, @RequestParam(required = false) String end) throws ResourceNotFoundException {
+        List<Alert> alerts = dataServ.getAlerts(seen, start, end);
         if(alerts == null) { throw new ResourceNotFoundException("Alerts not found"); }
         return ResponseEntity.ok().body(alerts);
     }
@@ -128,12 +128,22 @@ public class APIController {
         dataServ.deleteAllAlerts();
     }
 
-    @GetMapping("/{location}/{sensor}/alert")
+    @GetMapping("/{location}/alerts")
+    public ResponseEntity<List<Alert>> getAllAlerts(@PathVariable(value = "location") String location, @RequestParam(required = false) Boolean seen, 
+    @RequestParam(required = false) String start, @RequestParam(required = false) String end) throws ResourceNotFoundException {
+        List<Alert> alerts = dataServ.getAlertsLocation(location, seen, start, end);
+        if(alerts == null) { throw new ResourceNotFoundException("Alerts not found"); }
+        return ResponseEntity.ok().body(alerts);
+    }
+
+    @GetMapping("/{location}/{sensor}/alerts")
     public ResponseEntity<List<Alert>> getAlertByLocationAndSensor(
-        @PathVariable(value = "location") String location, @PathVariable(value = "sensor") String sensor) 
+        @PathVariable(value = "location") String location, @PathVariable(value = "sensor") String sensor, 
+        @RequestParam(required = false) Boolean seen, @RequestParam(required = false) String start, @RequestParam(required = false) String end) 
     throws ResourceNotFoundException {
-        List<Alert> alerts = dataServ.getAlertByLocationAndSensor(location, sensor);
-        if(alerts==null){
+        System.out.println("OI");
+        List<Alert> alerts = dataServ.getAlertByLocationAndSensor(location, sensor, seen, start, end);
+        if(alerts==null) {
             throw new ResourceNotFoundException("Location not found for this id :: " + location);
         }
         return ResponseEntity.ok().body(alerts);
@@ -142,30 +152,6 @@ public class APIController {
     @PostMapping("/{location}/{sensor}/alert")
     public Alert createAlert(@Valid @RequestBody Alert a, @PathVariable(value = "location") String location, @PathVariable(value = "sensor") String sensor) {
         return dataServ.saveAlert(a);
-    }
-
-
-    @GetMapping("/users")
-    public ResponseEntity<List<User>> getUsers() throws ResourceNotFoundException {
-        List<User> users = dataServ.getUsers();
-        if(users== null){
-            throw new ResourceNotFoundException("No users found.");
-        }
-        return ResponseEntity.ok().body(users);
-    }
-
-    @PostMapping("/users")
-    public User createUser(@Valid @RequestBody User u) {
-        return dataServ.saveUser(u);
-    }   
-    
-    @GetMapping("/users/{user}")
-    public ResponseEntity<User> getUserByName(@PathVariable(value="user") String username) throws ResourceNotFoundException {
-        User user = dataServ.getUserByName(username);
-        if(user==null){
-            throw new ResourceNotFoundException("No user with username "+username);
-        }
-        return ResponseEntity.ok().body(user);
     }
 
     // Plantation Temperature

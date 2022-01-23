@@ -8,7 +8,6 @@ import com.ies.blueberry.model.SoilWaterTension;
 import com.ies.blueberry.model.StorageHumidity;
 import com.ies.blueberry.model.StorageTemperature;
 import com.ies.blueberry.model.UnitLoss;
-import com.ies.blueberry.model.User;
 import com.ies.blueberry.model.PlantationTemperature;
 import com.ies.blueberry.repository.AlertRepository;
 import com.ies.blueberry.repository.LocationRepository;
@@ -17,7 +16,6 @@ import com.ies.blueberry.repository.PlantationTemperatureRepository;
 import com.ies.blueberry.repository.SoilPHRepository;
 import com.ies.blueberry.repository.SoilWaterTensionRepository;
 import com.ies.blueberry.repository.StorageHumidityRepository;
-import com.ies.blueberry.repository.UserRepository;
 import com.ies.blueberry.repository.StorageTemperatureRepository;
 import com.ies.blueberry.repository.UnitLossRepository;
 
@@ -63,9 +61,6 @@ public class AllDataService {
     private StorageHumidityRepository repStorageHumidity;
 
     @Autowired
-    private UserRepository repUsers;
-
-    @Autowired
     private StorageTemperatureRepository repStorageTemp;
 
     @Autowired
@@ -85,8 +80,54 @@ public class AllDataService {
         return l;
     }
 
-    public List<Alert> getAlertByLocationAndSensor(String location, String sensor){
-        return repAlert.findByLocationAndSensor(location, sensor);
+    public List<Alert> getAlertsLocation(String location, Boolean seen, String start, String end) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy-HH-mm-ss");
+        Long begin;
+        Long finish;
+        if(start==null) {
+            begin = Long.MIN_VALUE;
+        }
+        else {
+            LocalDateTime s = LocalDateTime.parse(start, formatter);
+            begin = s.toEpochSecond(ZoneOffset.UTC);
+        }
+        if(end==null) {
+            finish = Long.MAX_VALUE;
+        }
+        else {
+            LocalDateTime e = LocalDateTime.parse(end, formatter);
+            finish = e.toEpochSecond(ZoneOffset.UTC);
+        }
+
+        if(seen == null) return repAlert.findByLocationAndStartGreaterThanEqualAndEndLessThanEqual(location, begin, finish);
+        else return repAlert.findByLocationAndSeenAndStartGreaterThanEqualAndEndLessThanEqual(location, seen, begin, finish);
+    }
+
+    public List<Alert> getAlertByLocationAndSensor(String location, String sensor, Boolean seen, String start, String end){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy-HH-mm-ss");
+        Long begin;
+        Long finish;
+        if(start==null) {
+            begin = Long.MIN_VALUE;
+        }
+        else {
+            LocalDateTime s = LocalDateTime.parse(start, formatter);
+            begin = s.toEpochSecond(ZoneOffset.UTC);
+        }
+        if(end==null) {
+            finish = Long.MAX_VALUE;
+        }
+        else {
+            LocalDateTime e = LocalDateTime.parse(end, formatter);
+            finish = e.toEpochSecond(ZoneOffset.UTC);
+        }
+            
+        System.out.println("!!!!!!!!!!!!!!!" + begin + " " + finish);
+        if(seen == null) return repAlert.findByLocationAndSensorAndStartGreaterThanEqualAndEndLessThanEqual(location, sensor, begin, finish);
+        else {
+            return repAlert.findByLocationAndSensorAndSeenAndStartGreaterThanEqualAndEndLessThanEqual(location, sensor, seen, begin, finish);
+        }
+        
     }
 
     public Alert saveAlert(Alert a) {
@@ -102,8 +143,27 @@ public class AllDataService {
         repAlert.deleteAll();
     }
 
-    public List<Alert> getAlerts() {
-        return repAlert.findAll();
+    public List<Alert> getAlerts(Boolean seen, String start, String end) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy-HH-mm-ss");
+        Long begin;
+        Long finish;
+        if(start==null) {
+            begin = Long.MIN_VALUE;
+        }
+        else {
+            LocalDateTime s = LocalDateTime.parse(start, formatter);
+            begin = s.toEpochSecond(ZoneOffset.UTC);
+        }
+        if(end==null) {
+            finish = Long.MAX_VALUE;
+        }
+        else {
+            LocalDateTime e = LocalDateTime.parse(end, formatter);
+            finish = e.toEpochSecond(ZoneOffset.UTC);
+        }
+
+        if(seen == null) return repAlert.findByStartGreaterThanEqualAndEndLessThanEqual(begin, finish);
+        else return repAlert.findBySeenAndStartGreaterThanEqualAndEndLessThanEqual(seen, begin, finish);
     }
 
     public void deleteAll() {
@@ -249,18 +309,6 @@ public class AllDataService {
         List<Optional<Object>> results = getDataByDay(name, date, dataType);
         Collections.reverse(results);
         return results.stream().limit(limit).collect(Collectors.toList());
-    }
-
-    public List<User> getUsers() {
-        return repUsers.findAll();
-    }
-
-    public User saveUser(User u) {
-        return repUsers.save(u);
-    }
-
-    public User getUserByName(String username) {
-        return repUsers.findByUser(username);
     }
 
     //Temperature Section
@@ -560,6 +608,8 @@ public class AllDataService {
     public List<Alert> getStorageHumidityAlertByLocation(String location){
         return repAlert.findByLocationAndSensor(location, "storage_humidity");
     }
+
+    
 
 }
 
