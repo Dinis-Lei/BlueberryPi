@@ -10,6 +10,7 @@ const AlertHistory = props => {
     const {sensor} = useParams();
     const [alerts, setAlerts] = useState([]);
     const {all} = useState(props.all);
+    const [flg, setFlg] = useState(true);
 
     useEffect(() => {
         console.log(all)
@@ -34,7 +35,14 @@ const AlertHistory = props => {
                 setAlerts(result)
             }); 
         }
-    }, []) 
+    }, [flg]) 
+
+    useEffect(() => {
+        setInterval(
+         () => {
+             setFlg(!flg)
+         }, 60000) 
+ })
 
     return (
         <div >	 	

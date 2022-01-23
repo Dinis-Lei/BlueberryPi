@@ -1,21 +1,11 @@
 import React, { useEffect, useState } from "react"
-import Toast from 'react-bootstrap/Toast'
+import {Toast, Button, Row} from 'react-bootstrap'
 import ToastContainer from 'react-bootstrap/ToastContainer'
 import { useParams } from "react-router-dom"
 import { fetchData, processString } from "../App"
 
 
-const checkAlert = (alert) => {
-    alert.seen = true
-    const requestOptions = {
-        method: 'Put',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(alert)
-    };
-    fetch('https://localhost:8080/api/alerts', requestOptions)
-        .then(response => response.json())
-        .then(data => this.setState({ postId: data.id }));
-}
+
 
 const getDate = (start) => {
     let start_Date = new Date(start * 1000);
@@ -91,33 +81,28 @@ const SideAlerts = props => {
     const toggleShow = () => setShow(!show);
     const [alerts_dict, setAlertsDict] = useState([]);
     const {location} = useParams();
+    const [changed, setChanged] = useState(true)
+    const [flg, setFlg] = useState(true);
 
-    /* alerts_dict = {
-        location1: [
-        [
-            sensor1: ...,
-            val1: ...,
-            start1: ...,
-            end1: ...,
-        ],
-        [
-            sensor2: ...,
-            val2: ...,
-            start2: ...,
-            end2: ...,
-        ],
-        [...],
-        [...],
-        ...
-        ],
-        location2: [...],
-        location3: [...],
-        ...
-    } */
+    const checkAlert = (alert) => {
+        alert.seen = true
+        setChanged(!changed)
+        console.log(alert)
+        const requestOptions = {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(alert)
+        };
+        fetch('http://localhost:8080/api/alerts', requestOptions)
+            .then(response => {
+                //console.log(response.json())
+                response.json()
+            });
+    }
 
     useEffect(() => {
 
-        let alerts_data = fetchData("alerts");
+        let alerts_data = fetchData(location + "/alerts?seen=false");
         alerts_data.then(function(result){
             console.log("BBBBB")
             console.log(result)
@@ -125,9 +110,17 @@ const SideAlerts = props => {
             //setLocationsLst(getLocations(result));
         });
 
-    }, []);
+    }, [changed, flg]);
 
-    if (!props.alerts) {
+    useEffect(() => {
+           setInterval(
+            () => {
+                //console.log(flg)
+                setFlg(!flg)
+            }, 60000) 
+    })
+
+    if (!alerts_dict) {
         return (<div></div>);
     }
 
@@ -152,18 +145,13 @@ const SideAlerts = props => {
                         
                         alerts_dict.map(
                             (alert) => {
-                                console.log("AAAAA")
                                 console.log(alert)
-                                console.log(location)
-                                if(alert.location != location){
-                                    return (<div></div>);
-                                }
                                 return(
                                     !alert.seen && 
-                                    <div>
+                                    <Row className="border-bottom border-dark">
                                         <p>{processString(alert.sensor) + ": " + alert.val + ", since: " + getDate(alert.start) + ", until: " + getDate(alert.end)}</p>
-                                        <button onClick={checkAlert(alert)}></button>
-                                    </div>
+                                        <Button className="btn btn-danger col-2 mx-auto mb-2" onClick={() => checkAlert(alert)}>X</Button>
+                                    </Row>
                                 )
                             }
                         )
