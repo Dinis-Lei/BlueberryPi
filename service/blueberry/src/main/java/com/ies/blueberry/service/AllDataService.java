@@ -85,8 +85,9 @@ public class AllDataService {
         return l;
     }
 
-    public List<Alert> getAlertByLocationAndSensor(String location, String sensor){
-        return repAlert.findByLocationAndSensor(location, sensor);
+    public List<Alert> getAlertByLocationAndSensor(String location, String sensor, Boolean seen){
+        if(seen == null) return repAlert.findByLocationAndSensor(location, sensor);
+        else return repAlert.findByLocationAndSensorAndSeen(location, sensor, seen);
     }
 
     public Alert saveAlert(Alert a) {
@@ -102,8 +103,9 @@ public class AllDataService {
         repAlert.deleteAll();
     }
 
-    public List<Alert> getAlerts() {
-        return repAlert.findAll();
+    public List<Alert> getAlerts(Boolean seen) {
+        if(seen == null) return repAlert.findAll();
+        else return repAlert.findBySeen(seen);
     }
 
     public void deleteAll() {

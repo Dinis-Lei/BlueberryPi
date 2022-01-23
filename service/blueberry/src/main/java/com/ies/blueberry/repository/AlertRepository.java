@@ -11,5 +11,9 @@ import java.util.List;
 public interface AlertRepository extends JpaRepository<Alert, Long>{
     List<Alert> findByLocationAndSensor(String location, String sensor);
 
+    List<Alert> findByLocationAndSensorAndSeen(String location, String sensor, Boolean seen);
+
+    List<Alert> findBySeen(Boolean seen);
+
     List<Alert> findAll();
 }

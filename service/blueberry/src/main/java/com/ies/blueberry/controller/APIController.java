@@ -38,7 +38,7 @@ public class APIController {
     @Autowired
     private AllDataService dataServ;
 
-    @GetMapping("/deleteall")
+    @DeleteMapping("/deleteall")
     public void deleteAll() {
         dataServ.deleteAll();
     }
@@ -100,8 +100,8 @@ public class APIController {
     }
 
     @GetMapping("/alerts")
-    public ResponseEntity<List<Alert>> getAllAlerts() throws ResourceNotFoundException {
-        List<Alert> alerts = dataServ.getAlerts();
+    public ResponseEntity<List<Alert>> getAllAlerts(@RequestParam(required = false) Boolean seen) throws ResourceNotFoundException {
+        List<Alert> alerts = dataServ.getAlerts(seen);
         if(alerts == null) { throw new ResourceNotFoundException("Alerts not found"); }
         return ResponseEntity.ok().body(alerts);
     }
@@ -128,11 +128,11 @@ public class APIController {
         dataServ.deleteAllAlerts();
     }
 
-    @GetMapping("/{location}/{sensor}/alert")
+    @GetMapping("/{location}/{sensor}/alerts")
     public ResponseEntity<List<Alert>> getAlertByLocationAndSensor(
-        @PathVariable(value = "location") String location, @PathVariable(value = "sensor") String sensor) 
+        @PathVariable(value = "location") String location, @PathVariable(value = "sensor") String sensor, @RequestParam(required = false) Boolean seen) 
     throws ResourceNotFoundException {
-        List<Alert> alerts = dataServ.getAlertByLocationAndSensor(location, sensor);
+        List<Alert> alerts = dataServ.getAlertByLocationAndSensor(location, sensor, seen);
         if(alerts==null){
             throw new ResourceNotFoundException("Location not found for this id :: " + location);
         }
