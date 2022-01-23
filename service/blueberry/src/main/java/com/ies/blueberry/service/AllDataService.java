@@ -85,9 +85,31 @@ public class AllDataService {
         return l;
     }
 
-    public List<Alert> getAlertByLocationAndSensor(String location, String sensor, Boolean seen){
-        if(seen == null) return repAlert.findByLocationAndSensor(location, sensor);
-        else return repAlert.findByLocationAndSensorAndSeen(location, sensor, seen);
+    public List<Alert> getAlertByLocationAndSensor(String location, String sensor, Boolean seen, String start, String end){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy-HH-mm-ss");
+        Long begin;
+        Long finish;
+        if(start==null) {
+            begin = Long.MIN_VALUE;
+        }
+        else {
+            LocalDateTime s = LocalDateTime.parse(start, formatter);
+            begin = s.toEpochSecond(ZoneOffset.UTC);
+        }
+        if(end==null) {
+            finish = Long.MAX_VALUE;
+        }
+        else {
+            LocalDateTime e = LocalDateTime.parse(end, formatter);
+            finish = e.toEpochSecond(ZoneOffset.UTC);
+        }
+            
+
+        if(seen == null) return repAlert.findByLocationAndSensorAndStartAfterAndEndBefore(location, sensor, begin, finish);
+        else {
+            return repAlert.findByLocationAndSensorAndSeenAndStartAfterAndEndBefore(location, sensor, seen, begin, finish);
+        }
+        
     }
 
     public Alert saveAlert(Alert a) {
