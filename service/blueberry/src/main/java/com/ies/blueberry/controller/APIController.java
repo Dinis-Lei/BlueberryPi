@@ -99,8 +99,9 @@ public class APIController {
     }
 
     @GetMapping("/alerts")
-    public ResponseEntity<List<Alert>> getAllAlerts(@RequestParam(required = false) Boolean seen) throws ResourceNotFoundException {
-        List<Alert> alerts = dataServ.getAlerts(seen);
+    public ResponseEntity<List<Alert>> getAllAlerts(@RequestParam(required = false) Boolean seen,
+    @RequestParam(required = false) String start, @RequestParam(required = false) String end) throws ResourceNotFoundException {
+        List<Alert> alerts = dataServ.getAlerts(seen, start, end);
         if(alerts == null) { throw new ResourceNotFoundException("Alerts not found"); }
         return ResponseEntity.ok().body(alerts);
     }
@@ -129,10 +130,12 @@ public class APIController {
 
     @GetMapping("/{location}/{sensor}/alerts")
     public ResponseEntity<List<Alert>> getAlertByLocationAndSensor(
-        @PathVariable(value = "location") String location, @PathVariable(value = "sensor") String sensor, @RequestParam(required = false) Boolean seen) 
+        @PathVariable(value = "location") String location, @PathVariable(value = "sensor") String sensor, 
+        @RequestParam(required = false) Boolean seen, @RequestParam(required = false) String start, @RequestParam(required = false) String end) 
     throws ResourceNotFoundException {
-        List<Alert> alerts = dataServ.getAlertByLocationAndSensor(location, sensor, seen);
-        if(alerts==null){
+        System.out.println("OI");
+        List<Alert> alerts = dataServ.getAlertByLocationAndSensor(location, sensor, seen, start, end);
+        if(alerts==null) {
             throw new ResourceNotFoundException("Location not found for this id :: " + location);
         }
         return ResponseEntity.ok().body(alerts);
