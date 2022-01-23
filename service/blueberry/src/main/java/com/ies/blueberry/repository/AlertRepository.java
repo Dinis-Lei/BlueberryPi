@@ -22,5 +22,7 @@ public interface AlertRepository extends JpaRepository<Alert, Long>{
 
     List<Alert> findByLocationAndSeenAndStartGreaterThanEqualAndEndLessThanEqual(String location, Boolean seen, Long start, Long end);
 
+    List<Alert> findByLocationAndSensor(String location, String sensor);
+
     List<Alert> findAll();
 }
