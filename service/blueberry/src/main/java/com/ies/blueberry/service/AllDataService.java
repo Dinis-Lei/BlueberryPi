@@ -8,7 +8,6 @@ import com.ies.blueberry.model.SoilWaterTension;
 import com.ies.blueberry.model.StorageHumidity;
 import com.ies.blueberry.model.StorageTemperature;
 import com.ies.blueberry.model.UnitLoss;
-import com.ies.blueberry.model.User;
 import com.ies.blueberry.model.PlantationTemperature;
 import com.ies.blueberry.repository.AlertRepository;
 import com.ies.blueberry.repository.LocationRepository;
@@ -17,7 +16,6 @@ import com.ies.blueberry.repository.PlantationTemperatureRepository;
 import com.ies.blueberry.repository.SoilPHRepository;
 import com.ies.blueberry.repository.SoilWaterTensionRepository;
 import com.ies.blueberry.repository.StorageHumidityRepository;
-import com.ies.blueberry.repository.UserRepository;
 import com.ies.blueberry.repository.StorageTemperatureRepository;
 import com.ies.blueberry.repository.UnitLossRepository;
 
@@ -61,9 +59,6 @@ public class AllDataService {
 
     @Autowired
     private StorageHumidityRepository repStorageHumidity;
-
-    @Autowired
-    private UserRepository repUsers;
 
     @Autowired
     private StorageTemperatureRepository repStorageTemp;
@@ -251,18 +246,6 @@ public class AllDataService {
         List<Optional<Object>> results = getDataByDay(name, date, dataType);
         Collections.reverse(results);
         return results.stream().limit(limit).collect(Collectors.toList());
-    }
-
-    public List<User> getUsers() {
-        return repUsers.findAll();
-    }
-
-    public User saveUser(User u) {
-        return repUsers.save(u);
-    }
-
-    public User getUserByName(String username) {
-        return repUsers.findByUser(username);
     }
 
     //Temperature Section
