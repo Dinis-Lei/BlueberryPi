@@ -16,7 +16,11 @@ public interface AlertRepository extends JpaRepository<Alert, Long>{
 
     List<Alert> findByStartGreaterThanEqualAndEndLessThanEqual(Long start, Long end);
 
-    List<Alert> findBySeenAndStartGreaterThanEqualAndEndLessThanEqual(Boolean seen, Long start, Long end);    
+    List<Alert> findBySeenAndStartGreaterThanEqualAndEndLessThanEqual(Boolean seen, Long start, Long end); 
+    
+    List<Alert> findByLocationAndStartGreaterThanEqualAndEndLessThanEqual(String location, Long start, Long end);
+
+    List<Alert> findByLocationAndSeenAndStartGreaterThanEqualAndEndLessThanEqual(String location, Boolean seen, Long start, Long end);
 
     List<Alert> findAll();
 }
