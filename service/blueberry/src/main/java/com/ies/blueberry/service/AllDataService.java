@@ -148,7 +148,7 @@ public class AllDataService {
     }
 
     public List<Optional<Object>> getDataByDate(String l, String lowerlim, String upperlim, String dataType) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy-HH-mm-ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy-HH:mm:ss");
         Long begin;
         Long end;
         if(lowerlim==null) {
