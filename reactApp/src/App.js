@@ -197,7 +197,7 @@ const App = () => {
                       </Row>
                     </Col>
                     <Col xl={3} md={12}>
-                      <SideAlerts alerts={alertsExist} />
+                      <SideAlerts alerts={alertsExist}/>
                     </Col>
                   </Row>
                 }

@@ -4,12 +4,25 @@ import { useParams } from "react-router-dom";
 import { fetchData, processString } from "../App";
 
 
+
+const process_date = (timestamp) => {
+    let date = new Date(timestamp * 1000);
+    let date_str = date.getDate()+
+        "/"+(date.getMonth()+1)+
+        "/"+date.getFullYear()+
+        " "+date.getHours()+
+        ":"+date.getMinutes()+
+        ":"+date.getSeconds();
+    return date_str;
+  }
+
 const AlertHistory = props => {
 
     const {location} = useParams();
     const {sensor} = useParams();
     const [alerts, setAlerts] = useState([]);
     const {all} = useState(props.all);
+    const [flg, setFlg] = useState(true);
 
     useEffect(() => {
         console.log(all)
@@ -34,7 +47,14 @@ const AlertHistory = props => {
                 setAlerts(result)
             }); 
         }
-    }, []) 
+    }, [flg]) 
+
+    useEffect(() => {
+        setInterval(
+         () => {
+             setFlg(!flg)
+         }, 60000) 
+ })
 
     return (
         <div >	 	
@@ -59,8 +79,8 @@ const AlertHistory = props => {
                                     <td>{idx + 1}</td>
                                     {props.all && <td>{data.location}</td>}
                                     {props.all && <td>{data.sensor}</td>}
-                                    <td>{data.start}</td>
-                                    <td>{data.end}</td>
+                                    <td>{process_date(data.start)}</td>
+                                    <td>{process_date(data.end)}</td>
                                     <td>{data.val}</td>
                                 </tr>
                                 )

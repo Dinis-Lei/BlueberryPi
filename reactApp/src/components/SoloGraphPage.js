@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import CanvasJSReact from '../canvasjs.react';
 import { fetchData, processString } from "../App";
 import { useParams } from "react-router-dom"
+import RangeSlider from 'react-bootstrap-range-slider';
+import { Form, Col, Row } from "react-bootstrap";
 
 var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
@@ -27,56 +29,6 @@ const process_date = (timestamp) => {
     return date_str;
 }
 
-export const getDataPoints = (JSONData) => {
-    let ret = [];
-    let counter = 1;
-    let graphData;
-
-    if (JSONData.length < 20) {
-        graphData = JSONData;
-    }
-    else {
-        let firstElem = 0; 
-        let lastElem = 40;
-        graphData = JSONData.slice(firstElem, lastElem); // não inclui lastElem
-    }
-    graphData.reverse()
-    for (const dataPoint of graphData) {
-        let newElem = {x: counter, y: dataPoint["data"], label: process_date(dataPoint["timestamp"])};
-        ret.push(newElem);
-        counter += 1;
-    }
-
-    return ret;
-}
-
-// const getTimes = (JSONData) => {
-//     let ret = [];
-//     let graphData;
-
-//     if (JSONData.length < 20) {
-//         graphData = JSONData;
-//     }
-//     else {
-//         let firstElem = JSONData.length - 10; 
-//         let lastElem = JSONData.length;
-//         graphData = JSONData.slice(firstElem, lastElem); // não inclui lastElem
-//     }
-
-//     for (const dataPoint of graphData) {
-//         let timestamp = dataPoint["timestamp"];
-//         let date = new Date(timestamp * 1000);
-//         let date_str = date.getDate()+
-//             "/"+(date.getMonth()+1)+
-//             "/"+date.getFullYear()+
-//             " "+date.getHours()+
-//             ":"+date.getMinutes()+
-//             ":"+date.getSeconds();
-//         ret.push(date_str);
-//     }
-
-//     return ret;
-// }
 
 const SoloGraphPage = props =>{
 
@@ -85,7 +37,33 @@ const SoloGraphPage = props =>{
     const { location } = useParams()
     const [flg, setFlg] = useState(true);
     const { sensor } = useParams();
+    const [ nDataPoints, setnDataPoints ] = useState(100); 
+    const [ maxDataPoints, setMaxDataPoints] = useState(200);
     // const [times, setTimes] = useState([]);
+
+    const getDataPoints = (JSONData) => {
+        let ret = [];
+        let counter = 1;
+        let graphData;
+    
+        if (JSONData.length < nDataPoints) {
+            graphData = JSONData;
+            setnDataPoints(JSONData.length)
+        }
+        else {
+            let firstElem = 0; 
+            let lastElem = nDataPoints;
+            graphData = JSONData.slice(firstElem, lastElem); // não inclui lastElem
+        }
+        graphData.reverse()
+        for (const dataPoint of graphData) {
+            let newElem = {x: counter, y: dataPoint["data"], label: process_date(dataPoint["timestamp"])};
+            ret.push(newElem);
+            counter += 1;
+        }
+    
+        return ret;
+    }
 
     useEffect(() => {
         //while(true){
@@ -113,7 +91,9 @@ const SoloGraphPage = props =>{
             // setTimes(getTimes(result));
         });
 
-    }, [flg]);
+    }, [flg, nDataPoints]);
+
+    
 
     const options = {
         animationEnabled: true,
@@ -133,16 +113,31 @@ const SoloGraphPage = props =>{
         },
         data: [{
             type: "spline",
-            indexLabel: "{x}: {y}",
+            //indexLabel: "{x}: {y}",
             // toolTipContent: "Week {x}: {y}%",
             dataPoints: myDataPoints
         }]
     }
 
-    return (			
-    <CanvasJSChart options = {options} 
-        //onRef={ref => this.chart = ref}
-    />)
+    return (
+        <div>
+            <CanvasJSChart options = {options} 
+                //onRef={ref => this.chart = ref}
+            />
+            <div className="col-6 mx-auto">
+                <label for="customRange3" class="form-label">Data Points</label>
+                <Form>
+                <RangeSlider
+                                max={maxDataPoints }
+                                value={nDataPoints}
+                                onChange={e => setnDataPoints(e.target.value)}
+                                tooltip='on'
+                            />
+                </Form>
+            </div>
+            
+        </div>			
+    )
 
 }
 
