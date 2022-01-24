@@ -37,7 +37,8 @@ const SoloGraphPage = props =>{
     const { location } = useParams()
     const [flg, setFlg] = useState(true);
     const { sensor } = useParams();
-    const [ nDataPoints, setnDataPoints ] = useState(50); 
+    const [ nDataPoints, setnDataPoints ] = useState(100); 
+    const [ maxDataPoints, setMaxDataPoints] = useState(200);
     // const [times, setTimes] = useState([]);
 
     const getDataPoints = (JSONData) => {
@@ -112,7 +113,7 @@ const SoloGraphPage = props =>{
         },
         data: [{
             type: "spline",
-            indexLabel: "{x}: {y}",
+            //indexLabel: "{x}: {y}",
             // toolTipContent: "Week {x}: {y}%",
             dataPoints: myDataPoints
         }]
@@ -127,6 +128,7 @@ const SoloGraphPage = props =>{
                 <label for="customRange3" class="form-label">Data Points</label>
                 <Form>
                 <RangeSlider
+                                max={maxDataPoints }
                                 value={nDataPoints}
                                 onChange={e => setnDataPoints(e.target.value)}
                                 tooltip='on'
