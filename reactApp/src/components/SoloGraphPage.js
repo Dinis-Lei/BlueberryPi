@@ -174,23 +174,25 @@ const SoloGraphPage = props =>{
     return (	
         <div>
 
-            <table>
-                <thead>
-                    <tr>
-                        <td>
-                            <label>Start date:</label>
-                            <DatePicker onChange={setStartDate} />
-                            <HourPicker onChange={setStartHour} />
-                        </td>
-                        <td>
-                            <label>End date:</label>
-                            <DatePicker onChange={setEndDate} />
-                            <HourPicker onChange={setEndHour}/>
-                        </td>
-                    </tr>
-                    <Button onClick={filterByDate}>Filter</Button>
-                </thead>
-            </table>
+            <div style={{marginLeft: '5%'}}>
+                <table>
+                    <thead>
+                        <tr>
+                            <td>
+                                <label>Start date:</label>
+                                <DatePicker onChange={setStartDate} />
+                                <HourPicker onChange={setStartHour} />
+                            </td>
+                            <td>
+                                <label>End date:</label>
+                                <DatePicker onChange={setEndDate} />
+                                <HourPicker onChange={setEndHour}/>
+                            </td>
+                        </tr>
+                        <Button onClick={filterByDate}>Filter</Button>
+                    </thead>
+                </table>
+            </div>
 
             <CanvasJSChart options = {options} 
                 //onRef={ref => this.chart = ref}
