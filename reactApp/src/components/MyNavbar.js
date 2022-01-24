@@ -26,10 +26,13 @@ const MyNavbar = () => {
             <Nav className="me-auto">
               <Nav.Link href="/dashboard/home">Dashboard</Nav.Link>
             </Nav>
+            <Nav className="mr-auto">
+              <Nav.Link href="/dashboard/alerts">Alert History</Nav.Link>
+            </Nav>
             <Navbar.Collapse id="basic-navbar-nav">
               <Nav className="me-auto d-flex flex-grow-1">
                 {!logged && <Nav.Link href="#login">Login</Nav.Link>}
-                <NavDropdown title="History" id="basic-nav-dropdown" className="flex-grow-1">
+                <NavDropdown title="Locations" id="basic-nav-dropdown" className="flex-grow-1">
                   {
                     locations_lst.map(
                       (elem) => { return ( <NavDropdown.Item href={"/dashboard/"+elem}>{elem}</NavDropdown.Item>) }
@@ -39,6 +42,7 @@ const MyNavbar = () => {
                 {logged && <Navbar.Text className="ml-auto px-3" >Hello {name}!</Navbar.Text>}
               </Nav>
             </Navbar.Collapse>
+  
         </Navbar>
     )
 

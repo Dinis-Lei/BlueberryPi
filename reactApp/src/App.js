@@ -1,8 +1,8 @@
 import logo from './logo.svg';
 import './App.css';
 import React, { Component, useState } from 'react';
-import { Routes, Route, Link } from "react-router-dom";
-import { ToggleButton } from 'react-bootstrap';
+import { Routes, Route, Link, useParams } from "react-router-dom";
+import { Container, ToggleButton, Row, Col } from 'react-bootstrap';
 import { ButtonGroup } from 'react-bootstrap';
 import { useEffect } from "react";
 import { Navigate } from 'react-router-dom';
@@ -14,8 +14,10 @@ import Graph from './components/Graph';
 import CircularGraph from './components/CircularGraph';
 import SideAlerts from './components/SideAlerts';
 import MyAccordion from './components/MyAccordion';
+import SoloGraphPage from './components/SoloGraphPage'
 
 import { getLocations } from './components/MyAccordion';
+import AlertHistory from './components/AlertHistory';
 
 let CanvasJS = CanvasJSReact.CanvasJS;
 let CanvasJSChart = CanvasJSReact.CanvasJSChart;
@@ -40,6 +42,8 @@ const App = () => {
   const [checked, setChecked] = useState(false);
   const [radioValue, setRadioValue] = useState('1');
   const [alertsExist, setAlertsExist] = useState(false);
+
+  const [frontPage, setFrontPage] = useState(true);
 
   const radios = [
     { name: 'Plantation', value: '1' },
@@ -128,75 +132,112 @@ const App = () => {
 
           }></Route>
 
-          <Route path=":location" element={
+          <Route path="alerts" element={
+
             <div>
-              <div className="d-flex">
+              <AlertHistory all={true} />
+            </div>
+
+          }></Route>
+
+          <Route path=":location">
+            <Route path="" element={ 
+              <div>
+                <div className="d-flex">
+                  <div style={{ width: '50%', marginLeft: '2%', marginTop: '2%' }}>
+                    <LocationInfo />
+                  </div>
+                  <div style={{ width: '50%' }}>
+                    <ButtonGroup style={{ position: "absolute", right: '5%', top: '10%' }}>
+                      {radios.map((radio, idx) => (
+                        <ToggleButton
+                          key={idx}
+                          id={`radio-${idx}`}
+                          type="radio"
+                          letiant='outline-dark'
+                          name="radio"
+                          value={radio.value}
+                          checked={radioValue === radio.value}
+                          onChange={(e) => {
+                            setRadioValue(e.currentTarget.value);
+                            if (e.currentTarget.value == 1) {
+                              setFrontPage(true);
+                            }
+                            else {
+                              setFrontPage(false);
+                            }
+                          }}
+                        >
+                          {radio.name}
+                        </ToggleButton>
+                      ))}
+                    </ButtonGroup>
+                  </div>
+                </div>
+
+                {/* PLANTATION DATA */}
+                {frontPage == true &&
+                  <Row id='plantation'>
+                    <Col xl={9} md={12}>
+                      <Row style={{ marginTop: '50px', paddingLeft: '5%' }}>
+                        <Col xl={6} lg={12}>
+                          <Graph dataType="soil_water_tension" />
+                        </Col>
+                        <Col  xl={6} lg={12}>
+                          <Graph dataType="plantation_temperature" />
+                        </Col>  
+                      </Row>
+                      <Row style={{ marginTop: '50px', paddingLeft: '5%' }}>
+                        <Col xl={6} lg={12}>
+                          <Graph dataType="soil_ph" />
+                        </Col>
+                        <Col  xl={6} lg={12}>
+                          <Graph dataType="net_harvest" />
+                        </Col>  
+                      </Row>
+                    </Col>
+                    <Col xl={3} md={12}>
+                      <SideAlerts alerts={alertsExist}/>
+                    </Col>
+                  </Row>
+                }
+                { frontPage == false &&
+                  <Row id='storage'>
+                    <Col xl={9} lg={12}>
+                      <Row style={{ marginTop: '50px', paddingLeft: '5%' }}>
+                        <Col xl={6} lg={12}>
+                          <Graph dataType="storage_humidity" />
+                        </Col>
+                        <Col  xl={6} lg={12}>
+                          <Graph dataType="unit_loss" />
+                        </Col>  
+                      </Row>
+                      <Row style={{ marginTop: '50px', paddingLeft: '5%' }}>
+                        <Col xl={6} lg={12}>
+                          <Graph dataType="storage_temperature" />
+                        </Col>
+                      </Row>
+                    </Col>
+                    <Col xl={3} lg={12}>
+                      <SideAlerts alerts={alertsExist} />
+                    </Col>
+                  </Row>
+                }
+              </div>
+            }></Route>
+            <Route path=":sensor" element={
+              <div>
                 <div style={{ width: '50%', marginLeft: '2%', marginTop: '2%' }}>
                   <LocationInfo />
                 </div>
-                <div style={{ width: '50%' }}>
-                  <ButtonGroup style={{ position: "absolute", right: '5%', top: '10%' }}>
-                    {radios.map((radio, idx) => (
-                      <ToggleButton
-                        key={idx}
-                        id={`radio-${idx}`}
-                        type="radio"
-                        letiant='outline-dark'
-                        name="radio"
-                        value={radio.value}
-                        checked={radioValue === radio.value}
-                        onChange={(e) => {
-                          setRadioValue(e.currentTarget.value);
-                          if (e.currentTarget.value == 1) {
-                            document.getElementById('plantation').style.display = 'block';
-                            document.getElementById('storage').style.display = 'none';
-                          }
-                          else {
-                            document.getElementById('plantation').style.display = 'none';
-                            document.getElementById('storage').style.display = 'block';
-                          }
-                        }}
-                      >
-                        {radio.name}
-                      </ToggleButton>
-                    ))}
-                  </ButtonGroup>
-                </div>
+                <SoloGraphPage />
+                <br/>
+                <AlertHistory all={false} />
               </div>
-
-              {/* PLANTATION DATA */}
-              <div id='plantation'>
-                <div style={{ width: '40%', float: 'right' }}>
-                  <SideAlerts alerts={alertsExist} />
-                </div>
-                <div className="d-flex" style={{ marginTop: '50px', paddingLeft: '5%', width: '60%' }}>
-                  <Graph dataType="soil_water_tension" />
-                  <Graph dataType="plantation_temperature" />
-                </div>
-                <div className="d-flex" style={{ paddingLeft: '5%', width: '60%' }}>
-                  <Graph dataType="soil_ph" />
-                  <Graph dataType="net_harvest" />
-                </div>
-              </div>
-
-              {/* STORAGE DATA */}
-              <div id='storage' style={{ display: 'none' }}>
-                <div style={{ width: '40%', float: 'right' }}>
-                  <SideAlerts alerts={alertsExist} />
-                </div>
-                <div className="d-flex" style={{ marginTop: '50px', paddingLeft: '5%', width: '60%' }}>
-                  <Graph dataType="storage_humidity" />
-                  <Graph dataType="unit_loss" />
-                </div>
-                <div className="d-flex" style={{ paddingLeft: '5%', width: '60%' }}>
-                  <Graph dataType="storage_temperature" />
-                </div>
-              </div>
-
-            </div>
-          }></Route>
-
+            }></Route>
+          </Route>
         </Route>
+        
       </Routes>
     </div>
   );

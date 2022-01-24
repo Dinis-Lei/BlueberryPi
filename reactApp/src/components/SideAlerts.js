@@ -1,53 +1,67 @@
 import React, { useEffect, useState } from "react"
-import Toast from 'react-bootstrap/Toast'
+import {Toast, Button, Row} from 'react-bootstrap'
 import ToastContainer from 'react-bootstrap/ToastContainer'
+import { useParams } from "react-router-dom"
 import { fetchData, processString } from "../App"
 
-const getAlerts = (JSONData) => {
 
+
+
+const getDate = (start) => {
+    let start_Date = new Date(start * 1000);
+    console.log(start)
+    let start_date = start_Date.getDate()+
+        "/"+(start_Date.getMonth()+1)+
+        "/"+start_Date.getFullYear()+
+        " "+start_Date.getHours()+
+        ":"+start_Date.getMinutes()+
+        ":"+start_Date.getSeconds();
+    return start_date
+}
+
+const stringfyAlert = (alert) => {
     let ret = {}
   
-    for (let elem in JSONData) {
-        
-        let alert = JSONData[elem];
+    
 
-        let location = alert["location"];
+    let location = alert["location"];
+    console.log(alert.sensor)
+    let sensor = processString(alert["sensor"]);
+    let val = alert["val"];
 
-        let sensor = processString(alert["sensor"]);
-        let val = alert["val"];
+    let start = alert["start"];
+    let start_Date = new Date(start * 1000);
+    let start_date = start_Date.getDate()+
+        "/"+(start_Date.getMonth()+1)+
+        "/"+start_Date.getFullYear()+
+        " "+start_Date.getHours()+
+        ":"+start_Date.getMinutes()+
+        ":"+start_Date.getSeconds();
 
-        let start = alert["start"];
-        let start_Date = new Date(start * 1000);
-        let start_date = start_Date.getDate()+
-            "/"+(start_Date.getMonth()+1)+
-            "/"+start_Date.getFullYear()+
-            " "+start_Date.getHours()+
-            ":"+start_Date.getMinutes()+
-            ":"+start_Date.getSeconds();
+    let end = alert["end"];
+    let end_Date = new Date(end * 1000);
+    let end_date = end_Date.getDate()+
+        "/"+(end_Date.getMonth()+1)+
+        "/"+end_Date.getFullYear()+
+        " "+end_Date.getHours()+
+        ":"+end_Date.getMinutes()+
+        ":"+end_Date.getSeconds();
 
-        let end = alert["end"];
-        let end_Date = new Date(end * 1000);
-        let end_date = end_Date.getDate()+
-            "/"+(end_Date.getMonth()+1)+
-            "/"+end_Date.getFullYear()+
-            " "+end_Date.getHours()+
-            ":"+end_Date.getMinutes()+
-            ":"+end_Date.getSeconds();
+    let alert_str = sensor + ": " + val + ", since: " + start_date + ", until: " + end_date;
 
-        let alert_str = sensor + ": " + val + ", since: " + start_date + ", until: " + end_date;
-  
-        if (ret[location] != undefined) {
-            ret[location] = ret[location].concat([alert_str]);
-        }
-        else {
-            ret[location] = [alert_str];
-        }
-  
+    if (ret[location] != undefined) {
+        ret[location] = ret[location].concat([alert_str]);
     }
+    else {
+        ret[location] = [alert_str];
+    }
+  
+    
     console.log(ret)
     return ret;
-  
 }
+
+
 
 const getLocations = (JSONData) => {
     let ret = [];
@@ -65,43 +79,48 @@ const SideAlerts = props => {
 
     const [show, setShow] = React.useState(true);
     const toggleShow = () => setShow(!show);
-    const [alerts_dict, setAlertsDict] = useState({});
-    const [locations_lst, setLocationsLst] = useState([]);
+    const [alerts_dict, setAlertsDict] = useState([]);
+    const {location} = useParams();
+    const [changed, setChanged] = useState(true)
+    const [flg, setFlg] = useState(true);
 
-    /* alerts_dict = {
-        location1: [
-        [
-            sensor1: ...,
-            val1: ...,
-            start1: ...,
-            end1: ...,
-        ],
-        [
-            sensor2: ...,
-            val2: ...,
-            start2: ...,
-            end2: ...,
-        ],
-        [...],
-        [...],
-        ...
-        ],
-        location2: [...],
-        location3: [...],
-        ...
-    } */
+    const checkAlert = (alert) => {
+        alert.seen = true
+        setChanged(!changed)
+        console.log(alert)
+        const requestOptions = {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(alert)
+        };
+        fetch('http://localhost:8080/api/alerts', requestOptions)
+            .then(response => {
+                //console.log(response.json())
+                response.json()
+            });
+    }
 
     useEffect(() => {
 
-        let alerts_data = fetchData("alerts");
+        let alerts_data = fetchData(location + "/alerts?seen=false");
         alerts_data.then(function(result){
-            setAlertsDict(getAlerts(result));
-            setLocationsLst(getLocations(result));
+            console.log("BBBBB")
+            console.log(result)
+            setAlertsDict(result);
+            //setLocationsLst(getLocations(result));
         });
 
-    }, []);
+    }, [changed, flg]);
 
-    if (!props.alerts) {
+    useEffect(() => {
+           setInterval(
+            () => {
+                //console.log(flg)
+                setFlg(!flg)
+            }, 60000) 
+    })
+
+    if (!alerts_dict) {
         return (<div></div>);
     }
 
@@ -122,20 +141,23 @@ const SideAlerts = props => {
                     </Toast.Header>
                     <Toast.Body>
                     {
-                        locations_lst.map(
-                            (location) => {
+                        
+                        
+                        alerts_dict.map(
+                            (alert) => {
+                                console.log(alert)
                                 return(
-                                    alerts_dict[location].map(
-                                        (alert) => {
-                                            console.log(alert)
-                                            return(
-                                                <p>{alert}</p>
-                                            )
-                                        }
-                                    )
+                                    !alert.seen && 
+                                    <Row className="border-bottom border-dark">
+                                        <p>{processString(alert.sensor) + ": " + alert.val + ", since: " + getDate(alert.start) + ", until: " + getDate(alert.end)}</p>
+                                        <Button className="btn btn-danger col-2 mx-auto mb-2" onClick={() => checkAlert(alert)}>X</Button>
+                                    </Row>
                                 )
                             }
                         )
+                        
+                            
+                        
                     }
                     </Toast.Body>
                 </Toast>

@@ -1,6 +1,7 @@
 package com.ies.blueberry.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ies.blueberry.exception.ResourceNotFoundException;
@@ -34,6 +36,10 @@ public class APIController {
     @Autowired
     private AllDataService dataServ;
 
+    @DeleteMapping("/deleteall")
+    public void deleteAll() {
+        dataServ.deleteAll();
+    }
 
     @GetMapping("/locations")
     public List<Location> getLocations() {
@@ -55,9 +61,46 @@ public class APIController {
         return ResponseEntity.ok().body(l);
     }
 
+    @GetMapping("/{location}/{sensor}")
+    public ResponseEntity<List<Optional<Object>>> getSensorByDateAndLocation(
+        @PathVariable(value = "location") String location, @PathVariable(value = "sensor") String sensor, @RequestParam(required = false) String start, @RequestParam(required = false) String end
+    ) {
+        List<Optional<Object>> data;
+        if(start==null && end==null) {
+            data = dataServ.getData(location, sensor);
+        }
+        else {
+            data = dataServ.getDataByDate(location, start, end, sensor);
+        }
+        return ResponseEntity.ok().body(data);
+    }
+
+    @GetMapping("/{location}/{sensor}/{day}")
+    public ResponseEntity<List<Optional<Object>>> getSensorByDayAndLocation(
+        @PathVariable(value = "location") String location, @PathVariable(value = "sensor") String sensor,@PathVariable(value = "day") String date) 
+    throws ResourceNotFoundException {
+        List<Optional<Object>> data = dataServ.getDataByDay(location, date, sensor);
+        if(data==null){
+            throw new ResourceNotFoundException("Data not found for this id :: " + location);
+        }
+        return ResponseEntity.ok().body(data);
+    }
+
+    @GetMapping("/{location}/{sensor}/{day}/{limit}")
+    public ResponseEntity<List<Optional<Object>>> getSensorByDayAndLocationWithLimit(
+        @PathVariable(value = "location") String location, @PathVariable(value = "sensor") String sensor,@PathVariable(value = "day") String date,@PathVariable(value = "limit") Integer limit) 
+    throws ResourceNotFoundException {
+        List<Optional<Object>> data = dataServ.getDataByDayWithLimit(location, date, sensor,limit);
+        if(data==null){
+            throw new ResourceNotFoundException("Data not found for this id :: " + location);
+        }
+        return ResponseEntity.ok().body(data);
+    }
+
     @GetMapping("/alerts")
-    public ResponseEntity<List<Alert>> getAllAlerts() throws ResourceNotFoundException {
-        List<Alert> alerts = dataServ.getAlerts();
+    public ResponseEntity<List<Alert>> getAllAlerts(@RequestParam(required = false) Boolean seen,
+    @RequestParam(required = false) String start, @RequestParam(required = false) String end) throws ResourceNotFoundException {
+        List<Alert> alerts = dataServ.getAlerts(seen, start, end);
         if(alerts == null) { throw new ResourceNotFoundException("Alerts not found"); }
         return ResponseEntity.ok().body(alerts);
     }
@@ -81,12 +124,22 @@ public class APIController {
         dataServ.deleteAllAlerts();
     }
 
-    @GetMapping("/{location}/{sensor}/alert")
+    @GetMapping("/{location}/alerts")
+    public ResponseEntity<List<Alert>> getAllAlerts(@PathVariable(value = "location") String location, @RequestParam(required = false) Boolean seen, 
+    @RequestParam(required = false) String start, @RequestParam(required = false) String end) throws ResourceNotFoundException {
+        List<Alert> alerts = dataServ.getAlertsLocation(location, seen, start, end);
+        if(alerts == null) { throw new ResourceNotFoundException("Alerts not found"); }
+        return ResponseEntity.ok().body(alerts);
+    }
+
+    @GetMapping("/{location}/{sensor}/alerts")
     public ResponseEntity<List<Alert>> getAlertByLocationAndSensor(
-        @PathVariable(value = "location") String location, @PathVariable(value = "sensor") String sensor) 
+        @PathVariable(value = "location") String location, @PathVariable(value = "sensor") String sensor, 
+        @RequestParam(required = false) Boolean seen, @RequestParam(required = false) String start, @RequestParam(required = false) String end) 
     throws ResourceNotFoundException {
-        List<Alert> alerts = dataServ.getAlertByLocationAndSensor(location, sensor);
-        if(alerts==null){
+        System.out.println("OI");
+        List<Alert> alerts = dataServ.getAlertByLocationAndSensor(location, sensor, seen, start, end);
+        if(alerts==null) {
             throw new ResourceNotFoundException("Location not found for this id :: " + location);
         }
         return ResponseEntity.ok().body(alerts);
@@ -97,126 +150,126 @@ public class APIController {
         return dataServ.saveAlert(a);
     }
 
-    //Plantation Temperature
+    // Plantation Temperature
 
-    @GetMapping("/{location}/plantation_temperature") 
-    public ResponseEntity<List<PlantationTemperature>> getPlantationTemperatureByLocation(@PathVariable(value = "location") String location)
-        throws ResourceNotFoundException {
-        List<PlantationTemperature> plantationtemperature = dataServ.getPlantationTemperatureByLocation(location);
-        System.out.println("AQUI");
-        System.out.println(plantationtemperature);
-        if(plantationtemperature==null)
-        {
-            throw new ResourceNotFoundException("Location not found for this id :: " + location);
-        }
-        return ResponseEntity.ok().body(plantationtemperature);
-    }
+    // @GetMapping("/{location}/plantation_temperature") 
+    // public ResponseEntity<List<PlantationTemperature>> getPlantationTemperatureByLocation(@PathVariable(value = "location") String location)
+    //     throws ResourceNotFoundException {
+    //     List<PlantationTemperature> plantationtemperature = dataServ.getPlantationTemperatureByLocation(location);
+    //     System.out.println("AQUI");
+    //     System.out.println(plantationtemperature);
+    //     if(plantationtemperature==null)
+    //     {
+    //         throw new ResourceNotFoundException("Location not found for this id :: " + location);
+    //     }
+    //     return ResponseEntity.ok().body(plantationtemperature);
+    // }
 
     @PostMapping("/{location}/plantation_temperature")
     public PlantationTemperature createPlantationTemperature(@Valid @RequestBody PlantationTemperature temp,@PathVariable(value = "location") String location) {
         return dataServ.savePlantationTemperature(temp,location);
     }
 
-    //Net Harvest    
+    // Net Harvest    
 
-    @GetMapping("/{location}/net_harvest")
-    public ResponseEntity<List<NetHarvest>> getNetHarvestByLocation(@PathVariable(value = "location") String location)
-        throws ResourceNotFoundException {
-        List<NetHarvest> netharvest = dataServ.getNetHarvestByLocation(location);
-        if(netharvest==null)
-        {
-            throw new ResourceNotFoundException("Location not found for this id :: " + location);
-        }
-        return ResponseEntity.ok().body(netharvest);
-    }
+    // @GetMapping("/{location}/net_harvest")
+    // public ResponseEntity<List<NetHarvest>> getNetHarvestByLocation(@PathVariable(value = "location") String location)
+    //     throws ResourceNotFoundException {
+    //     List<NetHarvest> netharvest = dataServ.getNetHarvestByLocation(location);
+    //     if(netharvest==null)
+    //     {
+    //         throw new ResourceNotFoundException("Location not found for this id :: " + location);
+    //     }
+    //     return ResponseEntity.ok().body(netharvest);
+    // }
 
     @PostMapping("/{location}/net_harvest")
     public NetHarvest createNetHarvest(@Valid @RequestBody NetHarvest netHarv,@PathVariable(value = "location") String location) {
         return dataServ.saveNetHarvest(netHarv,location);
     }
 
-    //Soil pH
-    @GetMapping("/{location}/soil_ph")
-    public ResponseEntity<List<SoilPH>> getSoilPHByLocation(@PathVariable(value = "location") String location)
-        throws ResourceNotFoundException {
-        List<SoilPH> soilPH = dataServ.getSoilPHByLocation(location);
-        if(soilPH==null)
-        {
-            throw new ResourceNotFoundException("Location not found for this id :: " + location);
-        }
-        return ResponseEntity.ok().body(soilPH);
-    }
+    // Soil pH
+    // @GetMapping("/{location}/soil_ph")
+    // public ResponseEntity<List<SoilPH>> getSoilPHByLocation(@PathVariable(value = "location") String location)
+    //     throws ResourceNotFoundException {
+    //     List<SoilPH> soilPH = dataServ.getSoilPHByLocation(location);
+    //     if(soilPH==null)
+    //     {
+    //         throw new ResourceNotFoundException("Location not found for this id :: " + location);
+    //     }
+    //     return ResponseEntity.ok().body(soilPH);
+    // }
 
     @PostMapping("/{location}/soil_ph")
     public SoilPH createSoilPH(@Valid @RequestBody SoilPH soilph,@PathVariable(value = "location") String location) {
         return dataServ.saveSoilPH(soilph,location);
     }
 
-    //Soil Water Tension
+    // Soil Water Tension
 
-    @GetMapping("/{location}/soil_water_tension")
-    public ResponseEntity<List<SoilWaterTension>> getSoilWaterTensionByLocation(@PathVariable(value = "location") String location)
-        throws ResourceNotFoundException {
-        List<SoilWaterTension> soilwt = dataServ.getSoilWaterTensionByLocation(location);
-        if(soilwt==null)
-        {
-            throw new ResourceNotFoundException("Location not found for this id :: " + location);
-        }
-        return ResponseEntity.ok().body(soilwt);
-    }
+    // @GetMapping("/{location}/soil_water_tension")
+    // public ResponseEntity<List<SoilWaterTension>> getSoilWaterTensionByLocation(@PathVariable(value = "location") String location)
+    //     throws ResourceNotFoundException {
+    //     List<SoilWaterTension> soilwt = dataServ.getSoilWaterTensionByLocation(location);
+    //     if(soilwt==null)
+    //     {
+    //         throw new ResourceNotFoundException("Location not found for this id :: " + location);
+    //     }
+    //     return ResponseEntity.ok().body(soilwt);
+    // }
 
     @PostMapping("/{location}/soil_water_tension")
     public SoilWaterTension createSoilWaterTension(@Valid @RequestBody SoilWaterTension soilwt,@PathVariable(value = "location") String location) {
         return dataServ.saveSoilWaterTensions(soilwt,location);
     }
 
-    //Unit Loss
-    @GetMapping("/{location}/unit_loss")
-    public ResponseEntity<List<UnitLoss>> getUnitLossByLocation(@PathVariable(value = "location") String location)
-        throws ResourceNotFoundException {
-        List<UnitLoss> unitloss = dataServ.getUnitLossByLocation(location);
-        if(unitloss==null)
-        {
-            throw new ResourceNotFoundException("Location not found for this id :: " + location);
-        }
-        return ResponseEntity.ok().body(unitloss);
-    }
+    // Unit Loss
+    // @GetMapping("/{location}/unit_loss")
+    // public ResponseEntity<List<UnitLoss>> getUnitLossByLocation(@PathVariable(value = "location") String location)
+    //     throws ResourceNotFoundException {
+    //     List<UnitLoss> unitloss = dataServ.getUnitLossByLocation(location);
+    //     if(unitloss==null)
+    //     {
+    //         throw new ResourceNotFoundException("Location not found for this id :: " + location);
+    //     }
+    //     return ResponseEntity.ok().body(unitloss);
+    // }
 
     @PostMapping("/{location}/unit_loss")
     public UnitLoss createUnitLoss(@Valid @RequestBody UnitLoss ul,@PathVariable(value = "location") String location) {
         return dataServ.saveUnitLoss(ul,location);
     }
 
-    //Storage Temperature
+    // Storage Temperature
 
-    @GetMapping("/{location}/storage_temperature")
-    public ResponseEntity<List<StorageTemperature>> getStorageTemperatureByLocation(@PathVariable(value = "location") String location)
-        throws ResourceNotFoundException {
-        List<StorageTemperature> storageTemperature = dataServ.getStorageTemperatureByLocation(location);
-        if(storageTemperature==null)
-        {
-            throw new ResourceNotFoundException("Location not found for this id :: " + location);
-        }
-        return ResponseEntity.ok().body(storageTemperature);
-    }
+    // @GetMapping("/{location}/storage_temperature")
+    // public ResponseEntity<List<StorageTemperature>> getStorageTemperatureByLocation(@PathVariable(value = "location") String location)
+    //     throws ResourceNotFoundException {
+    //     List<StorageTemperature> storageTemperature = dataServ.getStorageTemperatureByLocation(location);
+    //     if(storageTemperature==null)
+    //     {
+    //         throw new ResourceNotFoundException("Location not found for this id :: " + location);
+    //     }
+    //     return ResponseEntity.ok().body(storageTemperature);
+    // }
 
     @PostMapping("/{location}/storage_temperature")
     public StorageTemperature createSTemperature(@Valid @RequestBody StorageTemperature st,@PathVariable(value = "location") String location) {
         return dataServ.saveStorageTemperature(st,location);
     }
 
-    //Storage Humidity
+    // Storage Humidity
 
-    @GetMapping("/{location}/storage_humidity")
-    public ResponseEntity<List<StorageHumidity>> getStorageHumidityByLocation(@PathVariable(value = "location") String location)
-        throws ResourceNotFoundException {
-        List<StorageHumidity> storageHumidity = dataServ.getStorageHumidityByLocation(location);
-        if(storageHumidity==null)
-        {
-            throw new ResourceNotFoundException("Location not found for this id :: " + location);
-        }
-        return ResponseEntity.ok().body(storageHumidity);
-    }
+    // @GetMapping("/{location}/storage_humidity")
+    // public ResponseEntity<List<StorageHumidity>> getStorageHumidityByLocation(@PathVariable(value = "location") String location)
+    //     throws ResourceNotFoundException {
+    //     List<StorageHumidity> storageHumidity = dataServ.getStorageHumidityByLocation(location);
+    //     if(storageHumidity==null)
+    //     {
+    //         throw new ResourceNotFoundException("Location not found for this id :: " + location);
+    //     }
+    //     return ResponseEntity.ok().body(storageHumidity);
+    // }
 
     @PostMapping("/{location}/storage_humidity")
     public StorageHumidity createSHumidity(@Valid @RequestBody StorageHumidity sh,@PathVariable(value = "location") String location) {
