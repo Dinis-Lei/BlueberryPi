@@ -4,6 +4,7 @@ import { fetchData, processString } from "../App";
 import { useParams } from "react-router-dom"
 import HourPicker from "./HourPicker";
 import DatePicker from "./DatePicker";
+import { Button } from "react-bootstrap";
 
 var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
@@ -34,6 +35,12 @@ export const getDataPoints = (JSONData) => {
     let counter = 1;
     let graphData;
 
+    console.log(JSONData)
+
+    if (JSONData.length < 1){
+        return 
+    }
+
     if (JSONData.length < 20) {
         graphData = JSONData;
     }
@@ -52,13 +59,18 @@ export const getDataPoints = (JSONData) => {
     return ret;
 }
 
+
 const SoloGraphPage = props =>{
 
     const [myDataPoints, setMyDataPoints] = useState([]);
     const [graphTitle, setGraphTitle] = useState("[no title]");
     const { location } = useParams()
     const [flg, setFlg] = useState(true);
-    const { sensor } = useParams();
+    const { sensor } = useParams(); 
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
+    const [startHour, setStartHour] = useState('00:00:00');
+    const [endHour, setEndHour] = useState('00:00:00');
     
     // const [times, setTimes] = useState([]);
 
@@ -109,24 +121,44 @@ const SoloGraphPage = props =>{
         }]
     }
 
+    const filterByDate = () => {
+        let url = location + "/" + sensor + "?";
+        if(startDate != ''){
+            url += "start=" + startDate + "-" + startHour + "&";
+        }
+        if(endDate != ''){
+            url += "end=" + endDate + "-" + endHour
+        }
+
+        console.log(url)
+
+        let data = fetchData(url); // data is a promise object
+        data.then(function (result) {
+            console.log(result)
+            setMyDataPoints(getDataPoints(result));
+        });
+
+    }
+
     return (	
         <div>
 
             <table>
-            <thead>
-            <tr>
-                <td>
-                    <label>Start date:</label>
-                    <DatePicker />
-                    <HourPicker />
-                </td>
-                <td>
-                    <label>End date:</label>
-                    <DatePicker />
-                    <HourPicker />
-                </td>
-            </tr>
-            </thead>
+                <thead>
+                    <tr>
+                        <td>
+                            <label>Start date:</label>
+                            <DatePicker onChange={setStartDate} />
+                            <HourPicker onChange={setStartHour} />
+                        </td>
+                        <td>
+                            <label>End date:</label>
+                            <DatePicker onChange={setEndDate} />
+                            <HourPicker onChange={setEndHour}/>
+                        </td>
+                    </tr>
+                    <Button onClick={filterByDate}>Filter</Button>
+                </thead>
             </table>
 
             <CanvasJSChart options = {options} 

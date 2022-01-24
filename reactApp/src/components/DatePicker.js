@@ -19,7 +19,11 @@ class DatePicker extends React.Component {
         this.handleChange = this.handleChange.bind(this);
     }
 
-    handleChange(event) { this.setState({value: event.target.value}); }
+    handleChange(event) { 
+        console.log(event.target.value)
+        this.props.onChange(event.target.value); 
+        this.state.value = event.target.value
+    }
 
     render() {
         return(
