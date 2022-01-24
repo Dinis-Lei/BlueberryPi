@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+
 import javax.transaction.Transactional;
 
 
@@ -205,6 +206,7 @@ public class AllDataService {
         return results;
     }
 
+
     public List<Optional<Object>> getDataByDate(String l, String lowerlim, String upperlim, String dataType) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH:mm:ss");
         Long begin;
@@ -310,6 +312,7 @@ public class AllDataService {
         Collections.reverse(results);
         return results.stream().limit(limit).collect(Collectors.toList());
     }
+
 
     //Temperature Section
     public List<PlantationTemperature> getPlantationTemperatureByLocation(String location) {
@@ -587,9 +590,7 @@ public class AllDataService {
     }
 
     public void checkStorageHumidityAlert(String l, StorageHumidity sh){
-        System.out.println("AAAAAA");
         if (sh.getData() < 85) { 
-            System.out.println(sh);
             Double val = 85 - sh.getData();
             List<Alert> alerts = repAlert.findByLocationAndSensor(l, "storage_humidity");
             for(Alert a : alerts) {
