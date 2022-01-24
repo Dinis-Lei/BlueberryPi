@@ -81,7 +81,7 @@ public class AllDataService {
     }
 
     public List<Alert> getAlertsLocation(String location, Boolean seen, String start, String end) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy-HH-mm-ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy-HH:mm:ss");
         Long begin;
         Long finish;
         if(start==null) {
@@ -104,7 +104,7 @@ public class AllDataService {
     }
 
     public List<Alert> getAlertByLocationAndSensor(String location, String sensor, Boolean seen, String start, String end){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy-HH-mm-ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy-HH:mm:ss");
         Long begin;
         Long finish;
         if(start==null) {
@@ -144,7 +144,7 @@ public class AllDataService {
     }
 
     public List<Alert> getAlerts(Boolean seen, String start, String end) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy-HH-mm-ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy-HH:mm:ss");
         Long begin;
         Long finish;
         if(start==null) {
@@ -206,7 +206,7 @@ public class AllDataService {
     }
 
     public List<Optional<Object>> getDataByDate(String l, String lowerlim, String upperlim, String dataType) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy-HH-mm-ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy-HH:mm:ss");
         Long begin;
         Long end;
         if(lowerlim==null) {
