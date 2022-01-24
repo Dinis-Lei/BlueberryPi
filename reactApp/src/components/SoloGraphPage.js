@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import CanvasJSReact from '../canvasjs.react';
 import { fetchData, processString } from "../App";
 import { useParams } from "react-router-dom"
+import HourPicker from "./HourPicker";
+import DatePicker from "./DatePicker";
 
 var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
@@ -50,34 +52,6 @@ export const getDataPoints = (JSONData) => {
     return ret;
 }
 
-// const getTimes = (JSONData) => {
-//     let ret = [];
-//     let graphData;
-
-//     if (JSONData.length < 20) {
-//         graphData = JSONData;
-//     }
-//     else {
-//         let firstElem = JSONData.length - 10; 
-//         let lastElem = JSONData.length;
-//         graphData = JSONData.slice(firstElem, lastElem); // não inclui lastElem
-//     }
-
-//     for (const dataPoint of graphData) {
-//         let timestamp = dataPoint["timestamp"];
-//         let date = new Date(timestamp * 1000);
-//         let date_str = date.getDate()+
-//             "/"+(date.getMonth()+1)+
-//             "/"+date.getFullYear()+
-//             " "+date.getHours()+
-//             ":"+date.getMinutes()+
-//             ":"+date.getSeconds();
-//         ret.push(date_str);
-//     }
-
-//     return ret;
-// }
-
 const SoloGraphPage = props =>{
 
     const [myDataPoints, setMyDataPoints] = useState([]);
@@ -85,6 +59,7 @@ const SoloGraphPage = props =>{
     const { location } = useParams()
     const [flg, setFlg] = useState(true);
     const { sensor } = useParams();
+    
     // const [times, setTimes] = useState([]);
 
     useEffect(() => {
@@ -107,10 +82,7 @@ const SoloGraphPage = props =>{
         let data = fetchData(url); // data is a promise object
         data.then(function (result) {
             setMyDataPoints(getDataPoints(result));
-            //console.log(`${dataType}`)
-            //console.log(myDataPoints)
             setGraphTitle(processString(sensor));
-            // setTimes(getTimes(result));
         });
 
     }, [flg]);
@@ -128,21 +100,40 @@ const SoloGraphPage = props =>{
         },
         axisX: {
             title: "Time",
-            //prefix: "W",
             interval: 2
         },
         data: [{
             type: "spline",
             indexLabel: "{x}: {y}",
-            // toolTipContent: "Week {x}: {y}%",
             dataPoints: myDataPoints
         }]
     }
 
-    return (			
-    <CanvasJSChart options = {options} 
-        //onRef={ref => this.chart = ref}
-    />)
+    return (	
+        <div>
+
+            <table>
+            <thead>
+            <tr>
+                <td>
+                    <label>Start date:</label>
+                    <DatePicker />
+                    <HourPicker />
+                </td>
+                <td>
+                    <label>End date:</label>
+                    <DatePicker />
+                    <HourPicker />
+                </td>
+            </tr>
+            </thead>
+            </table>
+
+            <CanvasJSChart options = {options} 
+                //onRef={ref => this.chart = ref}
+            />
+        </div>		
+    )
 
 }
 

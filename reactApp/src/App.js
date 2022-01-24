@@ -14,7 +14,7 @@ import Graph from './components/Graph';
 import CircularGraph from './components/CircularGraph';
 import SideAlerts from './components/SideAlerts';
 import MyAccordion from './components/MyAccordion';
-import SoloGraphPage from './components/SoloGraphPage'
+import SoloGraphPage from './components/SoloGraphPage';
 
 import { getLocations } from './components/MyAccordion';
 import AlertHistory from './components/AlertHistory';
@@ -225,6 +225,9 @@ const App = () => {
                 }
               </div>
             }></Route>
+            
+
+            {/* ISABEL */}
             <Route path=":sensor" element={
               <div>
                 <div style={{ width: '50%', marginLeft: '2%', marginTop: '2%' }}>

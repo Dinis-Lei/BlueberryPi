@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import CanvasJSReact from '../canvasjs.react';
 import { fetchData, processString } from "../App";
-import { useParams } from "react-router-dom"
+import { useParams } from "react-router-dom";
 
 var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
@@ -137,10 +137,13 @@ const Graph = props =>{
         }]
     }
 
-    return (			
-    <CanvasJSChart options = {options} 
-        //onRef={ref => this.chart = ref}
-    />)
+    return (	
+        <div>
+            <CanvasJSChart options = {options} 
+                //onRef={ref => this.chart = ref}
+            />	
+        </div>
+    )
 
 }
 
