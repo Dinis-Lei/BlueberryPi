@@ -74,7 +74,7 @@ public class APIController {
 
     @GetMapping("/{location}/{sensor}/latest")
     public ResponseEntity<Optional<Object>> getLatestBySensor(@PathVariable(value = "location") String location, @PathVariable(value = "sensor") String sensor) {
-        Optional<Object> data = null;
+        Optional<Object> data = dataServ.getDataLatest(location, sensor);
         return ResponseEntity.ok().body(data);
     }
 
@@ -121,61 +121,61 @@ public class APIController {
 
     // Not Being Used
 
-    @DeleteMapping("/deleteall")
-    public void deleteAll() {
-        dataServ.deleteAll();
-    }
+    // @DeleteMapping("/deleteall")
+    // public void deleteAll() {
+    //     dataServ.deleteAll();
+    // }
 
-    @PostMapping("/locations")
-    public Location saveLocation(@Valid @RequestBody Location l) {
-        return dataServ.saveLocation(l);
-    }
+    // @PostMapping("/locations")
+    // public Location saveLocation(@Valid @RequestBody Location l) {
+    //     return dataServ.saveLocation(l);
+    // }
 
-    @GetMapping("/{location}/{sensor}/{day}")
-    public ResponseEntity<List<Optional<Object>>> getSensorByDayAndLocation(
-        @PathVariable(value = "location") String location, @PathVariable(value = "sensor") String sensor,@PathVariable(value = "day") String date) 
-    throws ResourceNotFoundException {
-        List<Optional<Object>> data = dataServ.getDataByDay(location, date, sensor);
-        if(data==null){
-            throw new ResourceNotFoundException("Data not found for this id :: " + location);
-        }
-        return ResponseEntity.ok().body(data);
-    }
+    // @GetMapping("/{location}/{sensor}/{day}")
+    // public ResponseEntity<List<Optional<Object>>> getSensorByDayAndLocation(
+    //     @PathVariable(value = "location") String location, @PathVariable(value = "sensor") String sensor,@PathVariable(value = "day") String date) 
+    // throws ResourceNotFoundException {
+    //     List<Optional<Object>> data = dataServ.getDataByDay(location, date, sensor);
+    //     if(data==null){
+    //         throw new ResourceNotFoundException("Data not found for this id :: " + location);
+    //     }
+    //     return ResponseEntity.ok().body(data);
+    // }
 
-    @GetMapping("/{location}/{sensor}/{day}/{limit}")
-    public ResponseEntity<List<Optional<Object>>> getSensorByDayAndLocationWithLimit(
-        @PathVariable(value = "location") String location, @PathVariable(value = "sensor") String sensor,@PathVariable(value = "day") String date,@PathVariable(value = "limit") Integer limit) 
-    throws ResourceNotFoundException {
-        List<Optional<Object>> data = dataServ.getDataByDayWithLimit(location, date, sensor,limit);
-        if(data==null){
-            throw new ResourceNotFoundException("Data not found for this id :: " + location);
-        }
-        return ResponseEntity.ok().body(data);
-    }
+    // @GetMapping("/{location}/{sensor}/{day}/{limit}")
+    // public ResponseEntity<List<Optional<Object>>> getSensorByDayAndLocationWithLimit(
+    //     @PathVariable(value = "location") String location, @PathVariable(value = "sensor") String sensor,@PathVariable(value = "day") String date,@PathVariable(value = "limit") Integer limit) 
+    // throws ResourceNotFoundException {
+    //     List<Optional<Object>> data = dataServ.getDataByDayWithLimit(location, date, sensor,limit);
+    //     if(data==null){
+    //         throw new ResourceNotFoundException("Data not found for this id :: " + location);
+    //     }
+    //     return ResponseEntity.ok().body(data);
+    // }
 
-    @PostMapping("/alerts")
-    public Alert createAlert(@Valid @RequestBody Alert a) {
-        return dataServ.saveAlert(a);
-    }
+    // @PostMapping("/alerts")
+    // public Alert createAlert(@Valid @RequestBody Alert a) {
+    //     return dataServ.saveAlert(a);
+    // }
 
-    @DeleteMapping("/alerts/{id}")
-    public void deleteAlert(@PathVariable(value = "id") String s_id) {
-        try {
-            long id = Long.parseLong(s_id);
-            dataServ.deleteAlert(id);
-        } 
-        catch(NumberFormatException e) { System.out.println("Oh naur");}
-    }
+    // @DeleteMapping("/alerts/{id}")
+    // public void deleteAlert(@PathVariable(value = "id") String s_id) {
+    //     try {
+    //         long id = Long.parseLong(s_id);
+    //         dataServ.deleteAlert(id);
+    //     } 
+    //     catch(NumberFormatException e) { System.out.println("Oh naur");}
+    // }
 
-    @DeleteMapping("/alerts")
-    public void clearAlerts() {
-        dataServ.deleteAllAlerts();
-    }
+    // @DeleteMapping("/alerts")
+    // public void clearAlerts() {
+    //     dataServ.deleteAllAlerts();
+    // }
 
-    @PostMapping("/{location}/{sensor}/alert")
-    public Alert createAlert(@Valid @RequestBody Alert a, @PathVariable(value = "location") String location, @PathVariable(value = "sensor") String sensor) {
-        return dataServ.saveAlert(a);
-    }
+    // @PostMapping("/{location}/{sensor}/alert")
+    // public Alert createAlert(@Valid @RequestBody Alert a, @PathVariable(value = "location") String location, @PathVariable(value = "sensor") String sensor) {
+    //     return dataServ.saveAlert(a);
+    // }
 
     // Plantation Temperature
 
@@ -210,10 +210,10 @@ public class APIController {
     //     return ResponseEntity.ok().body(netharvest);
     // }
 
-    @PostMapping("/{location}/net_harvest")
-    public NetHarvest createNetHarvest(@Valid @RequestBody NetHarvest netHarv,@PathVariable(value = "location") String location) {
-        return dataServ.saveNetHarvest(netHarv,location);
-    }
+    // @PostMapping("/{location}/net_harvest")
+    // public NetHarvest createNetHarvest(@Valid @RequestBody NetHarvest netHarv,@PathVariable(value = "location") String location) {
+    //     return dataServ.saveNetHarvest(netHarv,location);
+    // }
 
     // Soil pH
     // @GetMapping("/{location}/soil_ph")
