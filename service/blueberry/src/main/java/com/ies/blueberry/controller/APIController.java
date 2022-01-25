@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -108,6 +109,18 @@ public class APIController {
     @PostMapping("/alerts")
     public Alert createAlert(@Valid @RequestBody Alert a) {
         return dataServ.saveAlert(a);
+    }
+
+    @PutMapping("/alerts")
+    public void deleteAlert(@Valid @RequestBody Alert alert) throws ResourceNotFoundException {
+        try {
+            if (alert == null){
+                throw new ResourceNotFoundException("Alert not found");
+            }
+            alert.setSeen(true);
+            dataServ.saveAlert(alert);
+        } 
+        catch(NumberFormatException e) { System.out.println("Oh naur");}
     }
 
     @DeleteMapping("/alerts/{id}")
