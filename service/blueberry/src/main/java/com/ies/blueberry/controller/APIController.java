@@ -1,5 +1,6 @@
 package com.ies.blueberry.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,19 +38,13 @@ public class APIController {
     @Autowired
     private AllDataService dataServ;
 
-    @DeleteMapping("/deleteall")
-    public void deleteAll() {
-        dataServ.deleteAll();
-    }
-
     @GetMapping("/locations")
-    public List<Location> getLocations() {
-        return dataServ.getLocations();
-    }
-
-    @PostMapping("/locations")
-    public Location saveLocation(@Valid @RequestBody Location l) {
-        return dataServ.saveLocation(l);
+    public ResponseEntity<List<String>> getLocations() {
+        List<String> data = new ArrayList<>();
+        for( Location l : dataServ.getLocations()) {
+            data.add(l.getName());
+        }
+        return ResponseEntity.ok().body(data);
     }
 
     @GetMapping("/locations/{location}") 
@@ -64,16 +59,76 @@ public class APIController {
 
     @GetMapping("/{location}/{sensor}")
     public ResponseEntity<List<Optional<Object>>> getSensorByDateAndLocation(
-        @PathVariable(value = "location") String location, @PathVariable(value = "sensor") String sensor, @RequestParam(required = false) String start, @RequestParam(required = false) String end
+        @PathVariable(value = "location") String location, @PathVariable(value = "sensor") String sensor, 
+        @RequestParam(required = false) String start, @RequestParam(required = false) String end, @RequestParam(required = false) Integer limit
     ) {
         List<Optional<Object>> data;
         if(start==null && end==null) {
-            data = dataServ.getData(location, sensor);
+            data = dataServ.getData(location, sensor, limit);
         }
         else {
-            data = dataServ.getDataByDate(location, start, end, sensor);
+            data = dataServ.getDataByDate(location, start, end, sensor, limit);
         }
         return ResponseEntity.ok().body(data);
+    }
+
+    @GetMapping("/{location}/{sensor}/latest")
+    public ResponseEntity<Optional<Object>> getLatestBySensor(@PathVariable(value = "location") String location, @PathVariable(value = "sensor") String sensor) {
+        Optional<Object> data = null;
+        return ResponseEntity.ok().body(data);
+    }
+
+    @GetMapping("/alerts")
+    public ResponseEntity<List<Alert>> getAllAlerts(@RequestParam(required = false) Boolean seen,
+    @RequestParam(required = false) String start, @RequestParam(required = false) String end) throws ResourceNotFoundException {
+        List<Alert> alerts = dataServ.getAlerts(seen, start, end);
+        if(alerts == null) { throw new ResourceNotFoundException("Alerts not found"); }
+        return ResponseEntity.ok().body(alerts);
+    }
+
+    @PutMapping("/alerts")
+    public void deleteAlert(@Valid @RequestBody Alert alert) throws ResourceNotFoundException {
+        try {
+            if (alert == null){
+                throw new ResourceNotFoundException("Alert not found");
+            }
+            alert.setSeen(true);
+            dataServ.saveAlert(alert);
+        } 
+        catch(NumberFormatException e) { System.out.println("Oh naur");}
+    }
+
+    @GetMapping("/{location}/alerts")
+    public ResponseEntity<List<Alert>> getAllAlerts(@PathVariable(value = "location") String location, @RequestParam(required = false) Boolean seen, 
+    @RequestParam(required = false) String start, @RequestParam(required = false) String end) throws ResourceNotFoundException {
+        List<Alert> alerts = dataServ.getAlertsLocation(location, seen, start, end);
+        if(alerts == null) { throw new ResourceNotFoundException("Alerts not found"); }
+        return ResponseEntity.ok().body(alerts);
+    }
+
+    @GetMapping("/{location}/{sensor}/alerts")
+    public ResponseEntity<List<Alert>> getAlertByLocationAndSensor(
+        @PathVariable(value = "location") String location, @PathVariable(value = "sensor") String sensor, 
+        @RequestParam(required = false) Boolean seen, @RequestParam(required = false) String start, @RequestParam(required = false) String end) 
+    throws ResourceNotFoundException {
+        System.out.println("OI");
+        List<Alert> alerts = dataServ.getAlertByLocationAndSensor(location, sensor, seen, start, end);
+        if(alerts==null) {
+            throw new ResourceNotFoundException("Location not found for this id :: " + location);
+        }
+        return ResponseEntity.ok().body(alerts);
+    }
+
+    // Not Being Used
+
+    @DeleteMapping("/deleteall")
+    public void deleteAll() {
+        dataServ.deleteAll();
+    }
+
+    @PostMapping("/locations")
+    public Location saveLocation(@Valid @RequestBody Location l) {
+        return dataServ.saveLocation(l);
     }
 
     @GetMapping("/{location}/{sensor}/{day}")
@@ -98,29 +153,9 @@ public class APIController {
         return ResponseEntity.ok().body(data);
     }
 
-    @GetMapping("/alerts")
-    public ResponseEntity<List<Alert>> getAllAlerts(@RequestParam(required = false) Boolean seen,
-    @RequestParam(required = false) String start, @RequestParam(required = false) String end) throws ResourceNotFoundException {
-        List<Alert> alerts = dataServ.getAlerts(seen, start, end);
-        if(alerts == null) { throw new ResourceNotFoundException("Alerts not found"); }
-        return ResponseEntity.ok().body(alerts);
-    }
-
     @PostMapping("/alerts")
     public Alert createAlert(@Valid @RequestBody Alert a) {
         return dataServ.saveAlert(a);
-    }
-
-    @PutMapping("/alerts")
-    public void deleteAlert(@Valid @RequestBody Alert alert) throws ResourceNotFoundException {
-        try {
-            if (alert == null){
-                throw new ResourceNotFoundException("Alert not found");
-            }
-            alert.setSeen(true);
-            dataServ.saveAlert(alert);
-        } 
-        catch(NumberFormatException e) { System.out.println("Oh naur");}
     }
 
     @DeleteMapping("/alerts/{id}")
@@ -135,27 +170,6 @@ public class APIController {
     @DeleteMapping("/alerts")
     public void clearAlerts() {
         dataServ.deleteAllAlerts();
-    }
-
-    @GetMapping("/{location}/alerts")
-    public ResponseEntity<List<Alert>> getAllAlerts(@PathVariable(value = "location") String location, @RequestParam(required = false) Boolean seen, 
-    @RequestParam(required = false) String start, @RequestParam(required = false) String end) throws ResourceNotFoundException {
-        List<Alert> alerts = dataServ.getAlertsLocation(location, seen, start, end);
-        if(alerts == null) { throw new ResourceNotFoundException("Alerts not found"); }
-        return ResponseEntity.ok().body(alerts);
-    }
-
-    @GetMapping("/{location}/{sensor}/alerts")
-    public ResponseEntity<List<Alert>> getAlertByLocationAndSensor(
-        @PathVariable(value = "location") String location, @PathVariable(value = "sensor") String sensor, 
-        @RequestParam(required = false) Boolean seen, @RequestParam(required = false) String start, @RequestParam(required = false) String end) 
-    throws ResourceNotFoundException {
-        System.out.println("OI");
-        List<Alert> alerts = dataServ.getAlertByLocationAndSensor(location, sensor, seen, start, end);
-        if(alerts==null) {
-            throw new ResourceNotFoundException("Location not found for this id :: " + location);
-        }
-        return ResponseEntity.ok().body(alerts);
     }
 
     @PostMapping("/{location}/{sensor}/alert")
@@ -178,10 +192,10 @@ public class APIController {
     //     return ResponseEntity.ok().body(plantationtemperature);
     // }
 
-    @PostMapping("/{location}/plantation_temperature")
-    public PlantationTemperature createPlantationTemperature(@Valid @RequestBody PlantationTemperature temp,@PathVariable(value = "location") String location) {
-        return dataServ.savePlantationTemperature(temp,location);
-    }
+    // @PostMapping("/{location}/plantation_temperature")
+    // public PlantationTemperature createPlantationTemperature(@Valid @RequestBody PlantationTemperature temp,@PathVariable(value = "location") String location) {
+    //     return dataServ.savePlantationTemperature(temp,location);
+    // }
 
     // Net Harvest    
 
@@ -213,10 +227,10 @@ public class APIController {
     //     return ResponseEntity.ok().body(soilPH);
     // }
 
-    @PostMapping("/{location}/soil_ph")
-    public SoilPH createSoilPH(@Valid @RequestBody SoilPH soilph,@PathVariable(value = "location") String location) {
-        return dataServ.saveSoilPH(soilph,location);
-    }
+    // @PostMapping("/{location}/soil_ph")
+    // public SoilPH createSoilPH(@Valid @RequestBody SoilPH soilph,@PathVariable(value = "location") String location) {
+    //     return dataServ.saveSoilPH(soilph,location);
+    // }
 
     // Soil Water Tension
 
@@ -231,10 +245,10 @@ public class APIController {
     //     return ResponseEntity.ok().body(soilwt);
     // }
 
-    @PostMapping("/{location}/soil_water_tension")
-    public SoilWaterTension createSoilWaterTension(@Valid @RequestBody SoilWaterTension soilwt,@PathVariable(value = "location") String location) {
-        return dataServ.saveSoilWaterTensions(soilwt,location);
-    }
+    // @PostMapping("/{location}/soil_water_tension")
+    // public SoilWaterTension createSoilWaterTension(@Valid @RequestBody SoilWaterTension soilwt,@PathVariable(value = "location") String location) {
+    //     return dataServ.saveSoilWaterTensions(soilwt,location);
+    // }
 
     // Unit Loss
     // @GetMapping("/{location}/unit_loss")
@@ -248,10 +262,10 @@ public class APIController {
     //     return ResponseEntity.ok().body(unitloss);
     // }
 
-    @PostMapping("/{location}/unit_loss")
-    public UnitLoss createUnitLoss(@Valid @RequestBody UnitLoss ul,@PathVariable(value = "location") String location) {
-        return dataServ.saveUnitLoss(ul,location);
-    }
+    // @PostMapping("/{location}/unit_loss")
+    // public UnitLoss createUnitLoss(@Valid @RequestBody UnitLoss ul,@PathVariable(value = "location") String location) {
+    //     return dataServ.saveUnitLoss(ul,location);
+    // }
 
     // Storage Temperature
 
@@ -266,10 +280,10 @@ public class APIController {
     //     return ResponseEntity.ok().body(storageTemperature);
     // }
 
-    @PostMapping("/{location}/storage_temperature")
-    public StorageTemperature createSTemperature(@Valid @RequestBody StorageTemperature st,@PathVariable(value = "location") String location) {
-        return dataServ.saveStorageTemperature(st,location);
-    }
+    // @PostMapping("/{location}/storage_temperature")
+    // public StorageTemperature createSTemperature(@Valid @RequestBody StorageTemperature st,@PathVariable(value = "location") String location) {
+    //     return dataServ.saveStorageTemperature(st,location);
+    // }
 
     // Storage Humidity
 
@@ -284,8 +298,8 @@ public class APIController {
     //     return ResponseEntity.ok().body(storageHumidity);
     // }
 
-    @PostMapping("/{location}/storage_humidity")
-    public StorageHumidity createSHumidity(@Valid @RequestBody StorageHumidity sh,@PathVariable(value = "location") String location) {
-        return dataServ.saveStorageHumidity(sh, location);
-    }
+    // @PostMapping("/{location}/storage_humidity")
+    // public StorageHumidity createSHumidity(@Valid @RequestBody StorageHumidity sh,@PathVariable(value = "location") String location) {
+    //     return dataServ.saveStorageHumidity(sh, location);
+    // }
 }

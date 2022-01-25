@@ -8,8 +8,6 @@ rng = default_rng()
 
 start = 1640995200
 
-alarm_period = 60*60*24*1
-
 class Sensor:
     def __init__(self, local, sensor_type, funcgood, funcbad, start_prob=[5,15], prob_delta=[1,1], value=None, step=0) -> None:
         self.local = local
@@ -19,7 +17,7 @@ class Sensor:
         self.alert = False
         self.prob = start_prob[0]
         self.start_prob = start_prob
-        self.prob_delta = [(step/alarm_period)*100, 30]
+        self.prob_delta = prob_delta
         self.value = value
         self.ts = start
         self.step = step
@@ -128,31 +126,31 @@ if __name__ == "__main__":
 
     sensors = []
     
-    sensors.append(Sensor("Guarda","store_humidity",generate_stor_humidity,generate_stor_humidity_alert,[0,0],[10,20],92.5,60))
-    sensors.append(Sensor("Minho","store_humidity",generate_stor_humidity,generate_stor_humidity_alert,[0,0],[10,20],92.5,60))
-    sensors.append(Sensor("VilaReal","store_humidity",generate_stor_humidity,generate_stor_humidity_alert,[0,0],[10,20],92.5,60))
-    sensors.append(Sensor("Guarda","unit_loss",generate_unit_loss,generate_unit_loss_alert,[0,0],[10,25],1,7*24*60*60))
-    sensors.append(Sensor("Minho","unit_loss",generate_unit_loss,generate_unit_loss_alert,[0,0],[10,25],1,7*24*60*60))
-    sensors.append(Sensor("VilaReal","unit_loss",generate_unit_loss,generate_unit_loss_alert,[0,0],[10,25],1,7*24*60*60))
-    sensors.append(Sensor("Guarda","ph",generate_ph,generate_ph_alert,[0,0],[10,30],5,(24*60*60)))
-    sensors.append(Sensor("Minho","ph",generate_ph,generate_ph_alert,[0,0],[10,30],5,(24*60*60)))
-    sensors.append(Sensor("VilaReal","ph",generate_ph,generate_ph_alert,[0,0],[10,30],5,(24*60*60)))
+    sensors.append(Sensor("Guarda","store_humidity",generate_stor_humidity,generate_stor_humidity_alert,[0,0],[5,10],92.5,60))
+    sensors.append(Sensor("Minho","store_humidity",generate_stor_humidity,generate_stor_humidity_alert,[0,0],[5,10],92.5,60))
+    sensors.append(Sensor("VilaReal","store_humidity",generate_stor_humidity,generate_stor_humidity_alert,[0,0],[5,10],92.5,60))
+    sensors.append(Sensor("Guarda","unit_loss",generate_unit_loss,generate_unit_loss_alert,[0,0],[5,10],1,7*24*60*60))
+    sensors.append(Sensor("Minho","unit_loss",generate_unit_loss,generate_unit_loss_alert,[0,0],[5,10],1,7*24*60*60))
+    sensors.append(Sensor("VilaReal","unit_loss",generate_unit_loss,generate_unit_loss_alert,[0,0],[5,10],1,7*24*60*60))
+    sensors.append(Sensor("Guarda","ph",generate_ph,generate_ph_alert,[0,0],[5,10],5,(24*60*60)))
+    sensors.append(Sensor("Minho","ph",generate_ph,generate_ph_alert,[0,0],[5,10],5,(24*60*60)))
+    sensors.append(Sensor("VilaReal","ph",generate_ph,generate_ph_alert,[0,0],[5,10],5,(24*60*60)))
 
     sensors.append(Sensor("Guarda","plantation_temperature",generate_temperature,generate_temperature_alert,[0,0],[0.2,0.9],19,60))
     sensors.append(Sensor("Minho","plantation_temperature",generate_temperature,generate_temperature_alert,[0,0],[0.2,0.9],19,60))
     sensors.append(Sensor("VilaReal","plantation_temperature",generate_temperature,generate_temperature_alert,[0,0],[0.2,0.9],19,60))
 
-    sensors.append(Sensor("Guarda","net_harvest",generate_net_harv,generate_net_harv_alert,[0,0],[10,30],5,(24*60*60)))
-    sensors.append(Sensor("Minho","net_harvest",generate_net_harv,generate_net_harv_alert,[0,0],[10,30],5,(24*60*60)))
-    sensors.append(Sensor("VilaReal","net_harvest",generate_net_harv,generate_net_harv_alert,[0,0],[10,30],5,(24*60*60)))
+    sensors.append(Sensor("Guarda","net_harvest",generate_net_harv,generate_net_harv_alert,[0,0],[5,10],5,(24*60*60)))
+    sensors.append(Sensor("Minho","net_harvest",generate_net_harv,generate_net_harv_alert,[0,0],[5,10],5,(24*60*60)))
+    sensors.append(Sensor("VilaReal","net_harvest",generate_net_harv,generate_net_harv_alert,[0,0],[5,10],5,(24*60*60)))
 
     sensors.append(Sensor("Guarda","water_tension",generate_water,generate_water_alert,[0,0],[0.2,0.9],40,60))
     sensors.append(Sensor("Minho","water_tension",generate_water,generate_water_alert,[0,0],[0.2,0.9],40,60))
     sensors.append(Sensor("VilaReal","water_tension",generate_water,generate_water_alert,[0,0],[0.2,0.9],40,60))
 
-    sensors.append(Sensor("Guarda","store_temperature",generate_stor_temp,generate_stor_temp_alert,[0,0],[10,25],0.5,60))
-    sensors.append(Sensor("Minho","store_temperature",generate_stor_temp,generate_stor_temp_alert,[0,0],[10,25],0.5,60))
-    sensors.append(Sensor("VilaReal","store_temperature",generate_stor_temp,generate_stor_temp_alert,[0,0],[10,25],0.5,60))
+    sensors.append(Sensor("Guarda","store_temperature",generate_stor_temp,generate_stor_temp_alert,[0,0],[5,10],0.5,60))
+    sensors.append(Sensor("Minho","store_temperature",generate_stor_temp,generate_stor_temp_alert,[0,0],[5,10],0.5,60))
+    sensors.append(Sensor("VilaReal","store_temperature",generate_stor_temp,generate_stor_temp_alert,[0,0],[5,10],0.5,60))
 
     curr_time = 1640995200
     time.sleep(30)
@@ -163,6 +161,6 @@ if __name__ == "__main__":
                 sensor.generate(channel)
                 if sensor.ts > big: big = sensor.ts
         curr_time += 1
-        time.sleep(1/60) # ajustar para acelerar/desacelerar o tempo (testing purposes)
+        time.sleep(1) # ajustar para acelerar/desacelerar o tempo (testing purposes)
 
     connection.close()

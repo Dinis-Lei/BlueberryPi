@@ -20,6 +20,8 @@ import com.ies.blueberry.repository.StorageTemperatureRepository;
 import com.ies.blueberry.repository.UnitLossRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -67,18 +69,133 @@ public class AllDataService {
     @Autowired
     private UnitLossRepository repUnitLoss;
 
+    // Being Used
 
     public List<Location> getLocations() {
         return repLocation.findAll();
     }
 
-    public Location saveLocation(Location l) {
-        return repLocation.save(l);
-    }
-
     public Location getLocationByName(String name) {
         Location l = repLocation.findLocationByName(name).orElse(null);
         return l;
+    }
+
+    public List<Optional<Object>> getData(String l, String dataType, Integer limit) {
+        // Returns data by most recent, limited by lim
+        if(limit==null) {limit = Integer.MAX_VALUE;}
+        Pageable page = PageRequest.of(0,limit);
+        List<Optional<Object>> results = new ArrayList<Optional<Object>>();
+        switch(dataType){
+            case "plantation_temperature":
+                results = repPlantationTemperature.findByLocation(l);
+                Collections.reverse(results);
+                return results;
+            case "net_harvest":
+                results = repNetHarvest.findByLocation(l, page);
+                Collections.reverse(results);
+                return results;
+            case "soil_ph":
+                results = repSoilPH.findByLocation(l);
+                Collections.reverse(results);
+                return results;
+            case "soil_water_tension":
+                results = repSoilWaterTension.findByLocation(l);
+                Collections.reverse(results);
+                return results;
+            case "unit_loss":
+                results = repUnitLoss.findByLocation(l);
+                Collections.reverse(results);
+                return results;
+            case "storage_temperature":
+                results = repStorageTemp.findByLocation(l);
+                Collections.reverse(results);
+                return results;
+            case "storage_humidity":    
+                results = repStorageHumidity.findByLocation(l);
+                Collections.reverse(results);
+                return results;
+        }
+        return results;
+    }
+
+    public List<Optional<Object>> getDataByDate(String l, String lowerlim, String upperlim, String dataType, Integer limit) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH:mm:ss");
+        Long begin;
+        Long end;
+        if(lowerlim==null) {
+            begin = Long.MIN_VALUE;
+        }
+        else {
+            LocalDateTime s = LocalDateTime.parse(lowerlim, formatter);
+            begin = s.toEpochSecond(ZoneOffset.UTC);
+        }
+        if(upperlim==null) {
+            end = Long.MAX_VALUE;
+        }
+        else {
+            LocalDateTime e = LocalDateTime.parse(upperlim, formatter);
+            end = e.toEpochSecond(ZoneOffset.UTC);
+        }
+        List<Optional<Object>> results = new ArrayList<Optional<Object>>();
+        switch(dataType){
+            case "plantation_temperature":
+                results = repPlantationTemperature.findByLocationAndTimestampBetween(l, begin, end);
+                Collections.reverse(results);
+                return results;
+            case "net_harvest":
+                results = repNetHarvest.findByLocationAndTimestampBetween(l, begin, end);
+                Collections.reverse(results);
+                return results;
+            case "soil_ph":
+                results = repSoilPH.findByLocationAndTimestampBetween(l, begin, end);
+                Collections.reverse(results);
+                return results;
+            case "soil_water_tension":
+                results = repSoilWaterTension.findByLocationAndTimestampBetween(l, begin, end);
+                Collections.reverse(results);
+                return results;
+            case "unit_loss":
+                results = repUnitLoss.findByLocationAndTimestampBetween(l, begin, end);
+                Collections.reverse(results);
+                return results;
+            case "storage_temperature":
+                results = repStorageTemp.findByLocationAndTimestampBetween(l, begin, end);
+                Collections.reverse(results);
+                return results;
+            case "storage_humidity":    
+                results = repStorageHumidity.findByLocationAndTimestampBetween(l, begin, end);
+                Collections.reverse(results);
+                return results;
+        }
+        return results;
+    }
+
+    public List<Alert> getAlerts(Boolean seen, String start, String end) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH:mm:ss");
+        Long begin;
+        Long finish;
+        if(start==null) {
+            begin = Long.MIN_VALUE;
+        }
+        else {
+            LocalDateTime s = LocalDateTime.parse(start, formatter);
+            begin = s.toEpochSecond(ZoneOffset.UTC);
+        }
+        if(end==null) {
+            finish = Long.MAX_VALUE;
+        }
+        else {
+            LocalDateTime e = LocalDateTime.parse(end, formatter);
+            finish = e.toEpochSecond(ZoneOffset.UTC);
+        }
+
+        if(seen == null) return repAlert.findByStartGreaterThanEqualAndEndLessThanEqual(begin, finish);
+        else return repAlert.findBySeenAndStartGreaterThanEqualAndEndLessThanEqual(seen, begin, finish);
+    }
+
+    public Alert saveAlert(Alert a) {
+        repAlert.save(a);
+        return a;
     }
 
     public List<Alert> getAlertsLocation(String location, Boolean seen, String start, String end) {
@@ -131,9 +248,36 @@ public class AllDataService {
         
     }
 
-    public Alert saveAlert(Alert a) {
-        repAlert.save(a);
-        return a;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // Not Being Used
+
+    public Location saveLocation(Location l) {
+        return repLocation.save(l);
     }
 
     public void deleteAlert(long id) {
@@ -144,119 +288,10 @@ public class AllDataService {
         repAlert.deleteAll();
     }
 
-    public List<Alert> getAlerts(Boolean seen, String start, String end) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH:mm:ss");
-        Long begin;
-        Long finish;
-        if(start==null) {
-            begin = Long.MIN_VALUE;
-        }
-        else {
-            LocalDateTime s = LocalDateTime.parse(start, formatter);
-            begin = s.toEpochSecond(ZoneOffset.UTC);
-        }
-        if(end==null) {
-            finish = Long.MAX_VALUE;
-        }
-        else {
-            LocalDateTime e = LocalDateTime.parse(end, formatter);
-            finish = e.toEpochSecond(ZoneOffset.UTC);
-        }
-
-        if(seen == null) return repAlert.findByStartGreaterThanEqualAndEndLessThanEqual(begin, finish);
-        else return repAlert.findBySeenAndStartGreaterThanEqualAndEndLessThanEqual(seen, begin, finish);
-    }
+    
 
     public void deleteAll() {
         repLocation.deleteAll();
-    }
-
-    public List<Optional<Object>> getData(String l, String dataType) {
-        List<Optional<Object>> results = new ArrayList<Optional<Object>>();
-        switch(dataType){
-            case "plantation_temperature":
-                results = repPlantationTemperature.findByLocation(l);
-                Collections.reverse(results);
-                return results;
-            case "net_harvest":
-                results = repNetHarvest.findByLocation(l);
-                Collections.reverse(results);
-                return results;
-            case "soil_ph":
-                results = repSoilPH.findByLocation(l);
-                Collections.reverse(results);
-                return results;
-            case "soil_water_tension":
-                results = repSoilWaterTension.findByLocation(l);
-                Collections.reverse(results);
-                return results;
-            case "unit_loss":
-                results = repUnitLoss.findByLocation(l);
-                Collections.reverse(results);
-                return results;
-            case "storage_temperature":
-                results = repStorageTemp.findByLocation(l);
-                Collections.reverse(results);
-                return results;
-            case "storage_humidity":    
-                results = repStorageHumidity.findByLocation(l);
-                Collections.reverse(results);
-                return results;
-        }
-        return results;
-    }
-
-
-    public List<Optional<Object>> getDataByDate(String l, String lowerlim, String upperlim, String dataType) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH:mm:ss");
-        Long begin;
-        Long end;
-        if(lowerlim==null) {
-            begin = Long.MIN_VALUE;
-        }
-        else {
-            LocalDateTime s = LocalDateTime.parse(lowerlim, formatter);
-            begin = s.toEpochSecond(ZoneOffset.UTC);
-        }
-        if(upperlim==null) {
-            end = Long.MAX_VALUE;
-        }
-        else {
-            LocalDateTime e = LocalDateTime.parse(upperlim, formatter);
-            end = e.toEpochSecond(ZoneOffset.UTC);
-        }
-        List<Optional<Object>> results = new ArrayList<Optional<Object>>();
-        switch(dataType){
-            case "plantation_temperature":
-                results = repPlantationTemperature.findByLocationAndTimestampBetween(l, begin, end);
-                Collections.reverse(results);
-                return results;
-            case "net_harvest":
-                results = repNetHarvest.findByLocationAndTimestampBetween(l, begin, end);
-                Collections.reverse(results);
-                return results;
-            case "soil_ph":
-                results = repSoilPH.findByLocationAndTimestampBetween(l, begin, end);
-                Collections.reverse(results);
-                return results;
-            case "soil_water_tension":
-                results = repSoilWaterTension.findByLocationAndTimestampBetween(l, begin, end);
-                Collections.reverse(results);
-                return results;
-            case "unit_loss":
-                results = repUnitLoss.findByLocationAndTimestampBetween(l, begin, end);
-                Collections.reverse(results);
-                return results;
-            case "storage_temperature":
-                results = repStorageTemp.findByLocationAndTimestampBetween(l, begin, end);
-                Collections.reverse(results);
-                return results;
-            case "storage_humidity":    
-                results = repStorageHumidity.findByLocationAndTimestampBetween(l, begin, end);
-                Collections.reverse(results);
-                return results;
-        }
-        return results;
     }
 
     public List<Optional<Object>> getDataByDateWithLimit(String l, String lowerlim, String upperlim, String dataType, Integer limit)
