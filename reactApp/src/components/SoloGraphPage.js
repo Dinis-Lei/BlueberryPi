@@ -43,15 +43,9 @@ export const getDataPoints = (JSONData) => {
         return 
     }
 
-    if (JSONData.length < 20) {
-        graphData = JSONData;
-    }
-    else {
-        let firstElem = 0; 
-        let lastElem = 40;
-        graphData = JSONData.slice(firstElem, lastElem); // não inclui lastElem
-    }
-    graphData.reverse()
+
+    graphData = JSONData;
+
     for (const dataPoint of graphData) {
         let newElem = {x: counter, y: dataPoint["data"], label: process_date(dataPoint["timestamp"])};
         ret.push(newElem);
@@ -104,7 +98,7 @@ const SoloGraphPage = props =>{
 
     useEffect(() => {
         //while(true){
-           setInterval(
+            setInterval(
             () => {
                 //console.log(flg)
                 setFlg(!flg)
@@ -117,7 +111,7 @@ const SoloGraphPage = props =>{
         console.log("LOCATION")
         console.log(location)
         
-        let url = location + "/" + sensor;
+        let url = location + "/" + sensor + "?limit=" + nDataPoints;
         
         let data = fetchData(url); // data is a promise object
         data.then(function (result) {

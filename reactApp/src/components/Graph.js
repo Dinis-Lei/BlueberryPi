@@ -32,15 +32,9 @@ export const getDataPoints = (JSONData) => {
     let counter = 1;
     let graphData;
 
-    if (JSONData.length < 10) {
-        graphData = JSONData;
-    }
-    else {
-        let firstElem = 0; 
-        let lastElem = 10;
-        graphData = JSONData.slice(firstElem, lastElem); // não inclui lastElem
-    }
-    graphData.reverse()
+
+    graphData = JSONData;
+    
     for (const dataPoint of graphData) {
         let newElem = {x: counter, y: dataPoint["data"], label: process_date(dataPoint["timestamp"])};
         ret.push(newElem);
@@ -88,7 +82,7 @@ const Graph = props =>{
 
     useEffect(() => {
         //while(true){
-           setInterval(
+            setInterval(
             () => {
                 //console.log(flg)
                 setFlg(!flg)
@@ -100,7 +94,7 @@ const Graph = props =>{
     useEffect(() => {
         //console.log("AAA")
         let dataType = props.dataType;
-        let url = location + "/" + dataType;
+        let url = location + "/" + dataType + "?limit=35" ;
         
         let plantation_temperature_data = fetchData(url); // data is a promise object
         plantation_temperature_data.then(function (result) {
