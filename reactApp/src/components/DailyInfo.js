@@ -40,6 +40,7 @@ const DailyInfo = props => {
 
     const title = processString(props.dataType)
     const [value, setValue] = useState("no information available");
+    const [flg, setFlg] = useState(true);
 
     const aStyle = {
         'text-decoration': 'none'
@@ -53,7 +54,18 @@ const DailyInfo = props => {
             setValue(getLatestDataPoint(result, props.location, props.units));
         });
 
-    }, []);
+    }, [flg]);
+
+    useEffect(() => {
+        //while(true){
+            setInterval(
+            () => {
+                //console.log(flg)
+                setFlg(!flg)
+            }, 60000) 
+        //} 
+        
+    })
 
     return(
         <a style={aStyle} href={"/dashboard/"+props.location+"/"+props.dataType}>

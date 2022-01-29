@@ -94,7 +94,7 @@ const Graph = props =>{
     useEffect(() => {
         //console.log("AAA")
         let dataType = props.dataType;
-        let url = location + "/" + dataType + "?limit=35" ;
+        let url = location + "/" + dataType + "?limit=20" ;
         
         let plantation_temperature_data = fetchData(url); // data is a promise object
         plantation_temperature_data.then(function (result) {
@@ -125,7 +125,7 @@ const Graph = props =>{
         },
         data: [{
             type: "spline",
-            indexLabel: "{x}: {y}",
+            //indexLabel: "{x}: {y}",
             // toolTipContent: "Week {x}: {y}%",
             dataPoints: myDataPoints
         }]

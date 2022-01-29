@@ -6,25 +6,38 @@ import { fetchData } from "../App";
 import { Container, Table } from "react-bootstrap";
 
 export const getLocations = (JSONData) => {
-    let ret = [];
-    for (let loc of JSONData) {
-        ret.push(loc["name"]);
-    }
+    // let ret = [];
+    // for (let loc of JSONData) {
+    //     ret.push(loc["name"]);
+    // }
     console.log(JSONData)
-    console.log(ret)
-    return ret;
+    // console.log(ret)
+    //return ret;
+    return JSONData;
 }
 
 const MyAccordion = () => {
 
     const [locations_lst, setLocationsLst] = useState([]);
+    const [flg, setFlg] = useState(true);
 
     useEffect(() => {
         let location_data = fetchData("locations");
         location_data.then(function (result) {
             setLocationsLst(getLocations(result));
         });
-    }, []);
+    }, [flg]);
+
+    useEffect(() => {
+        //while(true){
+            setInterval(
+            () => {
+                //console.log(flg)
+                setFlg(!flg)
+            }, 60000) 
+        //} 
+        
+    })
 
     let imgs = [
         "https://www.tecnologiahorticola.com/wp-content/uploads/2019/03/New_Plantation_Croatia-2.jpg",
