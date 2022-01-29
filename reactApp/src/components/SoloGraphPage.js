@@ -37,21 +37,16 @@ export const getDataPoints = (JSONData) => {
     let counter = 1;
     let graphData;
 
+    console.log("HELLOEOEO")
     console.log(JSONData)
 
     if (JSONData.length < 1){
         return 
     }
 
-    if (JSONData.length < 20) {
-        graphData = JSONData;
-    }
-    else {
-        let firstElem = 0; 
-        let lastElem = 40;
-        graphData = JSONData.slice(firstElem, lastElem); // não inclui lastElem
-    }
-    graphData.reverse()
+
+    graphData = JSONData;
+
     for (const dataPoint of graphData) {
         let newElem = {x: counter, y: dataPoint["data"], label: process_date(dataPoint["timestamp"])};
         ret.push(newElem);
@@ -79,20 +74,14 @@ const SoloGraphPage = props =>{
     // const [times, setTimes] = useState([]);
 
     const getDataPoints = (JSONData) => {
+        console.log("AAAAAA")
+        console.log(JSONData)
         let ret = [];
         let counter = 1;
         let graphData;
     
-        if (JSONData.length < nDataPoints) {
-            graphData = JSONData;
-            setnDataPoints(JSONData.length)
-        }
-        else {
-            let firstElem = 0; 
-            let lastElem = nDataPoints;
-            graphData = JSONData.slice(firstElem, lastElem); // não inclui lastElem
-        }
-        graphData.reverse()
+        graphData = JSONData;
+        //setnDataPoints(JSONData.length)
         for (const dataPoint of graphData) {
             let newElem = {x: counter, y: dataPoint["data"], label: process_date(dataPoint["timestamp"])};
             ret.push(newElem);
@@ -104,7 +93,7 @@ const SoloGraphPage = props =>{
 
     useEffect(() => {
         //while(true){
-           setInterval(
+            setInterval(
             () => {
                 //console.log(flg)
                 setFlg(!flg)
@@ -117,7 +106,8 @@ const SoloGraphPage = props =>{
         console.log("LOCATION")
         console.log(location)
         
-        let url = location + "/" + sensor;
+        let url = location + "/" + sensor + "?limit=" + nDataPoints;
+        console.log(url)
         
         let data = fetchData(url); // data is a promise object
         data.then(function (result) {
@@ -203,6 +193,7 @@ const SoloGraphPage = props =>{
                 <Form>
                 <RangeSlider
                                 max={maxDataPoints }
+                                min={1}
                                 value={nDataPoints}
                                 onChange={e => setnDataPoints(e.target.value)}
                                 tooltip='on'

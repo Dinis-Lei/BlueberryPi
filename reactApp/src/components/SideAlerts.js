@@ -93,7 +93,7 @@ const SideAlerts = props => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(alert)
         };
-        fetch('http://localhost:8080/api/alerts', requestOptions)
+        fetch('http://192.168.160.210:8080/api/alerts', requestOptions)
             .then(response => {
                 //console.log(response.json())
                 response.json()
