@@ -83,6 +83,7 @@ const SideAlerts = props => {
     const {location} = useParams();
     const [changed, setChanged] = useState(true)
     const [flg, setFlg] = useState(true);
+    
 
     const checkAlert = (alert) => {
         alert.seen = true
@@ -93,7 +94,7 @@ const SideAlerts = props => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(alert)
         };
-        fetch('http://localhost:8080/api/alerts', requestOptions)
+        fetch('http://192.168.160.210:8080/api/alerts', requestOptions)
             .then(response => {
                 //console.log(response.json())
                 response.json()
@@ -101,14 +102,27 @@ const SideAlerts = props => {
     }
 
     useEffect(() => {
-
-        let alerts_data = fetchData(location + "/alerts?seen=false");
-        alerts_data.then(function(result){
-            console.log("BBBBB")
-            console.log(result)
-            setAlertsDict(result);
-            //setLocationsLst(getLocations(result));
-        });
+        //console.log(props.all)
+        if(!props.all){
+            //console.log("AAAA")
+            let alerts_data = fetchData("alerts?seen=false");
+            alerts_data.then(function(result){
+                //console.log("BBBBB")
+                //console.log(result)
+                setAlertsDict(result);
+                //setLocationsLst(getLocations(result));
+            });
+        }
+        else{
+            let alerts_data = fetchData(location + "/alerts?seen=false");
+            alerts_data.then(function(result){
+                console.log("BBBBB")
+                console.log(result)
+                setAlertsDict(result);
+                //setLocationsLst(getLocations(result));
+            });
+        }
+        
 
     }, [changed, flg]);
 
@@ -120,7 +134,7 @@ const SideAlerts = props => {
             }, 60000) 
     })
 
-    if (!alerts_dict) {
+    if (Object.keys(alerts_dict).length === 0) {
         return (<div></div>);
     }
 
@@ -149,7 +163,8 @@ const SideAlerts = props => {
                                 return(
                                     !alert.seen && 
                                     <Row className="border-bottom border-dark">
-                                        <p>{processString(alert.sensor) + ": " + alert.val + ", since: " + getDate(alert.start) + ", until: " + getDate(alert.end)}</p>
+                                        {props.all && <p>{alert.location +"/" + processString(alert.sensor) + ": " + alert.val + ", since: " + getDate(alert.start) + ", until: " + getDate(alert.end)}</p>}
+                                        {!props.all && <p>{processString(alert.sensor) + ": " + alert.val + ", since: " + getDate(alert.start) + ", until: " + getDate(alert.end)}</p> }
                                         <Button className="btn btn-danger col-2 mx-auto mb-2" onClick={() => checkAlert(alert)}>X</Button>
                                     </Row>
                                 )
