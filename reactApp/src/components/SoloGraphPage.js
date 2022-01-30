@@ -121,7 +121,6 @@ const SoloGraphPage = props =>{
 
     const options = {
         animationEnabled: true,
-        width: 1800,
         theme: "light2",
         title:{
             text: graphTitle
@@ -183,10 +182,12 @@ const SoloGraphPage = props =>{
                     </thead>
                 </table>
             </div>
-
-            <CanvasJSChart options = {options} 
+            <div>
+               <CanvasJSChart options = {options} 
                 //onRef={ref => this.chart = ref}
-            />
+            /> 
+            </div>
+            
 
             <div className="col-6 mx-auto">
                 <label for="customRange3" class="form-label">Data Points</label>

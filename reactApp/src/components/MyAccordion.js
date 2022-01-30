@@ -3,7 +3,8 @@ import Accordion from 'react-bootstrap/Accordion';
 import LocationInfo from "./LocationInfo";
 import DailyInfo from "./DailyInfo";
 import { fetchData } from "../App";
-import { Container, Table } from "react-bootstrap";
+import { Col, Container, Row, Table } from "react-bootstrap";
+import SideAlerts from "./SideAlerts";
 
 export const getLocations = (JSONData) => {
     // let ret = [];
@@ -20,6 +21,7 @@ const MyAccordion = () => {
 
     const [locations_lst, setLocationsLst] = useState([]);
     const [flg, setFlg] = useState(true);
+    const [alertsExist, setAlertsExist] = useState(false);
 
     useEffect(() => {
         let location_data = fetchData("locations");
@@ -27,6 +29,17 @@ const MyAccordion = () => {
             setLocationsLst(getLocations(result));
         });
     }, [flg]);
+
+    useEffect(() => {
+
+        let alerts_data = fetchData("alerts");
+        alerts_data.then(function(result){
+          if (result.length != 0) {
+            setAlertsExist(true);
+          }
+        });
+    
+      }, [flg]);
 
     useEffect(() => {
         //while(true){
@@ -66,49 +79,58 @@ const MyAccordion = () => {
             <div style={{margin: '3%' }}>
                 <LocationInfo />
             </div>
-            <Container style={{ width: '50%', margin: 'auto', marginTop: '1%' }}>
-                <Accordion defaultActiveKey="0" flush>
-                    
-                    {
-                        locations_lst.map(
-                        (elem) => { return (
+            
+            <Row>
 
-                            <Accordion.Item eventKey={(locations_lst.indexOf(elem)).toString()}>
+                <Col xl={9} lg={12}>
+                    <Container style={{ width: '75%', margin: 'auto', marginTop: '1%' }}>
+                        <Accordion defaultActiveKey="0" flush>
+                            
+                            {
+                                locations_lst.map(
+                                (elem) => { return (
+
+                                    <Accordion.Item eventKey={(locations_lst.indexOf(elem)).toString()}>
+                                        
+                                        <Accordion.Header>{elem}</Accordion.Header>
+
+                                        <Accordion.Body style={{ backgroundImage: 'url(' + imgs[locations_lst.indexOf(elem)] + ')' }}>
+                                            <div style={{ position: 'relative' }}>
+                                                <Table style={{ margin: '0 auto' }} responsive>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td> <DailyInfo dataType={pt} units={pt_u} location={elem} /> </td>
+                                                            <td> <DailyInfo dataType={nh} units={nh_u} location={elem} /> </td>
+                                                            <td> <DailyInfo dataType={sp} units={sp_u} location={elem} /> </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td> <DailyInfo dataType={swt} units={swt_u} location={elem} /> </td>
+                                                            <td> <DailyInfo dataType={ul} units={ul_u} location={elem} /> </td>
+                                                            <td> <DailyInfo dataType={st} units={st_u} location={elem} /> </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td></td>
+                                                            <td> <DailyInfo dataType={sh} units={sh_u} location={elem} /> </td>
+                                                            <td></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </Table>
+                                            </div>
+                                        </Accordion.Body>
+
+                                    </Accordion.Item>
                                 
-                                <Accordion.Header>{elem}</Accordion.Header>
+                                ) }
+                                )
+                            }
 
-                                <Accordion.Body style={{ backgroundImage: 'url(' + imgs[locations_lst.indexOf(elem)] + ')' }}>
-                                    <div style={{ position: 'relative' }}>
-                                        <Table style={{ margin: '0 auto' }} responsive>
-                                            <tbody>
-                                                <tr>
-                                                    <td> <DailyInfo dataType={pt} units={pt_u} location={elem} /> </td>
-                                                    <td> <DailyInfo dataType={nh} units={nh_u} location={elem} /> </td>
-                                                    <td> <DailyInfo dataType={sp} units={sp_u} location={elem} /> </td>
-                                                </tr>
-                                                <tr>
-                                                    <td> <DailyInfo dataType={swt} units={swt_u} location={elem} /> </td>
-                                                    <td> <DailyInfo dataType={ul} units={ul_u} location={elem} /> </td>
-                                                    <td> <DailyInfo dataType={st} units={st_u} location={elem} /> </td>
-                                                </tr>
-                                                <tr>
-                                                    <td></td>
-                                                    <td> <DailyInfo dataType={sh} units={sh_u} location={elem} /> </td>
-                                                    <td></td>
-                                                </tr>
-                                            </tbody>
-                                        </Table>
-                                    </div>
-                                </Accordion.Body>
-
-                            </Accordion.Item>
-                        
-                        ) }
-                        )
-                    }
-
-                </Accordion>
-            </Container>
+                        </Accordion>
+                    </Container>
+                </Col>
+                <Col xl={3} lg={12}>
+                    <SideAlerts alerts={alertsExist} all={false} />
+                </Col>
+            </Row>
         </div>
 
     )
