@@ -42,6 +42,7 @@ const App = () => {
   const [checked, setChecked] = useState(false);
   const [radioValue, setRadioValue] = useState('1');
   const [alertsExist, setAlertsExist] = useState(false);
+  const [flg, setFlg] = useState(true);
 
   const [frontPage, setFrontPage] = useState(true);
 
@@ -59,7 +60,15 @@ const App = () => {
       }
     });
 
-  }, []);
+  }, [flg]);
+
+  useEffect(() => {
+        setInterval(
+        () => {
+            setFlg(!flg)
+        }, 60000) 
+    
+})
 
   return (
 
@@ -197,7 +206,7 @@ const App = () => {
                       </Row>
                     </Col>
                     <Col xl={3} md={12}>
-                      <SideAlerts alerts={alertsExist}/>
+                      <SideAlerts alerts={alertsExist} all={false} />
                     </Col>
                   </Row>
                 }
@@ -219,7 +228,7 @@ const App = () => {
                       </Row>
                     </Col>
                     <Col xl={3} lg={12}>
-                      <SideAlerts alerts={alertsExist} />
+                      <SideAlerts alerts={alertsExist} all={false} />
                     </Col>
                   </Row>
                 }
@@ -230,7 +239,7 @@ const App = () => {
                 <div style={{ width: '50%', marginLeft: '2%', marginTop: '2%' }}>
                   <LocationInfo />
                 </div>
-                <SoloGraphPage />
+                <SoloGraphPage/>
                 <br/>
                 <AlertHistory all={false} />
               </div>
